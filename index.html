@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¿Hoy juega el América?</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --accent: #facc15;
+      --accent-2: #1d4ed8;
+      --danger: #dc2626;
+      --success: #16a34a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, var(--bg), #1e293b);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 720px;
+      background: rgba(17, 24, 39, 0.92);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 40px 28px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(250, 204, 21, 0.16);
+      color: var(--accent);
+      font-weight: bold;
+      margin-bottom: 18px;
+      letter-spacing: 0.4px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      margin: 0 0 14px;
+      line-height: 1.05;
+    }
+
+    p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin: 0 0 26px;
+    }
+
+    .status {
+      margin: 28px auto;
+      padding: 26px 18px;
+      border-radius: 20px;
+      font-size: clamp(1.6rem, 4vw, 3rem);
+      font-weight: 800;
+      transition: all 0.25s ease;
+    }
+
+    .yes {
+      background: rgba(22, 163, 74, 0.16);
+      border: 1px solid rgba(22, 163, 74, 0.35);
+      color: #bbf7d0;
+    }
+
+    .no {
+      background: rgba(220, 38, 38, 0.16);
+      border: 1px solid rgba(220, 38, 38, 0.35);
+      color: #fecaca;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .primary {
+      background: var(--accent);
+      color: #111827;
+    }
+
+    .secondary {
+      background: var(--accent-2);
+      color: white;
+    }
+
+    .footer {
+      margin-top: 22px;
+      font-size: 0.95rem;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="badge">Versión inicial</div>
+    <h1>¿Hoy juega el América?</h1>
+    <p>¡Vamos por la décimo séptima!</p>
+
+    <section id="status" class="status yes">Hoy juega el América</section>
+
+    <div class="controls">
+      <button class="primary" onclick="setStatus(true)">Mostrar que sí juega</button>
+      <button class="secondary" onclick="setStatus(false)">Mostrar que no juega</button>
+    </div>
+
+    <div class="footer">
+      Después podremos conectarla a un calendario o a una API de partidos.
+    </div>
+  </main>
+
+  <script>
+    function setStatus(playsToday) {
+      const status = document.getElementById('status');
+
+      if (playsToday) {
+        status.textContent = 'Hoy juega el América';
+        status.className = 'status yes';
+      } else {
+        status.textContent = 'Hoy no juega el América';
+        status.className = 'status no';
+      }
+    }
+  </script>
+</body>
+</html>
