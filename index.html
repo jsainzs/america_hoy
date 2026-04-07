@@ -130,7 +130,8 @@
     <p>¡Vamos por la décimo séptima!</p>
 
     <section id="status" class="status yes">Hoy juega el América</section>
-
+    <img id="imagen" src="hoy_juega_america.png" style="max-width: 100%; border-radius: 16px; margin-top: 20px;">
+    
     <div class="controls">
       <button class="primary" onclick="setStatus(true)">Mostrar que sí juega</button>
       <button class="secondary" onclick="setStatus(false)">Mostrar que no juega</button>
@@ -144,13 +145,16 @@
   <script>
     function setStatus(playsToday) {
       const status = document.getElementById('status');
-
+      const imagen = document.getElementById('imagen');
+    
       if (playsToday) {
         status.textContent = 'Hoy juega el América';
         status.className = 'status yes';
+        imagen.style.display = 'block';   // muestra imagen
       } else {
         status.textContent = 'Hoy no juega el América';
         status.className = 'status no';
+        imagen.style.display = 'none';    // oculta imagen
       }
     }
   </script>
