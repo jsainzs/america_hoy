@@ -336,6 +336,24 @@
       }).format(date);
     }
 
+    function getTodayInMexico() {
+      return new Intl.DateTimeFormat("en-CA", {
+        timeZone: MEXICO_TZ,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).format(new Date());
+    }
+
+    function getMexicoDateString(date) {
+      return new Intl.DateTimeFormat("en-CA", {
+        timeZone: MEXICO_TZ,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).format(date);
+    }
+
     function showOnlyImage(showYes) {
       const imgSi = document.getElementById("imgSi");
       const imgNo = document.getElementById("imgNo");
@@ -393,10 +411,6 @@
       return d;
     }
 
-    function isSameMexicoDate(dateA, dateB) {
-      return formatDateInTimeZone(dateA, MEXICO_TZ) === formatDateInTimeZone(dateB, MEXICO_TZ);
-    }
-
     function buildMatchHtml(prefix, event, kickoffUtc, labelText) {
       const home = event.strHomeTeam || event.strHome || "Equipo local";
       const away = event.strAwayTeam || event.strAway || "Equipo visitante";
@@ -447,10 +461,11 @@
           .sort((a, b) => b.kickoffUtc - a.kickoffUtc);
 
         const now = new Date();
+        const todayInMexico = getTodayInMexico();
 
-        const nextToday = nextEvents.find(x => isSameMexicoDate(x.kickoffUtc, now)) || null;
+        const nextToday = nextEvents.find(x => getMexicoDateString(x.kickoffUtc) === todayInMexico) || null;
+        const lastToday = prevEvents.find(x => getMexicoDateString(x.kickoffUtc) === todayInMexico) || null;
         const nextFuture = nextEvents.find(x => x.kickoffUtc > now) || null;
-        const lastToday = prevEvents.find(x => isSameMexicoDate(x.kickoffUtc, now)) || null;
 
         let tagText = "No hay partido hoy";
         let tagMode = "status-no";
@@ -478,13 +493,15 @@
         }
 
         lastDebug = {
-          nextRaw: nextData,
-          prevRaw: prevData,
+          todayInMexico,
           nextCount: nextEvents.length,
           prevCount: prevEvents.length,
-          nextToday: nextToday ? nextToday.kickoffUtc.toISOString() : null,
-          lastToday: lastToday ? lastToday.kickoffUtc.toISOString() : null,
-          nextFuture: nextFuture ? nextFuture.kickoffUtc.toISOString() : null
+          nextTodayMexico: nextToday ? getMexicoDateString(nextToday.kickoffUtc) : null,
+          nextTodayUtc: nextToday ? nextToday.kickoffUtc.toISOString() : null,
+          lastTodayMexico: lastToday ? getMexicoDateString(lastToday.kickoffUtc) : null,
+          lastTodayUtc: lastToday ? lastToday.kickoffUtc.toISOString() : null,
+          nextFutureMexico: nextFuture ? getMexicoDateString(nextFuture.kickoffUtc) : null,
+          nextFutureUtc: nextFuture ? nextFuture.kickoffUtc.toISOString() : null
         };
 
         setStatus(tagText, tagMode, showYesImage, detailsHtml);
@@ -508,11 +525,15 @@
       }
 
       alert([
+        `todayInMexico: ${lastDebug.todayInMexico}`,
         `nextCount: ${lastDebug.nextCount}`,
         `prevCount: ${lastDebug.prevCount}`,
-        `nextToday: ${lastDebug.nextToday}`,
-        `lastToday: ${lastDebug.lastToday}`,
-        `nextFuture: ${lastDebug.nextFuture}`
+        `nextTodayMexico: ${lastDebug.nextTodayMexico}`,
+        `nextTodayUtc: ${lastDebug.nextTodayUtc}`,
+        `lastTodayMexico: ${lastDebug.lastTodayMexico}`,
+        `lastTodayUtc: ${lastDebug.lastTodayUtc}`,
+        `nextFutureMexico: ${lastDebug.nextFutureMexico}`,
+        `nextFutureUtc: ${lastDebug.nextFutureUtc}`
       ].join("\n"));
     }
 
