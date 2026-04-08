@@ -6,23 +6,39 @@
   <title>¿Hoy juega el América?</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --card: #111827;
+      --bg: #08111f;
+      --bg-2: #132238;
+      --card: rgba(10, 18, 32, 0.86);
+      --card-border: rgba(255,255,255,0.08);
       --text: #f8fafc;
       --muted: #cbd5e1;
+      --muted-2: #94a3b8;
       --accent: #facc15;
-      --accent-2: #1d4ed8;
-      --danger: #dc2626;
-      --success: #16a34a;
+      --accent-soft: rgba(250, 204, 21, 0.14);
+      --blue-soft: rgba(29, 78, 216, 0.16);
+      --green-soft: rgba(22, 163, 74, 0.16);
+      --red-soft: rgba(220, 38, 38, 0.16);
+      --green-text: #bbf7d0;
+      --red-text: #fecaca;
+      --blue-text: #bfdbfe;
+      --shadow: 0 24px 60px rgba(0,0,0,0.42);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(250, 204, 21, 0.08), transparent 28%),
+        linear-gradient(135deg, var(--bg), var(--bg-2));
+    }
 
     body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(135deg, var(--bg), #1e293b);
-      color: var(--text);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -32,75 +48,123 @@
 
     .card {
       width: 100%;
-      max-width: 720px;
-      background: rgba(17, 24, 39, 0.92);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 24px;
-      padding: 40px 28px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      max-width: 760px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 22px 22px 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
       text-align: center;
     }
 
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
     .badge {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       padding: 8px 14px;
       border-radius: 999px;
-      background: rgba(250, 204, 21, 0.16);
+      background: var(--accent-soft);
       color: var(--accent);
-      font-weight: bold;
-      margin-bottom: 18px;
-      letter-spacing: 0.4px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      font-size: 0.95rem;
     }
 
-    h1 {
-      font-size: clamp(2rem, 5vw, 4rem);
-      margin: 0 0 14px;
-      line-height: 1.05;
-    }
-
-    p {
-      color: var(--muted);
-      font-size: 1.05rem;
-      margin: 0 0 26px;
-    }
-
-    .status {
-      margin: 28px auto 18px;
-      padding: 26px 18px;
-      border-radius: 20px;
-      font-size: clamp(1.6rem, 4vw, 3rem);
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.84rem;
       font-weight: 800;
-      transition: all 0.25s ease;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
     }
 
-    .yes {
-      background: rgba(22, 163, 74, 0.16);
-      border: 1px solid rgba(22, 163, 74, 0.35);
-      color: #bbf7d0;
+    .status-loading {
+      background: var(--blue-soft);
+      color: var(--blue-text);
+      border: 1px solid rgba(29, 78, 216, 0.3);
     }
 
-    .no {
-      background: rgba(220, 38, 38, 0.16);
-      border: 1px solid rgba(220, 38, 38, 0.35);
-      color: #fecaca;
+    .status-yes {
+      background: var(--green-soft);
+      color: var(--green-text);
+      border: 1px solid rgba(22, 163, 74, 0.34);
     }
 
-    .loading {
-      background: rgba(29, 78, 216, 0.16);
-      border: 1px solid rgba(29, 78, 216, 0.35);
-      color: #bfdbfe;
+    .status-no {
+      background: var(--red-soft);
+      color: var(--red-text);
+      border: 1px solid rgba(220, 38, 38, 0.34);
+    }
+
+    .hero-wrap {
+      position: relative;
+      width: 100%;
+      margin-bottom: 18px;
+    }
+
+    .hero {
+      width: 100%;
+      display: none;
+      border-radius: 22px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    }
+
+    .hero.visible {
+      display: block;
+      animation: fadeIn 0.35s ease;
     }
 
     .details {
-      margin-top: 16px;
-      color: var(--text);
-      font-size: 1.05rem;
-      line-height: 1.6;
-      min-height: 72px;
+      margin-top: 4px;
+      padding: 18px 18px 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      color: var(--muted);
+      font-size: 1.03rem;
+      line-height: 1.65;
+      min-height: 108px;
     }
 
-    .details strong {
+    .details .match-line {
       color: white;
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+
+    .details .comp-line {
+      color: #e2e8f0;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .details .time-line {
+      color: var(--muted);
+    }
+
+    .details .label {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: var(--muted-2);
+      letter-spacing: 0.3px;
     }
 
     .controls {
@@ -114,15 +178,21 @@
     button {
       border: none;
       border-radius: 14px;
-      padding: 14px 18px;
-      font-size: 1rem;
+      padding: 13px 18px;
+      font-size: 0.98rem;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.15s ease;
+      transition: transform 0.15s ease, opacity 0.15s ease, filter 0.15s ease;
     }
 
-    button:hover { transform: translateY(-1px); }
-    button:active { transform: translateY(0); }
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.04);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
 
     .primary {
       background: var(--accent);
@@ -130,36 +200,82 @@
     }
 
     .secondary {
-      background: var(--accent-2);
+      background: #1d4ed8;
       color: white;
     }
 
     .footer {
-      margin-top: 22px;
-      font-size: 0.95rem;
-      color: #94a3b8;
+      margin-top: 18px;
+      font-size: 0.92rem;
+      color: var(--muted-2);
+      line-height: 1.5;
     }
 
-    img.match-image {
-      max-width: 100%;
-      border-radius: 16px;
-      margin-top: 20px;
-      display: none;
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .card {
+        padding: 18px 16px 16px;
+        border-radius: 22px;
+      }
+
+      .topbar {
+        justify-content: center;
+      }
+
+      .details {
+        font-size: 0.98rem;
+        min-height: 96px;
+      }
+
+      .details .match-line {
+        font-size: 1.08rem;
+      }
+
+      .controls {
+        margin-top: 16px;
+      }
+
+      button {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
   <main class="card">
-    <div class="badge">Versión con API</div>
-    <h1>¿Hoy juega el América?</h1>
-    <p>¡Vamos por la décimo séptima!</p>
+    <div class="topbar">
+      <div class="badge">Club América</div>
+      <div id="statusTag" class="status-tag status-loading">Consultando</div>
+    </div>
 
-    <section id="status" class="status loading">Consultando partido...</section>
+    <div class="hero-wrap">
+      <img
+        id="imgSi"
+        class="hero"
+        src="hoy_juega_america.png"
+        alt="Hoy juega el América"
+      >
+      <img
+        id="imgNo"
+        class="hero"
+        src="no_juega_america.png"
+        alt="Hoy no juega el América"
+      >
+    </div>
 
-    <div id="details" class="details"></div>
-
-    <img id="imgSi" class="match-image" src="hoy_juega_america.png" alt="Hoy juega el América">
-    <img id="imgNo" class="match-image" src="no_juega_america.png" alt="Hoy no juega el América">
+    <div id="details" class="details">
+      Cargando información del próximo partido...
+    </div>
 
     <div class="controls">
       <button class="primary" onclick="loadMatchStatus()">Actualizar</button>
@@ -208,51 +324,59 @@
       }).format(date);
     }
 
-    function setLoading(message = "Consultando partido...") {
-      const status = document.getElementById("status");
-      const details = document.getElementById("details");
+    function showOnlyImage(showYes) {
       const imgSi = document.getElementById("imgSi");
       const imgNo = document.getElementById("imgNo");
 
-      status.textContent = message;
-      status.className = "status loading";
-      details.innerHTML = "";
-      imgSi.style.display = "none";
-      imgNo.style.display = "none";
+      imgSi.classList.remove("visible");
+      imgNo.classList.remove("visible");
+
+      if (showYes) {
+        imgSi.classList.add("visible");
+      } else {
+        imgNo.classList.add("visible");
+      }
+    }
+
+    function setTag(text, mode) {
+      const tag = document.getElementById("statusTag");
+      tag.textContent = text;
+      tag.className = `status-tag ${mode}`;
+    }
+
+    function setLoading(message = "Consultando información del partido...") {
+      const details = document.getElementById("details");
+
+      setTag("Consultando", "status-loading");
+      details.innerHTML = message;
+      document.getElementById("imgSi").classList.remove("visible");
+      document.getElementById("imgNo").classList.remove("visible");
     }
 
     function setStatus(playsToday, detailsHtml) {
-      const status = document.getElementById("status");
       const details = document.getElementById("details");
-      const imgSi = document.getElementById("imgSi");
-      const imgNo = document.getElementById("imgNo");
 
       if (playsToday) {
-        status.textContent = "Hoy juega el América";
-        status.className = "status yes";
-        imgSi.style.display = "block";
-        imgNo.style.display = "none";
+        setTag("Hoy juega", "status-tag status-yes");
+        showOnlyImage(true);
       } else {
-        status.textContent = "Hoy no juega el América";
-        status.className = "status no";
-        imgSi.style.display = "none";
-        imgNo.style.display = "block";
+        setTag("No hay partido hoy", "status-tag status-no");
+        showOnlyImage(false);
       }
 
       details.innerHTML = detailsHtml || "";
     }
 
     function setError(message) {
-      const status = document.getElementById("status");
       const details = document.getElementById("details");
-      const imgSi = document.getElementById("imgSi");
-      const imgNo = document.getElementById("imgNo");
 
-      status.textContent = "No se pudo consultar";
-      status.className = "status no";
-      details.innerHTML = `<strong>Error:</strong> ${message}`;
-      imgSi.style.display = "none";
-      imgNo.style.display = "none";
+      setTag("No se pudo consultar", "status-tag status-no");
+      details.innerHTML = `
+        <div class="match-line">No se pudo cargar la información</div>
+        <div class="time-line">${message}</div>
+      `;
+      document.getElementById("imgSi").classList.remove("visible");
+      document.getElementById("imgNo").classList.remove("visible");
     }
 
     function buildUtcDateFromEvent(event) {
@@ -260,8 +384,9 @@
         return null;
       }
 
-      // strTime viene mejor interpretado como hora UTC.
-      // Ejemplo: 2026-04-08 + 00:00:00 UTC => 2026-04-07 18:00 en CDMX.
+      // strTime parece comportarse mejor como hora UTC.
+      // Ejemplo observado:
+      // 2026-04-08 + 00:00:00 UTC => 2026-04-07 18:00 en CDMX
       return new Date(`${event.dateEvent}T${event.strTime}Z`);
     }
 
@@ -270,6 +395,7 @@
 
       try {
         const response = await fetch(API_URL);
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
@@ -277,7 +403,13 @@
         const data = await response.json();
 
         if (!data.events || data.events.length === 0) {
-          setStatus(false, "No se encontró un próximo partido en la respuesta del servicio.");
+          setStatus(
+            false,
+            `
+              <div class="match-line">No se encontró un próximo partido</div>
+              <div class="time-line">La respuesta del servicio llegó vacía.</div>
+            `
+          );
           return;
         }
 
@@ -291,7 +423,6 @@
         const todayInMexico = formatDateInTimeZone(new Date(), MEXICO_TZ);
         const matchDateInMexico = formatDateInTimeZone(kickoffUtc, MEXICO_TZ);
         const matchTimeInMexico = formatTimeInTimeZone(kickoffUtc, MEXICO_TZ);
-
         const playsToday = todayInMexico === matchDateInMexico;
 
         const home = event.strHomeTeam || "Equipo local";
@@ -301,16 +432,17 @@
 
         const detailsHtml = playsToday
           ? `
-            <strong>${home} vs ${away}</strong><br>
-            ${league}<br>
-            ${longDate} (hora de CDMX)
-          `
+              <div class="match-line">${home} vs ${away}</div>
+              <div class="comp-line">${league}</div>
+              <div class="time-line">${longDate} (hora de CDMX)</div>
+              <div class="label">Partido programado para hoy</div>
+            `
           : `
-            <strong>Próximo partido:</strong><br>
-            ${home} vs ${away}<br>
-            ${league}<br>
-            ${longDate} (hora de CDMX)
-          `;
+              <div class="match-line">Próximo partido: ${home} vs ${away}</div>
+              <div class="comp-line">${league}</div>
+              <div class="time-line">${longDate} (hora de CDMX)</div>
+              <div class="label">Hoy no hay partido del América</div>
+            `;
 
         lastDebug = {
           rawEvent: event,
