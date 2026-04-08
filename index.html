@@ -286,7 +286,7 @@
     </div>
 
     <h1>¿Hoy juega el América?</h1>
-    <p class="subtitle">Para que sepas si hoy juega, si ya jugó, o cuál es el siguiente partido.</p>
+    <p class="subtitle">Para que sepas si hoy juega, si ya jugó, o si hoy no tiene partido.</p>
 
     <div class="hero-wrap">
       <img id="imgSi" class="hero" src="hoy_juega_america.png" alt="Hoy juega el América">
@@ -309,15 +309,23 @@
 
   <script>
     const TEAM_ID = "134193";
-    const NEXT_URL = `https://www.thesportsdb.com/api/v2/json/schedule/next/team/${TEAM_ID}`;
-    const PREV_URL = `https://www.thesportsdb.com/api/v2/json/schedule/previous/team/${TEAM_ID}`;
+    const NEXT_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
     const MEXICO_TZ = "America/Mexico_City";
 
     let lastDebug = null;
 
-    function formatDateInTimeZone(date, timeZone) {
+    function getTodayInMexico() {
       return new Intl.DateTimeFormat("en-CA", {
-        timeZone,
+        timeZone: MEXICO_TZ,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).format(new Date());
+    }
+
+    function getMexicoDateString(date) {
+      return new Intl.DateTimeFormat("en-CA", {
+        timeZone: MEXICO_TZ,
         year: "numeric",
         month: "2-digit",
         day: "2-digit"
@@ -336,22 +344,39 @@
       }).format(date);
     }
 
-    function getTodayInMexico() {
-      return new Intl.DateTimeFormat("en-CA", {
-        timeZone: MEXICO_TZ,
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-      }).format(new Date());
+    function parseEventDate(event) {
+      if (event.strTimestamp) {
+        const d = new Date(event.strTimestamp);
+        if (!Number.isNaN(d.getTime())) return d;
+      }
+
+      if (event.dateEvent && event.strTime) {
+        const d = new Date(`${event.dateEvent}T${event.strTime}Z`);
+        if (!Number.isNaN(d.getTime())) return d;
+      }
+
+      if (event.dateEvent) {
+        const d = new Date(`${event.dateEvent}T12:00:00Z`);
+        if (!Number.isNaN(d.getTime())) return d;
+      }
+
+      return null;
     }
 
-    function getMexicoDateString(date) {
-      return new Intl.DateTimeFormat("en-CA", {
-        timeZone: MEXICO_TZ,
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-      }).format(date);
+    function buildMatchHtml(prefix, event, kickoffUtc, labelText) {
+      const home = event.strHomeTeam || "Equipo local";
+      const away = event.strAwayTeam || "Equipo visitante";
+      const league = event.strLeague || "Competencia no especificada";
+      const longDate = kickoffUtc
+        ? formatLongDateTimeInMexico(kickoffUtc)
+        : "Fecha no disponible";
+
+      return `
+        <div class="match-line">${prefix}${home} vs ${away}</div>
+        <div class="comp-line">${league}</div>
+        <div class="time-line">${longDate}${kickoffUtc ? " (hora de CDMX)" : ""}</div>
+        <div class="label">${labelText}</div>
+      `;
     }
 
     function showOnlyImage(showYes) {
@@ -397,75 +422,58 @@
       document.getElementById("imgNo").classList.remove("visible");
     }
 
-    function parseEventDate(event) {
-      const raw =
-        event.strTimestamp ||
-        event.dateEventTimestamp ||
-        (event.dateEvent && event.strTime ? `${event.dateEvent}T${event.strTime}Z` : null) ||
-        event.dateEvent;
-
-      if (!raw) return null;
-
-      const d = new Date(raw);
-      if (Number.isNaN(d.getTime())) return null;
-      return d;
-    }
-
-    function buildMatchHtml(prefix, event, kickoffUtc, labelText) {
-      const home = event.strHomeTeam || event.strHome || "Equipo local";
-      const away = event.strAwayTeam || event.strAway || "Equipo visitante";
-      const league = event.strLeague || "Competencia no especificada";
-      const longDate = kickoffUtc
-        ? formatLongDateTimeInMexico(kickoffUtc)
-        : "Fecha no disponible";
-
-      return `
-        <div class="match-line">${prefix}${home} vs ${away}</div>
-        <div class="comp-line">${league}</div>
-        <div class="time-line">${longDate}${kickoffUtc ? " (hora de CDMX)" : ""}</div>
-        <div class="label">${labelText}</div>
-      `;
-    }
-
-    function normalizeEvents(payload) {
-      if (!payload) return [];
-      if (Array.isArray(payload.events)) return payload.events;
-      if (Array.isArray(payload.event)) return payload.event;
-      if (Array.isArray(payload.results)) return payload.results;
-      return [];
-    }
-
     async function loadMatchStatus() {
       setLoading();
 
       try {
-        const [nextRes, prevRes] = await Promise.all([
-          fetch(NEXT_URL),
-          fetch(PREV_URL)
-        ]);
+        const response = await fetch(NEXT_URL);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
 
-        if (!nextRes.ok) throw new Error(`NEXT HTTP ${nextRes.status}`);
-        if (!prevRes.ok) throw new Error(`PREV HTTP ${prevRes.status}`);
+        const data = await response.json();
 
-        const nextData = await nextRes.json();
-        const prevData = await prevRes.json();
+        if (!data.events || !Array.isArray(data.events) || data.events.length === 0) {
+          setStatus(
+            "Sin datos",
+            "status-no",
+            false,
+            `
+              <div class="match-line">No se encontró información de partidos</div>
+              <div class="time-line">La respuesta del servicio llegó vacía.</div>
+            `
+          );
+          return;
+        }
 
-        const nextEvents = normalizeEvents(nextData)
-          .map(event => ({ event, kickoffUtc: parseEventDate(event) }))
+        const parsedEvents = data.events
+          .map(event => ({
+            event,
+            kickoffUtc: parseEventDate(event)
+          }))
           .filter(x => x.kickoffUtc)
           .sort((a, b) => a.kickoffUtc - b.kickoffUtc);
 
-        const prevEvents = normalizeEvents(prevData)
-          .map(event => ({ event, kickoffUtc: parseEventDate(event) }))
-          .filter(x => x.kickoffUtc)
-          .sort((a, b) => b.kickoffUtc - a.kickoffUtc);
+        if (parsedEvents.length === 0) {
+          setStatus(
+            "Sin datos",
+            "status-no",
+            false,
+            `
+              <div class="match-line">No se pudieron interpretar las fechas</div>
+              <div class="time-line">El servicio respondió, pero las fechas no fueron utilizables.</div>
+            `
+          );
+          return;
+        }
 
         const now = new Date();
         const todayInMexico = getTodayInMexico();
 
-        const nextToday = nextEvents.find(x => getMexicoDateString(x.kickoffUtc) === todayInMexico) || null;
-        const lastToday = prevEvents.find(x => getMexicoDateString(x.kickoffUtc) === todayInMexico) || null;
-        const nextFuture = nextEvents.find(x => x.kickoffUtc > now) || null;
+        const todayEvents = parsedEvents.filter(x => getMexicoDateString(x.kickoffUtc) === todayInMexico);
+        const futureTodayEvent = todayEvents.find(x => x.kickoffUtc > now) || null;
+        const pastTodayEvent = [...todayEvents].reverse().find(x => x.kickoffUtc <= now) || null;
+        const nextFutureEvent = parsedEvents.find(x => x.kickoffUtc > now) || null;
 
         let tagText = "No hay partido hoy";
         let tagMode = "status-no";
@@ -475,33 +483,50 @@
           <div class="time-line">El servicio no devolvió partidos interpretables.</div>
         `;
 
-        if (nextToday && nextToday.kickoffUtc > now) {
+        if (futureTodayEvent) {
           tagText = "Hoy juega";
           tagMode = "status-yes";
           showYesImage = true;
-          detailsHtml = buildMatchHtml("", nextToday.event, nextToday.kickoffUtc, "Partido programado para hoy");
-        } else if (lastToday) {
+          detailsHtml = buildMatchHtml(
+            "",
+            futureTodayEvent.event,
+            futureTodayEvent.kickoffUtc,
+            "Partido programado para hoy"
+          );
+        } else if (pastTodayEvent) {
           tagText = "Ya jugó hoy";
           tagMode = "status-no";
           showYesImage = false;
-          detailsHtml = buildMatchHtml("", lastToday.event, lastToday.kickoffUtc, "Ese partido ya pasó hoy");
-        } else if (nextFuture) {
+          detailsHtml = buildMatchHtml(
+            "",
+            pastTodayEvent.event,
+            pastTodayEvent.kickoffUtc,
+            "Ese partido ya pasó hoy"
+          );
+        } else if (nextFutureEvent) {
           tagText = "No hay partido hoy";
           tagMode = "status-no";
           showYesImage = false;
-          detailsHtml = buildMatchHtml("Próximo partido: ", nextFuture.event, nextFuture.kickoffUtc, "El próximo partido no es hoy");
+          detailsHtml = buildMatchHtml(
+            "Próximo partido: ",
+            nextFutureEvent.event,
+            nextFutureEvent.kickoffUtc,
+            "El próximo partido no es hoy"
+          );
         }
 
         lastDebug = {
           todayInMexico,
-          nextCount: nextEvents.length,
-          prevCount: prevEvents.length,
-          nextTodayMexico: nextToday ? getMexicoDateString(nextToday.kickoffUtc) : null,
-          nextTodayUtc: nextToday ? nextToday.kickoffUtc.toISOString() : null,
-          lastTodayMexico: lastToday ? getMexicoDateString(lastToday.kickoffUtc) : null,
-          lastTodayUtc: lastToday ? lastToday.kickoffUtc.toISOString() : null,
-          nextFutureMexico: nextFuture ? getMexicoDateString(nextFuture.kickoffUtc) : null,
-          nextFutureUtc: nextFuture ? nextFuture.kickoffUtc.toISOString() : null
+          parsedCount: parsedEvents.length,
+          allMexicoDates: parsedEvents.map(x => ({
+            event: `${x.event.strHomeTeam} vs ${x.event.strAwayTeam}`,
+            utc: x.kickoffUtc.toISOString(),
+            mexicoDate: getMexicoDateString(x.kickoffUtc),
+            status: x.event.strStatus || null
+          })),
+          futureTodayEvent: futureTodayEvent ? futureTodayEvent.kickoffUtc.toISOString() : null,
+          pastTodayEvent: pastTodayEvent ? pastTodayEvent.kickoffUtc.toISOString() : null,
+          nextFutureEvent: nextFutureEvent ? nextFutureEvent.kickoffUtc.toISOString() : null
         };
 
         setStatus(tagText, tagMode, showYesImage, detailsHtml);
@@ -524,17 +549,21 @@
         return;
       }
 
-      alert([
+      const lines = [
         `todayInMexico: ${lastDebug.todayInMexico}`,
-        `nextCount: ${lastDebug.nextCount}`,
-        `prevCount: ${lastDebug.prevCount}`,
-        `nextTodayMexico: ${lastDebug.nextTodayMexico}`,
-        `nextTodayUtc: ${lastDebug.nextTodayUtc}`,
-        `lastTodayMexico: ${lastDebug.lastTodayMexico}`,
-        `lastTodayUtc: ${lastDebug.lastTodayUtc}`,
-        `nextFutureMexico: ${lastDebug.nextFutureMexico}`,
-        `nextFutureUtc: ${lastDebug.nextFutureUtc}`
-      ].join("\n"));
+        `parsedCount: ${lastDebug.parsedCount}`,
+        `futureTodayEvent: ${lastDebug.futureTodayEvent}`,
+        `pastTodayEvent: ${lastDebug.pastTodayEvent}`,
+        `nextFutureEvent: ${lastDebug.nextFutureEvent}`,
+        "",
+        "Eventos interpretados:"
+      ];
+
+      lastDebug.allMexicoDates.forEach(item => {
+        lines.push(`${item.event} | UTC: ${item.utc} | CDMX: ${item.mexicoDate} | status: ${item.status}`);
+      });
+
+      alert(lines.join("\n"));
     }
 
     loadMatchStatus();
