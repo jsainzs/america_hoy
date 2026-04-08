@@ -24,9 +24,7 @@
       --shadow: 0 24px 60px rgba(0,0,0,0.42);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html, body {
       margin: 0;
@@ -226,41 +224,25 @@
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(6px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @media (max-width: 640px) {
-      body {
-        padding: 10px;
-      }
+      body { padding: 10px; }
 
       .card {
         padding: 14px;
         border-radius: 18px;
       }
 
-      .topbar {
-        justify-content: center;
-      }
+      .topbar { justify-content: center; }
 
-      h1 {
-        font-size: clamp(1.55rem, 6vw, 2.15rem);
-      }
+      h1 { font-size: clamp(1.55rem, 6vw, 2.15rem); }
 
-      .subtitle {
-        font-size: 0.9rem;
-      }
+      .subtitle { font-size: 0.9rem; }
 
-      .hero {
-        max-height: 64vh;
-      }
+      .hero { max-height: 64vh; }
 
       .details {
         font-size: 0.92rem;
@@ -268,9 +250,7 @@
         padding: 12px;
       }
 
-      .details .match-line {
-        font-size: 1rem;
-      }
+      .details .match-line { font-size: 1rem; }
 
       button {
         flex: 1 1 0;
@@ -279,18 +259,14 @@
     }
 
     @media (max-height: 760px) {
-      h1 {
-        font-size: clamp(1.5rem, 3vw, 2rem);
-      }
+      h1 { font-size: clamp(1.5rem, 3vw, 2rem); }
 
       .subtitle {
         margin-bottom: 10px;
         font-size: 0.9rem;
       }
 
-      .hero {
-        max-height: 48vh;
-      }
+      .hero { max-height: 48vh; }
 
       .details {
         min-height: 78px;
@@ -298,9 +274,7 @@
         padding: 11px 12px;
       }
 
-      .footer {
-        font-size: 0.76rem;
-      }
+      .footer { font-size: 0.76rem; }
     }
   </style>
 </head>
@@ -312,25 +286,15 @@
     </div>
 
     <h1>¿Hoy juega el América?</h1>
-    <p class="subtitle">Para que sepas si hoy juega (o jugó) el América.</p>
+    <p class="subtitle">Para que sepas si hoy juega, si ya jugó, o cuál es el siguiente partido.</p>
 
     <div class="hero-wrap">
-      <img
-        id="imgSi"
-        class="hero"
-        src="hoy_juega_america.png"
-        alt="Hoy juega el América"
-      >
-      <img
-        id="imgNo"
-        class="hero"
-        src="no_juega_america.png"
-        alt="Hoy no juega el América"
-      >
+      <img id="imgSi" class="hero" src="hoy_juega_america.png" alt="Hoy juega el América">
+      <img id="imgNo" class="hero" src="no_juega_america.png" alt="Hoy no juega el América">
     </div>
 
     <div id="details" class="details">
-      Cargando información del próximo partido...
+      Cargando información del partido...
     </div>
 
     <div class="controls">
@@ -339,7 +303,7 @@
     </div>
 
     <div class="footer" id="footer">
-      Fuente: próximo partido del Club América y conversión a hora de CDMX.
+      Fuente: TheSportsDB y conversión a hora de CDMX.
     </div>
   </main>
 
@@ -356,15 +320,6 @@
         year: "numeric",
         month: "2-digit",
         day: "2-digit"
-      }).format(date);
-    }
-
-    function formatTimeInTimeZone(date, timeZone) {
-      return new Intl.DateTimeFormat("es-MX", {
-        timeZone,
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
       }).format(date);
     }
 
@@ -407,15 +362,9 @@
       document.getElementById("imgNo").classList.remove("visible");
     }
 
-    function setStatus(playsToday, detailsHtml) {
-      if (playsToday) {
-        setTag("Hoy juega", "status-yes");
-        showOnlyImage(true);
-      } else {
-        setTag("No hay partido hoy", "status-no");
-        showOnlyImage(false);
-      }
-
+    function setStatus(tagText, tagMode, showYesImage, detailsHtml) {
+      setTag(tagText, tagMode);
+      showOnlyImage(showYesImage);
       document.getElementById("details").innerHTML = detailsHtml || "";
     }
 
@@ -430,10 +379,14 @@
     }
 
     function buildUtcDateFromEvent(event) {
-      if (!event.dateEvent || !event.strTime) {
-        return null;
-      }
+      if (!event.dateEvent || !event.strTime) return null;
       return new Date(`${event.dateEvent}T${event.strTime}Z`);
+    }
+
+    function getMexicoNowParts() {
+      const now = new Date();
+      const todayInMexico = formatDateInTimeZone(now, MEXICO_TZ);
+      return { now, todayInMexico };
     }
 
     async function loadMatchStatus() {
@@ -441,7 +394,6 @@
 
       try {
         const response = await fetch(API_URL);
-
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
@@ -449,10 +401,15 @@
         const data = await response.json();
 
         if (!data.events || data.events.length === 0) {
-          setStatus(false, `
-            <div class="match-line">No se encontró un próximo partido</div>
-            <div class="time-line">La respuesta del servicio llegó vacía.</div>
-          `);
+          setStatus(
+            "Sin datos",
+            "status-no",
+            false,
+            `
+              <div class="match-line">No se encontró un partido próximo</div>
+              <div class="time-line">La respuesta del servicio llegó vacía.</div>
+            `
+          );
           return;
         }
 
@@ -463,40 +420,70 @@
           throw new Error("La fecha u hora del partido no se pudo interpretar.");
         }
 
-        const todayInMexico = formatDateInTimeZone(new Date(), MEXICO_TZ);
+        const { now, todayInMexico } = getMexicoNowParts();
         const matchDateInMexico = formatDateInTimeZone(kickoffUtc, MEXICO_TZ);
-        const matchTimeInMexico = formatTimeInTimeZone(kickoffUtc, MEXICO_TZ);
-        const playsToday = todayInMexico === matchDateInMexico;
+        const isTodayInMexico = todayInMexico === matchDateInMexico;
 
         const home = event.strHomeTeam || "Equipo local";
         const away = event.strAwayTeam || "Equipo visitante";
         const league = event.strLeague || "Competencia no especificada";
         const longDate = formatLongDateTimeInMexico(kickoffUtc);
 
-        const detailsHtml = playsToday
-          ? `
+        // margen de 3 horas para no marcar como "ya pasó" un partido que aún podría estar en curso
+        const threeHoursMs = 3 * 60 * 60 * 1000;
+        const eventHasLikelyPassed = now.getTime() > (kickoffUtc.getTime() + threeHoursMs);
+
+        let tagText = "No hay partido hoy";
+        let tagMode = "status-no";
+        let showYesImage = false;
+        let detailsHtml = "";
+
+        if (isTodayInMexico && !eventHasLikelyPassed) {
+          tagText = "Hoy juega";
+          tagMode = "status-yes";
+          showYesImage = true;
+
+          detailsHtml = `
             <div class="match-line">${home} vs ${away}</div>
             <div class="comp-line">${league}</div>
             <div class="time-line">${longDate} (hora de CDMX)</div>
             <div class="label">Partido programado para hoy</div>
-          `
-          : `
+          `;
+        } else if (isTodayInMexico && eventHasLikelyPassed) {
+          tagText = "Ya jugó hoy";
+          tagMode = "status-no";
+          showYesImage = false;
+
+          detailsHtml = `
+            <div class="match-line">${home} vs ${away}</div>
+            <div class="comp-line">${league}</div>
+            <div class="time-line">${longDate} (hora de CDMX)</div>
+            <div class="label">Ese partido ya pasó hoy</div>
+          `;
+        } else {
+          tagText = "No hay partido hoy";
+          tagMode = "status-no";
+          showYesImage = false;
+
+          detailsHtml = `
             <div class="match-line">Próximo partido: ${home} vs ${away}</div>
             <div class="comp-line">${league}</div>
             <div class="time-line">${longDate} (hora de CDMX)</div>
-            <div class="label">Hoy no hay partido del América</div>
+            <div class="label">El próximo partido no es hoy</div>
           `;
+        }
 
         lastDebug = {
           rawEvent: event,
           todayInMexico,
           matchDateInMexico,
-          matchTimeInMexico,
           kickoffUtc: kickoffUtc.toISOString(),
-          playsToday
+          isTodayInMexico,
+          eventHasLikelyPassed,
+          nowUtc: now.toISOString()
         };
 
-        setStatus(playsToday, detailsHtml);
+        setStatus(tagText, tagMode, showYesImage, detailsHtml);
 
         document.getElementById("footer").textContent =
           `Última actualización: ${new Intl.DateTimeFormat("es-MX", {
@@ -518,9 +505,10 @@
       alert([
         `todayInMexico: ${lastDebug.todayInMexico}`,
         `matchDateInMexico: ${lastDebug.matchDateInMexico}`,
-        `matchTimeInMexico: ${lastDebug.matchTimeInMexico}`,
         `kickoffUtc: ${lastDebug.kickoffUtc}`,
-        `playsToday: ${lastDebug.playsToday}`
+        `nowUtc: ${lastDebug.nowUtc}`,
+        `isTodayInMexico: ${lastDebug.isTodayInMexico}`,
+        `eventHasLikelyPassed: ${lastDebug.eventHasLikelyPassed}`
       ].join("\n"));
     }
 
