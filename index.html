@@ -1,241 +1,228 @@
-<script>
-  const TEAM_ID = "134193";
-  const NEXT_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
-  const MEXICO_TZ = "America/Mexico_City";
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¿Hoy juega el América?</title>
 
-  let lastDebug = null;
+  <style>
+    :root {
+      --bg: #08111f;
+      --bg-2: #132238;
+      --card: rgba(10, 18, 32, 0.9);
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --accent: #facc15;
+      --green: #16a34a;
+      --red: #dc2626;
+    }
 
-  function getTodayInMexico() {
-    return new Intl.DateTimeFormat("en-CA", {
-      timeZone: MEXICO_TZ,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit"
-    }).format(new Date());
-  }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, var(--bg), var(--bg-2));
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-  function getMexicoDateString(date) {
-    return new Intl.DateTimeFormat("en-CA", {
-      timeZone: MEXICO_TZ,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit"
-    }).format(date);
-  }
+    .card {
+      width: 100%;
+      max-width: 700px;
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
 
-  function formatLongDateTimeInMexico(date) {
-    return new Intl.DateTimeFormat("es-MX", {
-      timeZone: MEXICO_TZ,
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false
-    }).format(date);
-  }
+    h1 {
+      margin: 0 0 10px;
+      font-size: 2.2rem;
+    }
 
-  function parseEventDate(event) {
-    if (event.strTimestamp) {
-      let raw = event.strTimestamp.trim();
-      const hasTimezone = /(?:Z|[+-]\d{2}:\d{2})$/.test(raw);
-      if (!hasTimezone) raw += "Z";
+    .status {
+      margin: 15px 0;
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+
+    .yes { color: var(--green); }
+    .no { color: var(--red); }
+
+    .hero {
+      display: none;
+      width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+
+    .hero.visible {
+      display: block;
+    }
+
+    .details {
+      margin-top: 15px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>¿Hoy juega el América?</h1>
+
+    <div id="status" class="status">Consultando...</div>
+
+    <img id="imgSi" class="hero" src="hoy_juega_america.png">
+    <img id="imgNo" class="hero" src="no_juega_america.png">
+
+    <div id="details" class="details"></div>
+
+    <button onclick="loadMatch()">Actualizar</button>
+  </div>
+
+  <script>
+    const TEAM_ID = "134193";
+    const API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
+    const TZ = "America/Mexico_City";
+
+    function getMexicoDate(date) {
+      return new Intl.DateTimeFormat("en-CA", {
+        timeZone: TZ,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).format(date);
+    }
+
+    function formatMexicoDateTime(date) {
+      return new Intl.DateTimeFormat("es-MX", {
+        timeZone: TZ,
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        hour: "2-digit",
+        minute: "2-digit"
+      }).format(date);
+    }
+
+    function parseDate(event) {
+      let raw = event.strTimestamp || `${event.dateEvent}T${event.strTime}`;
+
+      if (!raw) return null;
+
+      if (!raw.endsWith("Z")) raw += "Z";
 
       const d = new Date(raw);
-      if (!Number.isNaN(d.getTime())) return d;
+      return isNaN(d) ? null : d;
     }
 
-    if (event.dateEvent && event.strTime) {
-      const d = new Date(`${event.dateEvent}T${event.strTime}Z`);
-      if (!Number.isNaN(d.getTime())) return d;
-    }
+    function showImage(isPlaying) {
+      document.getElementById("imgSi").classList.remove("visible");
+      document.getElementById("imgNo").classList.remove("visible");
 
-    if (event.dateEvent) {
-      const d = new Date(`${event.dateEvent}T12:00:00Z`);
-      if (!Number.isNaN(d.getTime())) return d;
-    }
-
-    return null;
-  }
-
-  function buildMatchHtml(prefix, event, kickoffUtc, labelText) {
-    const home = event.strHomeTeam || "Equipo local";
-    const away = event.strAwayTeam || "Equipo visitante";
-    const league = event.strLeague || "Competencia no especificada";
-    const longDate = kickoffUtc
-      ? formatLongDateTimeInMexico(kickoffUtc)
-      : "Fecha no disponible";
-
-    return `
-      <div class="match-line">${prefix}${home} vs ${away}</div>
-      <div class="comp-line">${league}</div>
-      <div class="time-line">${longDate}${kickoffUtc ? " (hora de CDMX)" : ""}</div>
-      <div class="label">${labelText}</div>
-    `;
-  }
-
-  function showOnlyImage(showYes) {
-    const imgSi = document.getElementById("imgSi");
-    const imgNo = document.getElementById("imgNo");
-
-    imgSi.classList.remove("visible");
-    imgNo.classList.remove("visible");
-
-    if (showYes) {
-      imgSi.classList.add("visible");
-    } else {
-      imgNo.classList.add("visible");
-    }
-  }
-
-  function setTag(text, mode) {
-    const tag = document.getElementById("statusTag");
-    tag.textContent = text;
-    tag.className = `status-tag ${mode}`;
-  }
-
-  function setLoading(message = "Consultando información del partido...") {
-    document.getElementById("details").innerHTML = message;
-    setTag("Consultando", "status-loading");
-    document.getElementById("imgSi").classList.remove("visible");
-    document.getElementById("imgNo").classList.remove("visible");
-  }
-
-  function setStatus(tagText, tagMode, showYesImage, detailsHtml) {
-    setTag(tagText, tagMode);
-    showOnlyImage(showYesImage);
-    document.getElementById("details").innerHTML = detailsHtml || "";
-  }
-
-  function setError(message) {
-    setTag("No se pudo consultar", "status-no");
-    document.getElementById("details").innerHTML = `
-      <div class="match-line">No se pudo cargar la información</div>
-      <div class="time-line">${message}</div>
-    `;
-    document.getElementById("imgSi").classList.remove("visible");
-    document.getElementById("imgNo").classList.remove("visible");
-  }
-
-  async function loadMatchStatus() {
-    setLoading();
-
-    try {
-      const response = await fetch(NEXT_URL);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-      const data = await response.json();
-
-      if (!data.events || !Array.isArray(data.events) || data.events.length === 0) {
-        setStatus(
-          "Sin datos",
-          "status-no",
-          false,
-          `
-            <div class="match-line">No se encontró información de partidos</div>
-            <div class="time-line">La respuesta del servicio llegó vacía.</div>
-          `
-        );
-        return;
-      }
-
-      const event = data.events[0];
-      const kickoffUtc = parseEventDate(event);
-
-      if (!kickoffUtc) {
-        throw new Error("No se pudo interpretar la fecha del partido.");
-      }
-
-      const todayInMexico = getTodayInMexico();
-      const eventDateMexico = getMexicoDateString(kickoffUtc);
-      const isFinished = (event.strStatus || "").toLowerCase().includes("finished");
-
-      let tagText = "No hay partido hoy";
-      let tagMode = "status-no";
-      let showYesImage = false;
-      let detailsHtml = "";
-
-      if (eventDateMexico > todayInMexico) {
-        tagText = "No hay partido hoy";
-        tagMode = "status-no";
-        showYesImage = false;
-        detailsHtml = buildMatchHtml(
-          "Próximo partido: ",
-          event,
-          kickoffUtc,
-          "El próximo partido no es hoy"
-        );
-      } else if (eventDateMexico === todayInMexico) {
-        if (isFinished) {
-          tagText = "Ya jugó hoy";
-          tagMode = "status-no";
-          showYesImage = false;
-          detailsHtml = buildMatchHtml(
-            "",
-            event,
-            kickoffUtc,
-            "Ese partido ya pasó hoy"
-          );
-        } else {
-          tagText = "Hoy juega";
-          tagMode = "status-yes";
-          showYesImage = true;
-          detailsHtml = buildMatchHtml(
-            "",
-            event,
-            kickoffUtc,
-            "Partido programado para hoy"
-          );
-        }
+      if (isPlaying) {
+        document.getElementById("imgSi").classList.add("visible");
       } else {
-        tagText = "No hay partido hoy";
-        tagMode = "status-no";
-        showYesImage = false;
-        detailsHtml = buildMatchHtml(
-          "Último partido detectado: ",
-          event,
-          kickoffUtc,
-          "El evento devuelto ya quedó atrás"
-        );
+        document.getElementById("imgNo").classList.add("visible");
       }
-
-      lastDebug = {
-        todayInMexico,
-        eventDateMexico,
-        eventUtc: kickoffUtc.toISOString(),
-        status: event.strStatus || null,
-        home: event.strHomeTeam,
-        away: event.strAwayTeam
-      };
-
-      setStatus(tagText, tagMode, showYesImage, detailsHtml);
-
-      document.getElementById("footer").textContent =
-        `Última actualización: ${new Intl.DateTimeFormat("es-MX", {
-          timeZone: MEXICO_TZ,
-          dateStyle: "medium",
-          timeStyle: "short"
-        }).format(new Date())}`;
-
-    } catch (error) {
-      setError(error.message);
-    }
-  }
-
-  function showDebugInfo() {
-    if (!lastDebug) {
-      alert("Aún no hay datos cargados.");
-      return;
     }
 
-    alert([
-      `todayInMexico: ${lastDebug.todayInMexico}`,
-      `eventDateMexico: ${lastDebug.eventDateMexico}`,
-      `eventUtc: ${lastDebug.eventUtc}`,
-      `status: ${lastDebug.status}`,
-      `partido: ${lastDebug.home} vs ${lastDebug.away}`
-    ].join("\n"));
-  }
+    async function loadMatch() {
+      const status = document.getElementById("status");
+      const details = document.getElementById("details");
 
-  loadMatchStatus();
-</script>
+      status.textContent = "Consultando...";
+      details.innerHTML = "";
+
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+
+        if (!data.events || data.events.length === 0) {
+          status.textContent = "Sin datos";
+          return;
+        }
+
+        const event = data.events[0];
+        const date = parseDate(event);
+
+        if (!date) {
+          status.textContent = "Error en fecha";
+          return;
+        }
+
+        const today = getMexicoDate(new Date());
+        const eventDate = getMexicoDate(date);
+        const finished = (event.strStatus || "").includes("Finished");
+
+        const matchText = `${event.strHomeTeam} vs ${event.strAwayTeam}`;
+        const dateText = formatMexicoDateTime(date);
+
+        if (eventDate > today) {
+          status.textContent = "No juega hoy";
+          status.className = "status no";
+          showImage(false);
+
+          details.innerHTML = `
+            Próximo partido:<br><b>${matchText}</b><br>${dateText}
+          `;
+        }
+
+        else if (eventDate === today) {
+          if (finished) {
+            status.textContent = "Ya jugó hoy";
+            status.className = "status no";
+            showImage(false);
+
+            details.innerHTML = `
+              ${matchText}<br>${dateText}
+            `;
+          } else {
+            status.textContent = "Hoy juega";
+            status.className = "status yes";
+            showImage(true);
+
+            details.innerHTML = `
+              ${matchText}<br>${dateText}
+            `;
+          }
+        }
+
+        else {
+          status.textContent = "No juega hoy";
+          status.className = "status no";
+          showImage(false);
+
+          details.innerHTML = `
+            Último partido:<br><b>${matchText}</b><br>${dateText}
+          `;
+        }
+
+      } catch (err) {
+        status.textContent = "Error al cargar";
+        console.error(err);
+      }
+    }
+
+    loadMatch();
+  </script>
+</body>
+</html>
