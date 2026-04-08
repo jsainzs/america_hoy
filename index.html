@@ -345,21 +345,32 @@
     }
 
     function parseEventDate(event) {
+      // 1) Si hay timestamp, interpretarlo como UTC si no trae zona horaria
       if (event.strTimestamp) {
-        const d = new Date(event.strTimestamp);
+        let raw = event.strTimestamp.trim();
+    
+        // Si no termina con Z ni trae offset (+hh:mm / -hh:mm), le agregamos Z
+        const hasTimezone = /(?:Z|[+-]\d{2}:\d{2})$/.test(raw);
+        if (!hasTimezone) {
+          raw += "Z";
+        }
+    
+        const d = new Date(raw);
         if (!Number.isNaN(d.getTime())) return d;
       }
-
+    
+      // 2) Si hay dateEvent + strTime, también asumir UTC
       if (event.dateEvent && event.strTime) {
         const d = new Date(`${event.dateEvent}T${event.strTime}Z`);
         if (!Number.isNaN(d.getTime())) return d;
       }
-
+    
+      // 3) Último recurso: usar solo la fecha al mediodía UTC
       if (event.dateEvent) {
         const d = new Date(`${event.dateEvent}T12:00:00Z`);
         if (!Number.isNaN(d.getTime())) return d;
       }
-
+    
       return null;
     }
 
