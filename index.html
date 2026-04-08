@@ -8,7 +8,7 @@
     :root {
       --bg: #08111f;
       --bg-2: #132238;
-      --card: rgba(10, 18, 32, 0.88);
+      --card: rgba(10, 18, 32, 0.9);
       --card-border: rgba(255,255,255,0.08);
       --text: #f8fafc;
       --muted: #cbd5e1;
@@ -30,13 +30,12 @@
 
     html, body {
       margin: 0;
-      height: 100%;
+      min-height: 100%;
       font-family: Arial, Helvetica, sans-serif;
       color: var(--text);
       background:
         radial-gradient(circle at top, rgba(250, 204, 21, 0.08), transparent 28%),
         linear-gradient(135deg, var(--bg), var(--bg-2));
-      overflow: hidden;
     }
 
     body {
@@ -44,24 +43,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 12px;
+      padding: 16px;
     }
 
     .card {
-      width: min(760px, 100%);
-      max-height: calc(100vh - 24px);
+      width: 100%;
+      max-width: 760px;
       background: var(--card);
       border: 1px solid var(--card-border);
       border-radius: 24px;
-      padding: 16px 16px 14px;
+      padding: 18px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(8px);
       text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 10px;
-      overflow: hidden;
     }
 
     .topbar {
@@ -70,19 +64,19 @@
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
+      margin-bottom: 10px;
     }
 
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
       padding: 7px 12px;
       border-radius: 999px;
       background: var(--accent-soft);
       color: var(--accent);
       font-weight: 700;
+      font-size: 0.92rem;
       letter-spacing: 0.3px;
-      font-size: 0.9rem;
     }
 
     .status-tag {
@@ -96,35 +90,36 @@
       font-weight: 800;
       letter-spacing: 0.8px;
       text-transform: uppercase;
+      border: 1px solid transparent;
     }
 
     .status-loading {
       background: var(--blue-soft);
       color: var(--blue-text);
-      border: 1px solid rgba(29, 78, 216, 0.3);
+      border-color: rgba(29, 78, 216, 0.3);
     }
 
     .status-yes {
       background: var(--green-soft);
       color: var(--green-text);
-      border: 1px solid rgba(22, 163, 74, 0.34);
+      border-color: rgba(22, 163, 74, 0.34);
     }
 
     .status-no {
       background: var(--red-soft);
       color: var(--red-text);
-      border: 1px solid rgba(220, 38, 38, 0.34);
+      border-color: rgba(220, 38, 38, 0.34);
     }
 
     h1 {
-      margin: 0;
-      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      margin: 0 0 8px;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
       line-height: 1.05;
       letter-spacing: -0.02em;
     }
 
     .subtitle {
-      margin: 0;
+      margin: 0 0 14px;
       color: var(--muted);
       font-size: 0.98rem;
       line-height: 1.35;
@@ -132,20 +127,17 @@
 
     .hero-wrap {
       width: 100%;
-      flex: 1 1 auto;
-      min-height: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      margin-bottom: 14px;
     }
 
     .hero {
-      width: 100%;
-      max-height: 100%;
-      object-fit: contain;
       display: none;
-      border-radius: 20px;
+      width: 100%;
+      max-height: 42vh;
+      object-fit: contain;
+      border-radius: 18px;
       box-shadow: 0 14px 34px rgba(0,0,0,0.33);
+      background: rgba(255,255,255,0.02);
     }
 
     .hero.visible {
@@ -154,19 +146,20 @@
     }
 
     .details {
-      padding: 12px 14px;
+      padding: 14px 16px;
       border-radius: 18px;
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.05);
       color: var(--muted);
-      font-size: 0.96rem;
-      line-height: 1.45;
-      min-height: 84px;
+      font-size: 0.98rem;
+      line-height: 1.5;
+      min-height: 96px;
+      margin-bottom: 14px;
     }
 
     .details .match-line {
       color: white;
-      font-size: 1.08rem;
+      font-size: 1.1rem;
       font-weight: 800;
       margin-bottom: 6px;
       line-height: 1.3;
@@ -185,9 +178,8 @@
     .details .label {
       display: inline-block;
       margin-top: 8px;
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       color: var(--muted-2);
-      letter-spacing: 0.2px;
     }
 
     .controls {
@@ -195,6 +187,7 @@
       gap: 10px;
       justify-content: center;
       flex-wrap: wrap;
+      margin-bottom: 12px;
     }
 
     button {
@@ -245,14 +238,12 @@
 
     @media (max-width: 640px) {
       body {
-        padding: 8px;
+        padding: 10px;
       }
 
       .card {
-        max-height: calc(100vh - 16px);
+        padding: 14px;
         border-radius: 18px;
-        padding: 12px 12px 10px;
-        gap: 8px;
       }
 
       .topbar {
@@ -260,71 +251,55 @@
       }
 
       h1 {
-        font-size: clamp(1.45rem, 6vw, 2rem);
+        font-size: clamp(1.55rem, 6vw, 2.15rem);
       }
 
       .subtitle {
         font-size: 0.9rem;
       }
 
+      .hero {
+        max-height: 34vh;
+      }
+
       .details {
-        font-size: 0.9rem;
-        min-height: 74px;
-        padding: 10px 12px;
+        font-size: 0.92rem;
+        min-height: 84px;
+        padding: 12px;
       }
 
       .details .match-line {
         font-size: 1rem;
       }
 
-      .controls {
-        gap: 8px;
-      }
-
       button {
         flex: 1 1 0;
         min-width: 140px;
-        padding: 10px 12px;
-        font-size: 0.9rem;
-      }
-
-      .footer {
-        font-size: 0.78rem;
       }
     }
 
-    @media (max-height: 740px) {
-      .card {
-        gap: 7px;
-        padding-top: 12px;
-        padding-bottom: 10px;
-      }
-
+    @media (max-height: 760px) {
       h1 {
-        font-size: clamp(1.45rem, 3vw, 2rem);
+        font-size: clamp(1.5rem, 3vw, 2rem);
       }
 
       .subtitle {
-        font-size: 0.88rem;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+      }
+
+      .hero {
+        max-height: 30vh;
       }
 
       .details {
-        min-height: 68px;
-        font-size: 0.88rem;
-        padding: 9px 11px;
-      }
-
-      .details .match-line {
-        font-size: 0.98rem;
+        min-height: 78px;
+        font-size: 0.9rem;
+        padding: 11px 12px;
       }
 
       .footer {
         font-size: 0.76rem;
-      }
-
-      button {
-        padding: 9px 12px;
-        font-size: 0.88rem;
       }
     }
   </style>
@@ -426,17 +401,13 @@
     }
 
     function setLoading(message = "Consultando información del partido...") {
-      const details = document.getElementById("details");
-
+      document.getElementById("details").innerHTML = message;
       setTag("Consultando", "status-loading");
-      details.innerHTML = message;
       document.getElementById("imgSi").classList.remove("visible");
       document.getElementById("imgNo").classList.remove("visible");
     }
 
     function setStatus(playsToday, detailsHtml) {
-      const details = document.getElementById("details");
-
       if (playsToday) {
         setTag("Hoy juega", "status-yes");
         showOnlyImage(true);
@@ -445,14 +416,12 @@
         showOnlyImage(false);
       }
 
-      details.innerHTML = detailsHtml || "";
+      document.getElementById("details").innerHTML = detailsHtml || "";
     }
 
     function setError(message) {
-      const details = document.getElementById("details");
-
       setTag("No se pudo consultar", "status-no");
-      details.innerHTML = `
+      document.getElementById("details").innerHTML = `
         <div class="match-line">No se pudo cargar la información</div>
         <div class="time-line">${message}</div>
       `;
@@ -480,13 +449,10 @@
         const data = await response.json();
 
         if (!data.events || data.events.length === 0) {
-          setStatus(
-            false,
-            `
-              <div class="match-line">No se encontró un próximo partido</div>
-              <div class="time-line">La respuesta del servicio llegó vacía.</div>
-            `
-          );
+          setStatus(false, `
+            <div class="match-line">No se encontró un próximo partido</div>
+            <div class="time-line">La respuesta del servicio llegó vacía.</div>
+          `);
           return;
         }
 
@@ -509,17 +475,17 @@
 
         const detailsHtml = playsToday
           ? `
-              <div class="match-line">${home} vs ${away}</div>
-              <div class="comp-line">${league}</div>
-              <div class="time-line">${longDate} (hora de CDMX)</div>
-              <div class="label">Partido programado para hoy</div>
-            `
+            <div class="match-line">${home} vs ${away}</div>
+            <div class="comp-line">${league}</div>
+            <div class="time-line">${longDate} (hora de CDMX)</div>
+            <div class="label">Partido programado para hoy</div>
+          `
           : `
-              <div class="match-line">Próximo partido: ${home} vs ${away}</div>
-              <div class="comp-line">${league}</div>
-              <div class="time-line">${longDate} (hora de CDMX)</div>
-              <div class="label">Hoy no hay partido del América</div>
-            `;
+            <div class="match-line">Próximo partido: ${home} vs ${away}</div>
+            <div class="comp-line">${league}</div>
+            <div class="time-line">${longDate} (hora de CDMX)</div>
+            <div class="label">Hoy no hay partido del América</div>
+          `;
 
         lastDebug = {
           rawEvent: event,
@@ -549,15 +515,13 @@
         return;
       }
 
-      alert(
-        [
-          `todayInMexico: ${lastDebug.todayInMexico}`,
-          `matchDateInMexico: ${lastDebug.matchDateInMexico}`,
-          `matchTimeInMexico: ${lastDebug.matchTimeInMexico}`,
-          `kickoffUtc: ${lastDebug.kickoffUtc}`,
-          `playsToday: ${lastDebug.playsToday}`
-        ].join("\n")
-      );
+      alert([
+        `todayInMexico: ${lastDebug.todayInMexico}`,
+        `matchDateInMexico: ${lastDebug.matchDateInMexico}`,
+        `matchTimeInMexico: ${lastDebug.matchTimeInMexico}`,
+        `kickoffUtc: ${lastDebug.kickoffUtc}`,
+        `playsToday: ${lastDebug.playsToday}`
+      ].join("\n"));
     }
 
     loadMatchStatus();
