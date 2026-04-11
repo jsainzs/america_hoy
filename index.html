@@ -10,11 +10,15 @@
       --text: #f8fafc;
       --muted: rgba(255,255,255,0.88);
       --accent: #facc15;
+      --accent-soft: rgba(250, 204, 21, 0.18);
       --green: #22c55e;
       --red: #ef4444;
-      --panel: rgba(4, 15, 35, 0.52);
+      --panel: rgba(4, 15, 35, 0.46);
       --panel-border: rgba(255,255,255,0.10);
       --shadow: 0 20px 60px rgba(0,0,0,0.32);
+      --bg-blue: #0a1f44;
+      --bg-blue-2: #16386e;
+      --bg-cream: #f3cf18;
     }
 
     * {
@@ -25,8 +29,9 @@
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), transparent 30%),
-        linear-gradient(135deg, #0a1f44 0%, #16386e 42%, #f3cf18 100%);
+        radial-gradient(circle at 25% 20%, rgba(255,255,255,0.08), transparent 24%),
+        radial-gradient(circle at 80% 30%, rgba(255,255,255,0.06), transparent 28%),
+        linear-gradient(135deg, var(--bg-blue) 0%, var(--bg-blue-2) 42%, var(--bg-cream) 100%);
       color: var(--text);
       min-height: 100vh;
       padding: 28px;
@@ -37,25 +42,56 @@
       justify-content: center;
     }
 
-    .bg-names {
+    /* TAPIZ DE FONDO */
+    .bg-tapestry {
       position: absolute;
       inset: 0;
       z-index: 0;
-      opacity: 0.09;
       pointer-events: none;
       overflow: hidden;
+      opacity: 0.15;
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
     }
 
-    .bg-names span {
+    .bg-tapestry::before {
+      content:
+        "CLUB AMÉRICA  MOISÉS MUÑOZ  CUAUHTÉMOC BLANCO  CARLOS REINOSO  CRISTÓBAL ORTEGA  ALFREDO TENA  GUILLERMO OCHOA  SALVADOR CABAÑAS  ENRIQUE BORJA  LUIS ROBERTO ALVES  HUGO SÁNCHEZ  HENRY MARTÍN  IVÁN ZAMORANO  ORIBE PERALTA  PÁVEL PARDO  RUBENS SAMBUEZA  GUIDO RODRÍGUEZ  CLUB AMÉRICA  MOISÉS MUÑOZ  CUAUHTÉMOC BLANCO  CARLOS REINOSO  CRISTÓBAL ORTEGA  ALFREDO TENA  GUILLERMO OCHOA  SALVADOR CABAÑAS  ENRIQUE BORJA  LUIS ROBERTO ALVES  HUGO SÁNCHEZ  HENRY MARTÍN  IVÁN ZAMORANO  ORIBE PERALTA  PÁVEL PARDO  RUBENS SAMBUEZA  GUIDO RODRÍGUEZ  CLUB AMÉRICA  MOISÉS MUÑOZ  CUAUHTÉMOC BLANCO  CARLOS REINOSO  CRISTÓBAL ORTEGA  ALFREDO TENA  GUILLERMO OCHOA  SALVADOR CABAÑAS  ENRIQUE BORJA  LUIS ROBERTO ALVES  HUGO SÁNCHEZ  HENRY MARTÍN  IVÁN ZAMORANO  ORIBE PERALTA  PÁVEL PARDO  RUBENS SAMBUEZA  GUIDO RODRÍGUEZ";
+      white-space: pre-wrap;
+      line-height: 2.15;
+      letter-spacing: 1px;
+      font-weight: 700;
+      font-size: clamp(20px, 2vw, 28px);
+      color: rgba(255,255,255,0.48);
+      display: block;
+      width: 140%;
+      transform: rotate(-14deg) scale(1.15);
+      transform-origin: center center;
       position: absolute;
-      white-space: nowrap;
-      color: #ffffff;
-      user-select: none;
+      top: -8%;
+      left: -10%;
+      text-align: justify;
     }
 
-    .big { font-size: 56px; font-weight: 700; }
-    .medium { font-size: 28px; font-weight: 500; }
-    .small { font-size: 16px; font-weight: 400; }
+    .bg-tapestry::after {
+      content:
+        "AMÉRICA  MOISÉS MUÑOZ  CUAUHTÉMOC BLANCO  CARLOS REINOSO  ALFREDO TENA  CRISTÓBAL ORTEGA  GUILLERMO OCHOA  HÉCTOR ZELADA  ADOLFO RÍOS  SALVADOR CABAÑAS  CARLOS HERMOSILLO  ORIBE PERALTA  HENRY MARTÍN  IVÁN ZAMORANO  ÓSCAR RUGGERI  CLAUDIO LÓPEZ  ANTONIO CARLOS SANTOS  PÁVEL PARDO  CLUB AMÉRICA  AMÉRICA  MOISÉS MUÑOZ  CUAUHTÉMOC BLANCO  CARLOS REINOSO  ALFREDO TENA  CRISTÓBAL ORTEGA  GUILLERMO OCHOA  HÉCTOR ZELADA  ADOLFO RÍOS  SALVADOR CABAÑAS  CARLOS HERMOSILLO  ORIBE PERALTA  HENRY MARTÍN  IVÁN ZAMORANO  ÓSCAR RUGGERI  CLAUDIO LÓPEZ  ANTONIO CARLOS SANTOS  PÁVEL PARDO";
+      white-space: pre-wrap;
+      line-height: 2.25;
+      letter-spacing: 1px;
+      font-weight: 400;
+      font-size: clamp(15px, 1.4vw, 20px);
+      color: rgba(255,255,255,0.32);
+      display: block;
+      width: 140%;
+      transform: rotate(-14deg) scale(1.15);
+      transform-origin: center center;
+      position: absolute;
+      top: 16%;
+      left: -6%;
+      text-align: justify;
+    }
 
     .shell {
       position: relative;
@@ -134,7 +170,7 @@
       font-size: clamp(1.05rem, 1.5vw, 1.35rem);
       line-height: 1.45;
       color: var(--muted);
-      margin-bottom: 24px;
+      margin-bottom: 10px;
       text-shadow: 0 2px 14px rgba(0,0,0,0.28);
     }
 
@@ -154,19 +190,84 @@
       color: rgba(255,255,255,0.9);
     }
 
-    .titles-box {
-      margin-top: 16px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: rgba(250, 204, 21, 0.12);
-      border: 1px solid rgba(250, 204, 21, 0.25);
-      color: #fff7cc;
-      font-size: 1rem;
-      line-height: 1.45;
+    .reference-time {
+      margin-top: 12px;
+      font-size: 0.94rem;
+      color: rgba(255,255,255,0.76);
     }
 
-    .titles-box strong {
+    .titles-box {
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(250, 204, 21, 0.10);
+      border: 1px solid rgba(250, 204, 21, 0.24);
+      color: #fff7cc;
+    }
+
+    .titles-heading {
+      font-size: 0.98rem;
+      font-weight: 700;
+      margin-bottom: 12px;
       color: #fff;
+    }
+
+    .title-row {
+      margin-bottom: 14px;
+    }
+
+    .title-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .title-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+      font-size: 0.96rem;
+      color: rgba(255,255,255,0.95);
+    }
+
+    .title-label strong {
+      color: #fff;
+    }
+
+    .eagle-bar {
+      position: relative;
+      min-height: 22px;
+      padding: 3px 0;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .eagle-fill {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 3px;
+      align-items: center;
+      min-height: 16px;
+      padding: 0 8px;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .eagle {
+      font-size: 14px;
+      line-height: 1;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35));
+      user-select: none;
+    }
+
+    .eagle.dim {
+      opacity: 0.18;
+    }
+
+    .eagle.full {
+      opacity: 0.95;
     }
 
     .actions {
@@ -174,24 +275,7 @@
       gap: 12px;
       align-items: center;
       flex-wrap: wrap;
-    }
-
-    button {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 12px;
-      background: var(--accent);
-      color: #111827;
-      font-weight: 800;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 14px 28px rgba(0,0,0,0.26);
+      margin-top: 18px;
     }
 
     .subtle {
@@ -229,60 +313,25 @@
         max-height: 460px;
       }
 
+      .title-label {
+        text-align: left;
+      }
+
       .actions {
         justify-content: center;
+      }
+
+      .bg-tapestry::before,
+      .bg-tapestry::after {
+        width: 190%;
+        left: -38%;
       }
     }
   </style>
 </head>
 
 <body>
-
-  <div class="bg-names">
-    <span class="big" style="top: 8%; left: 5%;">Club América</span>
-    <span class="big" style="top: 12%; right: 8%;">América</span>
-
-    <span class="medium" style="top: 24%; left: 16%;">Cuauhtémoc Blanco</span>
-    <span class="medium" style="top: 20%; right: 14%;">Carlos Reinoso</span>
-    <span class="medium" style="top: 38%; left: 8%;">Cristóbal Ortega</span>
-    <span class="medium" style="top: 34%; right: 10%;">Alfredo Tena</span>
-    <span class="medium" style="top: 53%; left: 6%;">Guillermo Ochoa</span>
-    <span class="medium" style="top: 56%; right: 12%;">Moisés Muñoz</span>
-
-    <span class="small" style="top: 18%; left: 40%;">Rafael Garza Gutiérrez</span>
-    <span class="small" style="top: 27%; left: 50%;">Ignacio De la Garza</span>
-    <span class="small" style="top: 30%; left: 68%;">Octavio Vial</span>
-    <span class="small" style="top: 44%; left: 22%;">Pedro Nájera</span>
-    <span class="small" style="top: 48%; left: 38%;">Enrique Borja</span>
-    <span class="small" style="top: 62%; left: 26%;">Luis Roberto Alves</span>
-    <span class="small" style="top: 70%; left: 10%;">Hugo Sánchez</span>
-    <span class="small" style="top: 74%; left: 34%;">Horacio Casarín</span>
-    <span class="small" style="top: 22%; right: 28%;">Adolfo Ríos</span>
-    <span class="small" style="top: 30%; right: 22%;">Héctor Zelada</span>
-    <span class="small" style="top: 40%; right: 30%;">Salvador Cabañas</span>
-    <span class="small" style="top: 48%; right: 18%;">Carlos Hermosillo</span>
-    <span class="small" style="top: 62%; right: 32%;">Oribe Peralta</span>
-    <span class="small" style="top: 68%; right: 16%;">Henry Martín</span>
-    <span class="small" style="top: 76%; right: 28%;">Iván Zamorano</span>
-    <span class="small" style="top: 82%; right: 10%;">François Omam-Biyik</span>
-    <span class="small" style="top: 82%; left: 50%;">Oscar Ruggeri</span>
-    <span class="small" style="top: 14%; left: 62%;">Claudio López</span>
-    <span class="small" style="top: 58%; left: 48%;">Antonio Carlos Santos</span>
-    <span class="small" style="top: 72%; left: 58%;">Pável Pardo</span>
-    <span class="small" style="top: 24%; left: 78%;">Rubens Sambueza</span>
-    <span class="small" style="top: 52%; right: 4%;">Guido Rodríguez</span>
-    <span class="small" style="top: 66%; left: 74%;">Germán Villa</span>
-    <span class="small" style="top: 72%; right: 36%;">Duilio Davino</span>
-    <span class="small" style="top: 78%; left: 22%;">Paul Aguilar</span>
-    <span class="small" style="top: 86%; left: 66%;">Miguel Layún</span>
-    <span class="small" style="top: 88%; left: 40%;">Diego Valdés</span>
-    <span class="small" style="top: 36%; left: 84%;">Álvaro Fidalgo</span>
-    <span class="small" style="top: 90%; right: 24%;">Richard Sánchez</span>
-    <span class="small" style="top: 84%; right: 42%;">Jonathan Dos Santos</span>
-    <span class="small" style="top: 10%; left: 28%;">Sebastián Cáceres</span>
-    <span class="small" style="top: 16%; right: 42%;">Brian Rodríguez</span>
-    <span class="small" style="top: 60%; right: 46%;">Alejandro Zendejas</span>
-  </div>
+  <div class="bg-tapestry"></div>
 
   <main class="shell">
     <section class="panel">
@@ -302,8 +351,7 @@
           <div id="titlesInfo"></div>
 
           <div class="actions">
-            <button onclick="loadMatch()">Actualizar</button>
-            <span class="subtle">Hora de referencia: Ciudad de México</span>
+            <span class="subtle">Información automática del próximo partido</span>
           </div>
         </div>
       </div>
@@ -314,19 +362,24 @@
     const TEAM_ID = "134193";
     const API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
     const TZ = "America/Mexico_City";
+    const AMERICA_TITLES = 16;
+    const MAX_TITLES_FOR_BAR = 16;
 
-    // Títulos de liga, con base en tu lista hasta Apertura 2025
     const LIGA_MX_TITLES = {
       "america": { name: "América", titles: 16 },
       "atlas": { name: "Atlas", titles: 3 },
       "atletico san luis": { name: "Atlético San Luis", titles: 0 },
+      "san luis": { name: "Atlético San Luis", titles: 0 },
       "juarez": { name: "Juárez", titles: 0 },
       "fc juarez": { name: "Juárez", titles: 0 },
+      "bravos": { name: "Juárez", titles: 0 },
       "guadalajara": { name: "Guadalajara", titles: 12 },
       "cd guadalajara": { name: "Guadalajara", titles: 12 },
       "chivas": { name: "Guadalajara", titles: 12 },
+      "club guadalajara": { name: "Guadalajara", titles: 12 },
       "cruz azul": { name: "Cruz Azul", titles: 9 },
       "queretaro": { name: "Querétaro", titles: 0 },
+      "queretaro fc": { name: "Querétaro", titles: 0 },
       "gallos blancos": { name: "Querétaro", titles: 0 },
       "leon": { name: "León", titles: 5 },
       "club leon": { name: "León", titles: 5 },
@@ -339,6 +392,7 @@
       "unam": { name: "Pumas UNAM", titles: 7 },
       "pumas": { name: "Pumas UNAM", titles: 7 },
       "pumas unam": { name: "Pumas UNAM", titles: 7 },
+      "club universidad nacional": { name: "Pumas UNAM", titles: 7 },
       "monterrey": { name: "Monterrey", titles: 5 },
       "rayados": { name: "Monterrey", titles: 5 },
       "santos laguna": { name: "Santos Laguna", titles: 6 },
@@ -422,7 +476,6 @@
       if (home.includes("america")) return event.strAwayTeam;
       if (away.includes("america")) return event.strHomeTeam;
 
-      // respaldo, por si la API ya viniera filtrada por América pero con nombre raro
       return event.strAwayTeam;
     }
 
@@ -442,6 +495,16 @@
       return null;
     }
 
+    function buildEagleBar(titles) {
+      let html = '<div class="eagle-bar"><div class="eagle-fill">';
+      for (let i = 0; i < MAX_TITLES_FOR_BAR; i++) {
+        const cls = i < titles ? 'full' : 'dim';
+        html += `<span class="eagle ${cls}">🦅</span>`;
+      }
+      html += '</div></div>';
+      return html;
+    }
+
     function renderTitlesInfo(event) {
       const titlesInfo = document.getElementById("titlesInfo");
       titlesInfo.innerHTML = "";
@@ -453,10 +516,31 @@
 
       titlesInfo.innerHTML = `
         <div class="titles-box">
-          <strong>Títulos de liga</strong><br>
-          América: <strong>16</strong> | ${opponent.name}: <strong>${opponent.titles}</strong>
+          <div class="titles-heading">Títulos de liga</div>
+
+          <div class="title-row">
+            <div class="title-label">
+              <span>América</span>
+              <strong>${AMERICA_TITLES}</strong>
+            </div>
+            ${buildEagleBar(AMERICA_TITLES)}
+          </div>
+
+          <div class="title-row">
+            <div class="title-label">
+              <span>${opponent.name}</span>
+              <strong>${opponent.titles}</strong>
+            </div>
+            ${buildEagleBar(opponent.titles)}
+          </div>
         </div>
       `;
+    }
+
+    function setReferenceTime(dateText) {
+      const details = document.getElementById("details");
+      const refHtml = `<div class="reference-time">Hora de referencia: ${dateText} (Ciudad de México)</div>`;
+      details.innerHTML += refHtml;
     }
 
     async function loadMatch() {
@@ -514,9 +598,8 @@
           details.innerHTML = `
             <div><b>Próximo partido</b></div>
             <div class="meta-line">${matchText}</div>
-            <div style="margin-top:12px;">${dateText}</div>
           `;
-
+          setReferenceTime(dateText);
           renderTitlesInfo(event);
 
         } else if (eventDate === today) {
@@ -527,8 +610,8 @@
 
             details.innerHTML = `
               <div><b>${matchText}</b></div>
-              <div style="margin-top:12px;">${dateText}</div>
             `;
+            setReferenceTime(dateText);
           } else {
             status.textContent = "Hoy juega";
             status.className = "status yes";
@@ -542,8 +625,8 @@
             details.innerHTML = `
               <div><b>${matchText}</b></div>
               <div class="meta-line" style="margin-top:12px;">Partido programado para hoy</div>
-              <div style="margin-top:12px;">${dateText}</div>
             `;
+            setReferenceTime(dateText);
           }
 
           renderTitlesInfo(event);
@@ -556,9 +639,8 @@
           details.innerHTML = `
             <div><b>Último partido registrado</b></div>
             <div class="meta-line">${matchText}</div>
-            <div style="margin-top:12px;">${dateText}</div>
           `;
-
+          setReferenceTime(dateText);
           renderTitlesInfo(event);
         }
 
