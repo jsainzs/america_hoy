@@ -37,7 +37,6 @@
       justify-content: center;
     }
 
-    /* Fondo con nombres */
     .bg-names {
       position: absolute;
       inset: 0;
@@ -58,7 +57,6 @@
     .medium { font-size: 28px; font-weight: 500; }
     .small { font-size: 16px; font-weight: 400; }
 
-    /* Panel principal */
     .shell {
       position: relative;
       z-index: 1;
@@ -156,6 +154,21 @@
       color: rgba(255,255,255,0.9);
     }
 
+    .titles-box {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(250, 204, 21, 0.12);
+      border: 1px solid rgba(250, 204, 21, 0.25);
+      color: #fff7cc;
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .titles-box strong {
+      color: #fff;
+    }
+
     .actions {
       display: flex;
       gap: 12px;
@@ -225,7 +238,6 @@
 
 <body>
 
-  <!-- Fondo decorativo -->
   <div class="bg-names">
     <span class="big" style="top: 8%; left: 5%;">Club América</span>
     <span class="big" style="top: 12%; right: 8%;">América</span>
@@ -287,6 +299,7 @@
         <div class="content">
           <div id="status" class="status">Consultando...</div>
           <div id="details" class="details"></div>
+          <div id="titlesInfo"></div>
 
           <div class="actions">
             <button onclick="loadMatch()">Actualizar</button>
@@ -301,6 +314,41 @@
     const TEAM_ID = "134193";
     const API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
     const TZ = "America/Mexico_City";
+
+    // Títulos de liga, con base en tu lista hasta Apertura 2025
+    const LIGA_MX_TITLES = {
+      "america": { name: "América", titles: 16 },
+      "atlas": { name: "Atlas", titles: 3 },
+      "atletico san luis": { name: "Atlético San Luis", titles: 0 },
+      "juarez": { name: "Juárez", titles: 0 },
+      "fc juarez": { name: "Juárez", titles: 0 },
+      "guadalajara": { name: "Guadalajara", titles: 12 },
+      "cd guadalajara": { name: "Guadalajara", titles: 12 },
+      "chivas": { name: "Guadalajara", titles: 12 },
+      "cruz azul": { name: "Cruz Azul", titles: 9 },
+      "queretaro": { name: "Querétaro", titles: 0 },
+      "gallos blancos": { name: "Querétaro", titles: 0 },
+      "leon": { name: "León", titles: 5 },
+      "club leon": { name: "León", titles: 5 },
+      "mazatlan": { name: "Mazatlán", titles: 0 },
+      "mazatlan fc": { name: "Mazatlán", titles: 0 },
+      "necaxa": { name: "Necaxa", titles: 3 },
+      "club necaxa": { name: "Necaxa", titles: 3 },
+      "pachuca": { name: "Pachuca", titles: 7 },
+      "puebla": { name: "Puebla", titles: 2 },
+      "unam": { name: "Pumas UNAM", titles: 7 },
+      "pumas": { name: "Pumas UNAM", titles: 7 },
+      "pumas unam": { name: "Pumas UNAM", titles: 7 },
+      "monterrey": { name: "Monterrey", titles: 5 },
+      "rayados": { name: "Monterrey", titles: 5 },
+      "santos laguna": { name: "Santos Laguna", titles: 6 },
+      "tigres": { name: "Tigres UANL", titles: 8 },
+      "tigres uanl": { name: "Tigres UANL", titles: 8 },
+      "toluca": { name: "Toluca", titles: 12 },
+      "tijuana": { name: "Tijuana", titles: 1 },
+      "xolos": { name: "Tijuana", titles: 1 },
+      "club tijuana": { name: "Tijuana", titles: 1 }
+    };
 
     function getMexicoDate(date) {
       return new Intl.DateTimeFormat("en-CA", {
@@ -335,6 +383,8 @@
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .toLowerCase()
+        .replace(/\./g, "")
+        .replace(/\s+/g, " ")
         .trim();
     }
 
@@ -365,13 +415,59 @@
       }
     }
 
+    function getOpponentName(event) {
+      const home = normalizeTeamName(event.strHomeTeam);
+      const away = normalizeTeamName(event.strAwayTeam);
+
+      if (home.includes("america")) return event.strAwayTeam;
+      if (away.includes("america")) return event.strHomeTeam;
+
+      // respaldo, por si la API ya viniera filtrada por América pero con nombre raro
+      return event.strAwayTeam;
+    }
+
+    function findLigaMxTeam(rawName) {
+      const normalized = normalizeTeamName(rawName);
+
+      if (LIGA_MX_TITLES[normalized]) {
+        return LIGA_MX_TITLES[normalized];
+      }
+
+      for (const key of Object.keys(LIGA_MX_TITLES)) {
+        if (normalized.includes(key) || key.includes(normalized)) {
+          return LIGA_MX_TITLES[key];
+        }
+      }
+
+      return null;
+    }
+
+    function renderTitlesInfo(event) {
+      const titlesInfo = document.getElementById("titlesInfo");
+      titlesInfo.innerHTML = "";
+
+      const opponentRaw = getOpponentName(event);
+      const opponent = findLigaMxTeam(opponentRaw);
+
+      if (!opponent) return;
+
+      titlesInfo.innerHTML = `
+        <div class="titles-box">
+          <strong>Títulos de liga</strong><br>
+          América: <strong>16</strong> | ${opponent.name}: <strong>${opponent.titles}</strong>
+        </div>
+      `;
+    }
+
     async function loadMatch() {
       const status = document.getElementById("status");
       const details = document.getElementById("details");
+      const titlesInfo = document.getElementById("titlesInfo");
 
       status.textContent = "Consultando...";
       status.className = "status";
       details.innerHTML = "";
+      titlesInfo.innerHTML = "";
       hideAllImages();
 
       try {
@@ -420,6 +516,9 @@
             <div class="meta-line">${matchText}</div>
             <div style="margin-top:12px;">${dateText}</div>
           `;
+
+          renderTitlesInfo(event);
+
         } else if (eventDate === today) {
           if (finished) {
             status.textContent = "Ya jugó hoy";
@@ -446,6 +545,9 @@
               <div style="margin-top:12px;">${dateText}</div>
             `;
           }
+
+          renderTitlesInfo(event);
+
         } else {
           status.textContent = "No juega hoy";
           status.className = "status no";
@@ -456,6 +558,8 @@
             <div class="meta-line">${matchText}</div>
             <div style="margin-top:12px;">${dateText}</div>
           `;
+
+          renderTitlesInfo(event);
         }
 
       } catch (err) {
