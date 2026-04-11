@@ -8,173 +8,294 @@
   <style>
     :root {
       --text: #f8fafc;
-      --muted: #cbd5e1;
+      --muted: rgba(255,255,255,0.88);
       --accent: #facc15;
-      --green: #16a34a;
-      --red: #dc2626;
+      --green: #22c55e;
+      --red: #ef4444;
+      --panel: rgba(4, 15, 35, 0.52);
+      --panel-border: rgba(255,255,255,0.10);
+      --shadow: 0 20px 60px rgba(0,0,0,0.32);
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(135deg, #0a1f44, #fcd116);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), transparent 30%),
+        linear-gradient(135deg, #0a1f44 0%, #16386e 42%, #f3cf18 100%);
       color: var(--text);
+      min-height: 100vh;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
-      position: relative;
-      overflow: hidden;
     }
 
-    /* FONDO */
+    /* Fondo con nombres */
     .bg-names {
       position: absolute;
       inset: 0;
       z-index: 0;
-      opacity: 0.07;
-      display: flex;
-      flex-wrap: wrap;
-      align-content: center;
-      justify-content: center;
+      opacity: 0.09;
       pointer-events: none;
+      overflow: hidden;
     }
 
     .bg-names span {
-      margin: 6px 12px;
+      position: absolute;
       white-space: nowrap;
+      color: #ffffff;
+      user-select: none;
     }
 
-    .big { font-size: 52px; font-weight: bold; }
-    .medium { font-size: 26px; }
-    .small { font-size: 14px; }
+    .big { font-size: 56px; font-weight: 700; }
+    .medium { font-size: 28px; font-weight: 500; }
+    .small { font-size: 16px; font-weight: 400; }
 
-    .card {
+    /* Panel principal */
+    .shell {
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 700px;
-      background: rgba(10, 18, 32, 0.9);
-      border-radius: 20px;
-      padding: 24px;
+      max-width: 1120px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 28px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      padding: 34px;
+    }
+
+    .title {
+      margin: 0 0 24px;
       text-align: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.05;
+      font-weight: 800;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.35);
     }
 
-    h1 {
-      margin: 0 0 10px;
-      font-size: 2.2rem;
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 420px) 1fr;
+      gap: 30px;
+      align-items: center;
     }
 
-    .status {
-      margin: 15px 0;
-      font-size: 1.6rem;
-      font-weight: bold;
+    .media-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-
-    .yes { color: var(--green); }
-    .no { color: var(--red); }
 
     .hero {
       display: none;
       width: 100%;
-      max-height: 400px;
+      max-width: 380px;
+      max-height: 560px;
       object-fit: contain;
-      border-radius: 12px;
-      margin-top: 10px;
+      border-radius: 20px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.08);
+      background: transparent;
     }
 
     .hero.visible {
       display: block;
     }
 
+    .content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100%;
+    }
+
+    .status {
+      margin: 0 0 16px;
+      font-size: clamp(2rem, 3vw, 3rem);
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .yes { color: var(--green); }
+    .no { color: var(--red); }
+
     .details {
-      margin-top: 15px;
+      font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+      line-height: 1.45;
       color: var(--muted);
-      font-size: 1rem;
+      margin-bottom: 24px;
+      text-shadow: 0 2px 14px rgba(0,0,0,0.28);
+    }
+
+    .details b {
+      color: #fff;
+      font-size: 1.08em;
+    }
+
+    .meta-line {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
     button {
-      margin-top: 15px;
-      padding: 10px 16px;
+      padding: 12px 20px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       background: var(--accent);
-      font-weight: bold;
+      color: #111827;
+      font-weight: 800;
+      font-size: 1rem;
       cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.26);
+    }
+
+    .subtle {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.78);
+    }
+
+    @media (max-width: 860px) {
+      body {
+        padding: 16px;
+      }
+
+      .panel {
+        padding: 24px 18px;
+        border-radius: 22px;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .media-wrap {
+        order: 2;
+      }
+
+      .content {
+        order: 1;
+        text-align: center;
+        align-items: center;
+      }
+
+      .hero {
+        max-width: 300px;
+        max-height: 460px;
+      }
+
+      .actions {
+        justify-content: center;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- FONDO RICO EN NOMBRES -->
+  <!-- Fondo decorativo -->
   <div class="bg-names">
+    <span class="big" style="top: 8%; left: 5%;">Club América</span>
+    <span class="big" style="top: 12%; right: 8%;">América</span>
 
-    <!-- GRANDES -->
-    <span class="big">Club América</span>
-    <span class="big">América</span>
+    <span class="medium" style="top: 24%; left: 16%;">Cuauhtémoc Blanco</span>
+    <span class="medium" style="top: 20%; right: 14%;">Carlos Reinoso</span>
+    <span class="medium" style="top: 38%; left: 8%;">Cristóbal Ortega</span>
+    <span class="medium" style="top: 34%; right: 10%;">Alfredo Tena</span>
+    <span class="medium" style="top: 53%; left: 6%;">Guillermo Ochoa</span>
+    <span class="medium" style="top: 56%; right: 12%;">Moisés Muñoz</span>
 
-    <!-- MEDIANOS -->
-    <span class="medium">Cuauhtémoc Blanco</span>
-    <span class="medium">Carlos Reinoso</span>
-    <span class="medium">Cristóbal Ortega</span>
-    <span class="medium">Alfredo Tena</span>
-    <span class="medium">Guillermo Ochoa</span>
-    <span class="medium">Moisés Muñoz</span>
-
-    <!-- MUCHOS PEQUEÑOS -->
-    <span class="small">Rafael Garza Gutiérrez</span>
-    <span class="small">Ignacio De la Garza</span>
-    <span class="small">Octavio Vial</span>
-    <span class="small">Pedro Nájera</span>
-    <span class="small">Enrique Borja</span>
-    <span class="small">Luis Roberto Alves</span>
-    <span class="small">Hugo Sánchez</span>
-    <span class="small">Horacio Casarín</span>
-    <span class="small">Adolfo Ríos</span>
-    <span class="small">Héctor Zelada</span>
-    <span class="small">Salvador Cabañas</span>
-    <span class="small">Carlos Hermosillo</span>
-    <span class="small">Oribe Peralta</span>
-    <span class="small">Henry Martín</span>
-    <span class="small">Iván Zamorano</span>
-    <span class="small">François Omam-Biyik</span>
-    <span class="small">Oscar Ruggeri</span>
-    <span class="small">Claudio López</span>
-    <span class="small">Antonio Carlos Santos</span>
-    <span class="small">Pável Pardo</span>
-    <span class="small">Rubens Sambueza</span>
-    <span class="small">Guido Rodríguez</span>
-    <span class="small">Germán Villa</span>
-    <span class="small">Duilio Davino</span>
-    <span class="small">Paul Aguilar</span>
-    <span class="small">Miguel Layún</span>
-    <span class="small">Diego Valdés</span>
-    <span class="small">Álvaro Fidalgo</span>
-    <span class="small">Richard Sánchez</span>
-    <span class="small">Jonathan Dos Santos</span>
-    <span class="small">Sebastián Cáceres</span>
-    <span class="small">Brian Rodríguez</span>
-    <span class="small">Alejandro Zendejas</span>
-
+    <span class="small" style="top: 18%; left: 40%;">Rafael Garza Gutiérrez</span>
+    <span class="small" style="top: 27%; left: 50%;">Ignacio De la Garza</span>
+    <span class="small" style="top: 30%; left: 68%;">Octavio Vial</span>
+    <span class="small" style="top: 44%; left: 22%;">Pedro Nájera</span>
+    <span class="small" style="top: 48%; left: 38%;">Enrique Borja</span>
+    <span class="small" style="top: 62%; left: 26%;">Luis Roberto Alves</span>
+    <span class="small" style="top: 70%; left: 10%;">Hugo Sánchez</span>
+    <span class="small" style="top: 74%; left: 34%;">Horacio Casarín</span>
+    <span class="small" style="top: 22%; right: 28%;">Adolfo Ríos</span>
+    <span class="small" style="top: 30%; right: 22%;">Héctor Zelada</span>
+    <span class="small" style="top: 40%; right: 30%;">Salvador Cabañas</span>
+    <span class="small" style="top: 48%; right: 18%;">Carlos Hermosillo</span>
+    <span class="small" style="top: 62%; right: 32%;">Oribe Peralta</span>
+    <span class="small" style="top: 68%; right: 16%;">Henry Martín</span>
+    <span class="small" style="top: 76%; right: 28%;">Iván Zamorano</span>
+    <span class="small" style="top: 82%; right: 10%;">François Omam-Biyik</span>
+    <span class="small" style="top: 82%; left: 50%;">Oscar Ruggeri</span>
+    <span class="small" style="top: 14%; left: 62%;">Claudio López</span>
+    <span class="small" style="top: 58%; left: 48%;">Antonio Carlos Santos</span>
+    <span class="small" style="top: 72%; left: 58%;">Pável Pardo</span>
+    <span class="small" style="top: 24%; left: 78%;">Rubens Sambueza</span>
+    <span class="small" style="top: 52%; right: 4%;">Guido Rodríguez</span>
+    <span class="small" style="top: 66%; left: 74%;">Germán Villa</span>
+    <span class="small" style="top: 72%; right: 36%;">Duilio Davino</span>
+    <span class="small" style="top: 78%; left: 22%;">Paul Aguilar</span>
+    <span class="small" style="top: 86%; left: 66%;">Miguel Layún</span>
+    <span class="small" style="top: 88%; left: 40%;">Diego Valdés</span>
+    <span class="small" style="top: 36%; left: 84%;">Álvaro Fidalgo</span>
+    <span class="small" style="top: 90%; right: 24%;">Richard Sánchez</span>
+    <span class="small" style="top: 84%; right: 42%;">Jonathan Dos Santos</span>
+    <span class="small" style="top: 10%; left: 28%;">Sebastián Cáceres</span>
+    <span class="small" style="top: 16%; right: 42%;">Brian Rodríguez</span>
+    <span class="small" style="top: 60%; right: 46%;">Alejandro Zendejas</span>
   </div>
 
-  <div class="card">
-    <h1>¿Hoy juega el América?</h1>
+  <main class="shell">
+    <section class="panel">
+      <h1 class="title">¿Hoy juega el América?</h1>
 
-    <div id="status" class="status">Consultando...</div>
+      <div class="layout">
+        <div class="media-wrap">
+          <img id="imgSi" class="hero" src="hoy_juega_america.png" alt="Hoy juega el América">
+          <img id="imgNo" class="hero" src="no_juega_america.png" alt="No juega el América">
+          <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg" alt="Próximo partido contra Cruz Azul">
+          <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg" alt="Hoy juega contra Cruz Azul">
+        </div>
 
-    <img id="imgSi" class="hero" src="hoy_juega_america.png">
-    <img id="imgNo" class="hero" src="no_juega_america.png">
-    <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg">
-    <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg">
+        <div class="content">
+          <div id="status" class="status">Consultando...</div>
+          <div id="details" class="details"></div>
 
-    <div id="details" class="details"></div>
-
-    <button onclick="loadMatch()">Actualizar</button>
-  </div>
+          <div class="actions">
+            <button onclick="loadMatch()">Actualizar</button>
+            <span class="subtle">Hora de referencia: Ciudad de México</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <script>
     const TEAM_ID = "134193";
@@ -209,67 +330,140 @@
       return isNaN(d) ? null : d;
     }
 
-    function normalize(name) {
-      return (name || "").toLowerCase();
+    function normalizeTeamName(name) {
+      return (name || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
     }
 
     function isVsCruzAzul(event) {
-      return normalize(event.strHomeTeam).includes("cruz azul") ||
-             normalize(event.strAwayTeam).includes("cruz azul");
+      const home = normalizeTeamName(event.strHomeTeam);
+      const away = normalizeTeamName(event.strAwayTeam);
+      return home.includes("cruz azul") || away.includes("cruz azul");
     }
 
     function hideAllImages() {
-      document.querySelectorAll(".hero").forEach(img => img.classList.remove("visible"));
+      document.getElementById("imgSi").classList.remove("visible");
+      document.getElementById("imgNo").classList.remove("visible");
+      document.getElementById("imgCruzAzulProx").classList.remove("visible");
+      document.getElementById("imgCruzAzulHoy").classList.remove("visible");
     }
 
-    function showImage(type) {
+    function showImage(mode) {
       hideAllImages();
-      if (type === "yes") imgSi.classList.add("visible");
-      if (type === "no") imgNo.classList.add("visible");
-      if (type === "caz-prox") imgCruzAzulProx.classList.add("visible");
-      if (type === "caz-hoy") imgCruzAzulHoy.classList.add("visible");
+
+      if (mode === "general-yes") {
+        document.getElementById("imgSi").classList.add("visible");
+      } else if (mode === "general-no") {
+        document.getElementById("imgNo").classList.add("visible");
+      } else if (mode === "caz-prox") {
+        document.getElementById("imgCruzAzulProx").classList.add("visible");
+      } else if (mode === "caz-hoy") {
+        document.getElementById("imgCruzAzulHoy").classList.add("visible");
+      }
     }
 
     async function loadMatch() {
       const status = document.getElementById("status");
       const details = document.getElementById("details");
 
+      status.textContent = "Consultando...";
+      status.className = "status";
+      details.innerHTML = "";
+      hideAllImages();
+
       try {
         const res = await fetch(API_URL);
         const data = await res.json();
+
+        if (!data.events || data.events.length === 0) {
+          status.textContent = "Sin datos";
+          status.className = "status no";
+          showImage("general-no");
+          details.innerHTML = `No se encontró información del próximo partido.`;
+          return;
+        }
+
         const event = data.events[0];
         const date = parseDate(event);
 
+        if (!date) {
+          status.textContent = "Error en fecha";
+          status.className = "status no";
+          showImage("general-no");
+          details.innerHTML = `No fue posible interpretar la fecha del partido.`;
+          return;
+        }
+
         const today = getMexicoDate(new Date());
         const eventDate = getMexicoDate(date);
-        const cruzAzul = isVsCruzAzul(event);
+        const finished = (event.strStatus || "").includes("Finished");
+        const cruzAzulMatch = isVsCruzAzul(event);
 
-        const match = `${event.strHomeTeam} vs ${event.strAwayTeam}`;
+        const matchText = `${event.strHomeTeam} vs ${event.strAwayTeam}`;
         const dateText = formatMexicoDateTime(date);
 
         if (eventDate > today) {
           status.textContent = "No juega hoy";
           status.className = "status no";
-          showImage(cruzAzul ? "caz-prox" : "no");
-          details.innerHTML = `Próximo partido:<br><b>${match}</b><br>${dateText}`;
-        }
 
-        else if (eventDate === today) {
-          status.textContent = "Hoy juega";
-          status.className = "status yes";
-          showImage(cruzAzul ? "caz-hoy" : "yes");
-          details.innerHTML = `${match}<br>${dateText}`;
-        }
+          if (cruzAzulMatch) {
+            showImage("caz-prox");
+          } else {
+            showImage("general-no");
+          }
 
-        else {
+          details.innerHTML = `
+            <div><b>Próximo partido</b></div>
+            <div class="meta-line">${matchText}</div>
+            <div style="margin-top:12px;">${dateText}</div>
+          `;
+        } else if (eventDate === today) {
+          if (finished) {
+            status.textContent = "Ya jugó hoy";
+            status.className = "status no";
+            showImage("general-no");
+
+            details.innerHTML = `
+              <div><b>${matchText}</b></div>
+              <div style="margin-top:12px;">${dateText}</div>
+            `;
+          } else {
+            status.textContent = "Hoy juega";
+            status.className = "status yes";
+
+            if (cruzAzulMatch) {
+              showImage("caz-hoy");
+            } else {
+              showImage("general-yes");
+            }
+
+            details.innerHTML = `
+              <div><b>${matchText}</b></div>
+              <div class="meta-line" style="margin-top:12px;">Partido programado para hoy</div>
+              <div style="margin-top:12px;">${dateText}</div>
+            `;
+          }
+        } else {
           status.textContent = "No juega hoy";
           status.className = "status no";
-          showImage("no");
+          showImage("general-no");
+
+          details.innerHTML = `
+            <div><b>Último partido registrado</b></div>
+            <div class="meta-line">${matchText}</div>
+            <div style="margin-top:12px;">${dateText}</div>
+          `;
         }
 
       } catch (err) {
-        status.textContent = "Error";
-        showImage("no");
+        status.textContent = "Error al cargar";
+        status.className = "status no";
+        showImage("general-no");
+        details.innerHTML = `No fue posible cargar la información del partido.`;
+        console.error(err);
       }
     }
 
