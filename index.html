@@ -1,3 +1,36 @@
+<body>
+
+  <!-- Fondo -->
+  <div class="bg-tapestry"></div>
+
+  <main class="shell">
+    <h1 class="title">¿Hoy juega el América?</h1>
+
+    <div class="layout">
+
+      <!-- IMAGEN -->
+      <div class="media-wrap">
+        <img id="imgSi" class="hero" src="hoy_juega_america.png">
+        <img id="imgNo" class="hero" src="no_juega_america.png">
+        <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg">
+        <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg">
+      </div>
+
+      <!-- TEXTO -->
+      <div class="content">
+        <div id="status" class="status"></div>
+        <div id="details" class="details"></div>
+        <div id="titlesInfo"></div>
+        <div id="funFact"></div>
+
+        <div class="footer-copy">
+          <img src="chanfle.png" class="chanfle-img">
+        </div>
+      </div>
+
+    </div>
+  </main>
+
 <script>
 const TEAM_ID = "134193";
 const API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
@@ -219,3 +252,5 @@ async function loadMatch() {
 
 loadMatch();
 </script>
+
+</body>
