@@ -1,645 +1,221 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>¿Hoy juega el América?</title>
+<script>
+const TEAM_ID = "134193";
+const API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
+const TZ = "America/Mexico_City";
 
-  <style>
-    :root {
-      --text: #f8fafc;
-      --muted: rgba(255,255,255,0.9);
-      --accent: #facc15;
-      --green: #22c55e;
-      --red: #ef4444;
-      --bg-blue: #0a1f44;
-      --bg-blue-2: #16386e;
-      --bg-cream: #f3cf18;
-      --shadow: 0 14px 38px rgba(0,0,0,0.28);
-    }
+const AMERICA_TITLES = 16;
+const MAX_TITLES_FOR_BAR = 16;
 
-    * {
-      box-sizing: border-box;
-    }
+const LIGA_MX_TITLES = {
+  "america": { name: "América", titles: 16, icon: "🦅" },
+  "atlas": { name: "Atlas", titles: 3, icon: "🦊" },
+  "atletico san luis": { name: "Atlético San Luis", titles: 0, icon: "⚪" },
+  "juarez": { name: "Juárez", titles: 0, icon: "🐎" },
+  "chivas": { name: "Guadalajara", titles: 12, icon: "🐐" },
+  "guadalajara": { name: "Guadalajara", titles: 12, icon: "🐐" },
+  "cruz azul": { name: "Cruz Azul", titles: 9, icon: "🔵" },
+  "queretaro": { name: "Querétaro", titles: 0, icon: "🐓" },
+  "leon": { name: "León", titles: 5, icon: "🦁" },
+  "mazatlan": { name: "Mazatlán", titles: 0, icon: "⚓" },
+  "necaxa": { name: "Necaxa", titles: 3, icon: "⚡" },
+  "pachuca": { name: "Pachuca", titles: 7, icon: "🏛️" },
+  "puebla": { name: "Puebla", titles: 2, icon: "🎽" },
+  "pumas": { name: "Pumas UNAM", titles: 7, icon: "🐾" },
+  "monterrey": { name: "Monterrey", titles: 5, icon: "⛰️" },
+  "santos laguna": { name: "Santos Laguna", titles: 6, icon: "👑" },
+  "tigres": { name: "Tigres UANL", titles: 8, icon: "🐯" },
+  "toluca": { name: "Toluca", titles: 12, icon: "😈" },
+  "tijuana": { name: "Tijuana", titles: 1, icon: "🐕" }
+};
 
-    html, body {
-      margin: 0;
-      min-height: 100%;
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(circle at 25% 20%, rgba(255,255,255,0.08), transparent 24%),
-        radial-gradient(circle at 80% 30%, rgba(255,255,255,0.06), transparent 28%),
-        linear-gradient(135deg, var(--bg-blue) 0%, var(--bg-blue-2) 42%, var(--bg-cream) 100%);
-      color: var(--text);
-      position: relative;
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
-
-    /* TAPIZ DE FONDO MÁS PRESENTE */
-    .bg-tapestry {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
-      opacity: 0.22;
-    }
-
-    .bg-tapestry::before {
-      content:
-        "CLUB AMÉRICA   AMÉRICA   MOISÉS MUÑOZ   CUAUHTÉMOC BLANCO   CARLOS REINOSO   CRISTÓBAL ORTEGA   ALFREDO TENA   GUILLERMO OCHOA   SALVADOR CABAÑAS   ENRIQUE BORJA   LUIS ROBERTO ALVES   HUGO SÁNCHEZ   HENRY MARTÍN   IVÁN ZAMORANO   ORIBE PERALTA   PÁVEL PARDO   RUBENS SAMBUEZA   GUIDO RODRÍGUEZ   HÉCTOR ZELADA   ADOLFO RÍOS   CARLOS HERMOSILLO   CLUB AMÉRICA   AMÉRICA   MOISÉS MUÑOZ   CUAUHTÉMOC BLANCO   CARLOS REINOSO   CRISTÓBAL ORTEGA   ALFREDO TENA   GUILLERMO OCHOA   SALVADOR CABAÑAS   ENRIQUE BORJA   LUIS ROBERTO ALVES   HUGO SÁNCHEZ   HENRY MARTÍN   IVÁN ZAMORANO   ORIBE PERALTA   PÁVEL PARDO   RUBENS SAMBUEZA   GUIDO RODRÍGUEZ   HÉCTOR ZELADA   ADOLFO RÍOS   CARLOS HERMOSILLO";
-      white-space: pre-wrap;
-      line-height: 1.95;
-      letter-spacing: 1.5px;
-      font-weight: 700;
-      font-size: clamp(20px, 2vw, 30px);
-      color: rgba(255,255,255,0.42);
-      display: block;
-      width: 150%;
-      transform: rotate(-14deg) scale(1.16);
-      transform-origin: center center;
-      position: absolute;
-      top: -8%;
-      left: -12%;
-      text-align: justify;
-    }
-
-    .bg-tapestry::after {
-      content:
-        "AMÉRICA   CLUB AMÉRICA   MOISÉS MUÑOZ   CUAUHTÉMOC BLANCO   CARLOS REINOSO   CRISTÓBAL ORTEGA   ALFREDO TENA   GUILLERMO OCHOA   SALVADOR CABAÑAS   ENRIQUE BORJA   LUIS ROBERTO ALVES   HUGO SÁNCHEZ   HENRY MARTÍN   IVÁN ZAMORANO   ORIBE PERALTA   PÁVEL PARDO   RUBENS SAMBUEZA   GUIDO RODRÍGUEZ   ÓSCAR RUGGERI   CLAUDIO LÓPEZ   ANTONIO CARLOS SANTOS   AMÉRICA   CLUB AMÉRICA   MOISÉS MUÑOZ   CUAUHTÉMOC BLANCO   CARLOS REINOSO   CRISTÓBAL ORTEGA   ALFREDO TENA   GUILLERMO OCHOA   SALVADOR CABAÑAS   ENRIQUE BORJA   LUIS ROBERTO ALVES   HUGO SÁNCHEZ   HENRY MARTÍN   IVÁN ZAMORANO   ORIBE PERALTA";
-      white-space: pre-wrap;
-      line-height: 2.15;
-      letter-spacing: 1.3px;
-      font-weight: 400;
-      font-size: clamp(15px, 1.4vw, 22px);
-      color: rgba(255,255,255,0.28);
-      display: block;
-      width: 150%;
-      transform: rotate(-14deg) scale(1.16);
-      transform-origin: center center;
-      position: absolute;
-      top: 18%;
-      left: -8%;
-      text-align: justify;
-    }
-
-    .shell {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 28px 24px 110px;
-    }
-
-    .title {
-      margin: 0 0 26px;
-      text-align: center;
-      font-size: clamp(2.1rem, 4vw, 3.4rem);
-      line-height: 1.05;
-      font-weight: 800;
-      text-shadow: 0 4px 20px rgba(0,0,0,0.35);
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(280px, 430px) 1fr;
-      gap: 34px;
-      align-items: center;
-    }
-
-    .media-wrap {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    /* Sin tarjeta negra */
-    .hero {
-      display: none;
-      width: 100%;
-      max-width: 400px;
-      max-height: 620px;
-      object-fit: contain;
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      background: transparent;
-    }
-
-    .hero.visible {
-      display: block;
-    }
-
-    .content {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      min-height: 100%;
-      padding: 8px 0;
-    }
-
-    .status {
-      margin: 0 0 16px;
-      font-size: clamp(2rem, 3vw, 3rem);
-      font-weight: 800;
-      line-height: 1;
-      text-shadow: 0 4px 16px rgba(0,0,0,0.28);
-    }
-
-    .yes { color: var(--green); }
-    .no { color: var(--red); }
-
-    .details {
-      font-size: clamp(1.05rem, 1.45vw, 1.35rem);
-      line-height: 1.45;
-      color: var(--muted);
-      margin-bottom: 10px;
-      text-shadow: 0 2px 14px rgba(0,0,0,0.28);
-    }
-
-    .details b {
-      color: #fff;
-      font-size: 1.08em;
-    }
-
-    .meta-line {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: rgba(0,0,0,0.18);
-      border: 1px solid rgba(255,255,255,0.12);
-      font-size: 0.95rem;
-      color: rgba(255,255,255,0.95);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-    }
-
-    .reference-time {
-      margin-top: 12px;
-      font-size: 0.94rem;
-      color: rgba(255,255,255,0.8);
-    }
-
-    .titles-box {
-      margin-top: 20px;
-      padding: 16px 18px;
-      border-radius: 18px;
-      background: rgba(0,0,0,0.16);
-      border: 1px solid rgba(255,255,255,0.12);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      color: #fff7cc;
-      max-width: 640px;
-    }
-
-    .titles-heading {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 14px;
-      color: #fff;
-    }
-
-    .title-row {
-      margin-bottom: 16px;
-    }
-
-    .title-row:last-child {
-      margin-bottom: 0;
-    }
-
-    .title-label {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
-      font-size: 0.98rem;
-      color: rgba(255,255,255,0.96);
-    }
-
-    .title-label strong {
-      color: #fff;
-    }
-
-    .bar-track {
-      position: relative;
-      height: 18px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.10);
-      overflow: visible;
-    }
-
-    .bar-fill {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, rgba(250,204,21,0.75), rgba(250,204,21,0.95));
-      box-shadow: 0 0 16px rgba(250,204,21,0.24);
-      min-width: 0;
-    }
-
-    .bar-icon {
-      position: absolute;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 28px;
-      line-height: 1;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
-      user-select: none;
-    }
-
-    .footer-copy {
-      margin-top: 30px;
-      text-align: center;
-      font-size: 1rem;
-      color: rgba(255,255,255,0.82);
-      text-shadow: 0 2px 10px rgba(0,0,0,0.25);
-    }
-
-    .footer-copy {
-  margin-top: 30px;
-  text-align: center;
+function getMexicoDate(date) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(date);
 }
 
-.chanfle-img {
-  display: block;
-  margin: 0 auto;
-  max-width: 220px;   /* puedes subir o bajar tamaño */
-  width: 100%;
-  height: auto;
+function formatMexicoDateTime(date) {
+  return new Intl.DateTimeFormat("es-MX", {
+    timeZone: TZ,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(date);
 }
 
-    .footer-copy {
-  margin-top: 40px;
-  padding-bottom: 20px;
+function parseDate(event) {
+  let raw = event.strTimestamp || `${event.dateEvent}T${event.strTime}`;
+  if (!raw) return null;
+  if (!raw.endsWith("Z")) raw += "Z";
+  const d = new Date(raw);
+  return isNaN(d) ? null : d;
 }
-    @media (max-width: 860px) {
-      .shell {
-        padding: 18px 16px 90px;
-      }
 
-      .layout {
-        grid-template-columns: 1fr;
-        gap: 22px;
-      }
+function normalize(name) {
+  return (name || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\./g, "")
+    .trim();
+}
 
-      .content {
-        text-align: center;
-        align-items: center;
-      }
+function isVsCruzAzul(event) {
+  const h = normalize(event.strHomeTeam);
+  const a = normalize(event.strAwayTeam);
+  return h.includes("cruz azul") || a.includes("cruz azul");
+}
 
-      .hero {
-        max-width: 300px;
-        max-height: 460px;
-      }
+function getOpponent(event) {
+  const h = normalize(event.strHomeTeam);
+  const a = normalize(event.strAwayTeam);
+  if (h.includes("america")) return event.strAwayTeam;
+  return event.strHomeTeam;
+}
 
-      .title-label {
-        text-align: left;
-        width: 100%;
-      }
+function findTeam(name) {
+  const n = normalize(name);
+  if (LIGA_MX_TITLES[n]) return LIGA_MX_TITLES[n];
+  for (let k in LIGA_MX_TITLES) {
+    if (n.includes(k) || k.includes(n)) return LIGA_MX_TITLES[k];
+  }
+  return null;
+}
 
-      .titles-box {
-        width: 100%;
-      }
+function hideAllImages() {
+  document.querySelectorAll(".hero").forEach(i => i.classList.remove("visible"));
+}
 
-      .bg-tapestry::before,
-      .bg-tapestry::after {
-        width: 210%;
-        left: -52%;
-      }
-    }
-  </style>
-</head>
+function showImage(type) {
+  hideAllImages();
+  if (type === "yes") imgSi.classList.add("visible");
+  if (type === "no") imgNo.classList.add("visible");
+  if (type === "caz-prox") imgCruzAzulProx.classList.add("visible");
+  if (type === "caz-hoy") imgCruzAzulHoy.classList.add("visible");
+}
 
-<body>
-  <div class="bg-tapestry"></div>
+function buildBar(titles, icon) {
+  const pct = (titles / MAX_TITLES_FOR_BAR) * 100;
+  return `
+    <div class="bar-track">
+      <div class="bar-fill" style="width:${pct}%"></div>
+      <div class="bar-icon" style="left:${pct}%">${icon}</div>
+    </div>
+  `;
+}
 
-  <main class="shell">
-    <h1 class="title">¿Hoy juega el América?</h1>
+function renderTitles(event) {
+  const box = document.getElementById("titlesInfo");
+  box.innerHTML = "";
 
-    <div class="layout">
-      <div class="media-wrap">
-        <img id="imgSi" class="hero" src="hoy_juega_america.png" alt="Hoy juega el América">
-        <img id="imgNo" class="hero" src="no_juega_america.png" alt="No juega el América">
-        <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg" alt="Próximo partido contra Cruz Azul">
-        <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg" alt="Hoy juega contra Cruz Azul">
+  const opp = findTeam(getOpponent(event));
+  if (!opp) return;
+
+  box.innerHTML = `
+    <div class="titles-box">
+      <div class="titles-heading">Títulos de liga</div>
+
+      <div class="title-row">
+        <div class="title-label"><span>América</span><strong>${AMERICA_TITLES}</strong></div>
+        ${buildBar(AMERICA_TITLES, "🦅")}
       </div>
 
-      <div class="content">
-        <div id="status" class="status">Consultando...</div>
-        <div id="details" class="details"></div>
-        <div id="titlesInfo"></div>
-
-        <div class="footer-copy">
-  <img src="chanfle.png" alt="El Chanfle" class="chanfle-img">
-        </div>
+      <div class="title-row">
+        <div class="title-label"><span>${opp.name}</span><strong>${opp.titles}</strong></div>
+        ${buildBar(opp.titles, opp.icon)}
       </div>
     </div>
-  </main>
+  `;
+}
 
-  <script>
-    const TEAM_ID = "134193";
-    const API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
-    const TZ = "America/Mexico_City";
-    const AMERICA_TITLES = 16;
-    const MAX_TITLES_FOR_BAR = 16;
+function renderFunFact(event) {
+  const box = document.getElementById("funFact");
+  box.innerHTML = "";
 
-    const LIGA_MX_TITLES = {
-      "america": { name: "América", titles: 16, icon: "🦅" },
-      "atlas": { name: "Atlas", titles: 3, icon: "🦊" },
-      "atletico san luis": { name: "Atlético San Luis", titles: 0, icon: "⚪" },
-      "san luis": { name: "Atlético San Luis", titles: 0, icon: "⚪" },
-      "juarez": { name: "Juárez", titles: 0, icon: "🐎" },
-      "fc juarez": { name: "Juárez", titles: 0, icon: "🐎" },
-      "bravos": { name: "Juárez", titles: 0, icon: "🐎" },
-      "guadalajara": { name: "Guadalajara", titles: 12, icon: "🐐" },
-      "cd guadalajara": { name: "Guadalajara", titles: 12, icon: "🐐" },
-      "chivas": { name: "Guadalajara", titles: 12, icon: "🐐" },
-      "club guadalajara": { name: "Guadalajara", titles: 12, icon: "🐐" },
-      "cruz azul": { name: "Cruz Azul", titles: 9, icon: "🔵" },
-      "queretaro": { name: "Querétaro", titles: 0, icon: "🐓" },
-      "queretaro fc": { name: "Querétaro", titles: 0, icon: "🐓" },
-      "gallos blancos": { name: "Querétaro", titles: 0, icon: "🐓" },
-      "leon": { name: "León", titles: 5, icon: "🦁" },
-      "club leon": { name: "León", titles: 5, icon: "🦁" },
-      "mazatlan": { name: "Mazatlán", titles: 0, icon: "⚓" },
-      "mazatlan fc": { name: "Mazatlán", titles: 0, icon: "⚓" },
-      "necaxa": { name: "Necaxa", titles: 3, icon: "⚡" },
-      "club necaxa": { name: "Necaxa", titles: 3, icon: "⚡" },
-      "pachuca": { name: "Pachuca", titles: 7, icon: "🏛️" },
-      "puebla": { name: "Puebla", titles: 2, icon: "🎽" },
-      "unam": { name: "Pumas UNAM", titles: 7, icon: "🐾" },
-      "pumas": { name: "Pumas UNAM", titles: 7, icon: "🐾" },
-      "pumas unam": { name: "Pumas UNAM", titles: 7, icon: "🐾" },
-      "club universidad nacional": { name: "Pumas UNAM", titles: 7, icon: "🐾" },
-      "monterrey": { name: "Monterrey", titles: 5, icon: "⛰️" },
-      "rayados": { name: "Monterrey", titles: 5, icon: "⛰️" },
-      "santos laguna": { name: "Santos Laguna", titles: 6, icon: "👑" },
-      "tigres": { name: "Tigres UANL", titles: 8, icon: "🐯" },
-      "tigres uanl": { name: "Tigres UANL", titles: 8, icon: "🐯" },
-      "toluca": { name: "Toluca", titles: 12, icon: "😈" },
-      "tijuana": { name: "Tijuana", titles: 1, icon: "🐕" },
-      "xolos": { name: "Tijuana", titles: 1, icon: "🐕" },
-      "club tijuana": { name: "Tijuana", titles: 1, icon: "🐕" }
-    };
+  if (!isVsCruzAzul(event)) return;
 
-    function getMexicoDate(date) {
-      return new Intl.DateTimeFormat("en-CA", {
-        timeZone: TZ,
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-      }).format(date);
-    }
+  box.innerHTML = `
+    <div class="confidential-box">
+      <div class="confidential-title">Archivo confidencial del americanismo</div>
+      <div class="confidential-text">
+        Por ahí de 1988 fuimos a un América-Cruz Azul de liga, hora y media antes del partido,
+        en zona baja detrás de una portería. Pablo Larios calentaba. Íbamos mi primo Marco,
+        su papá Jorge y yo. Jorge anunció: “Van a ver que me conoce”, y empezó a gritar:
+        “¡Pablo, Pablo!”. Al fin, Larios volteó apenas, saludó con desgano y de reojo.
+        Jorge aceleró para buscar lugar y dictó sentencia: “Ya no le vuelvo a prestar dinero”.
+      </div>
+    </div>
+  `;
+}
 
-    function formatMexicoDateTime(date) {
-      return new Intl.DateTimeFormat("es-MX", {
-        timeZone: TZ,
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        hour: "2-digit",
-        minute: "2-digit"
-      }).format(date);
-    }
+function setReference(dateText) {
+  document.getElementById("details").innerHTML +=
+    `<div class="reference-time">Hora de referencia: ${dateText}</div>`;
+}
 
-    function parseDate(event) {
-      let raw = event.strTimestamp || `${event.dateEvent}T${event.strTime}`;
-      if (!raw) return null;
-      if (!raw.endsWith("Z")) raw += "Z";
-      const d = new Date(raw);
-      return isNaN(d) ? null : d;
-    }
+async function loadMatch() {
+  const status = document.getElementById("status");
+  const details = document.getElementById("details");
 
-    function normalizeTeamName(name) {
-      return (name || "")
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
-        .replace(/\./g, "")
-        .replace(/\s+/g, " ")
-        .trim();
-    }
+  status.textContent = "Consultando...";
+  details.innerHTML = "";
+  document.getElementById("titlesInfo").innerHTML = "";
+  document.getElementById("funFact").innerHTML = "";
+  hideAllImages();
 
-    function isVsCruzAzul(event) {
-      const home = normalizeTeamName(event.strHomeTeam);
-      const away = normalizeTeamName(event.strAwayTeam);
-      return home.includes("cruz azul") || away.includes("cruz azul");
-    }
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    const event = data.events[0];
+    const date = parseDate(event);
 
-    function hideAllImages() {
-      document.getElementById("imgSi").classList.remove("visible");
-      document.getElementById("imgNo").classList.remove("visible");
-      document.getElementById("imgCruzAzulProx").classList.remove("visible");
-      document.getElementById("imgCruzAzulHoy").classList.remove("visible");
-    }
+    const today = getMexicoDate(new Date());
+    const eventDate = getMexicoDate(date);
+    const cruz = isVsCruzAzul(event);
 
-    function showImage(mode) {
-      hideAllImages();
+    const match = `${event.strHomeTeam} vs ${event.strAwayTeam}`;
+    const dateText = formatMexicoDateTime(date);
 
-      if (mode === "general-yes") {
-        document.getElementById("imgSi").classList.add("visible");
-      } else if (mode === "general-no") {
-        document.getElementById("imgNo").classList.add("visible");
-      } else if (mode === "caz-prox") {
-        document.getElementById("imgCruzAzulProx").classList.add("visible");
-      } else if (mode === "caz-hoy") {
-        document.getElementById("imgCruzAzulHoy").classList.add("visible");
-      }
-    }
+    if (eventDate > today) {
+      status.textContent = "No juega hoy";
+      status.className = "status no";
+      showImage(cruz ? "caz-prox" : "no");
 
-    function getOpponentName(event) {
-      const home = normalizeTeamName(event.strHomeTeam);
-      const away = normalizeTeamName(event.strAwayTeam);
-
-      if (home.includes("america")) return event.strAwayTeam;
-      if (away.includes("america")) return event.strHomeTeam;
-
-      return event.strAwayTeam;
-    }
-
-    function findLigaMxTeam(rawName) {
-      const normalized = normalizeTeamName(rawName);
-
-      if (LIGA_MX_TITLES[normalized]) {
-        return LIGA_MX_TITLES[normalized];
-      }
-
-      for (const key of Object.keys(LIGA_MX_TITLES)) {
-        if (normalized.includes(key) || key.includes(normalized)) {
-          return LIGA_MX_TITLES[key];
-        }
-      }
-
-      return null;
-    }
-
-    function buildSingleIconBar(titles, icon, fillColor = null) {
-      const widthPercent = Math.max(0, Math.min(100, (titles / MAX_TITLES_FOR_BAR) * 100));
-      const styleAttr = fillColor ? `style="background:${fillColor}"` : "";
-
-      return `
-        <div class="bar-track">
-          <div class="bar-fill" ${styleAttr} style="${fillColor ? `background:${fillColor};` : ""} width:${widthPercent}%"></div>
-          <div class="bar-icon" style="left:${widthPercent}%">${icon}</div>
-        </div>
+      details.innerHTML = `
+        <b>Próximo partido</b><br>
+        <span class="meta-line">${match}</span>
       `;
+      setReference(dateText);
     }
 
-    function renderTitlesInfo(event) {
-      const titlesInfo = document.getElementById("titlesInfo");
-      titlesInfo.innerHTML = "";
+    else if (eventDate === today) {
+      status.textContent = "Hoy juega";
+      status.className = "status yes";
+      showImage(cruz ? "caz-hoy" : "yes");
 
-      const opponentRaw = getOpponentName(event);
-      const opponent = findLigaMxTeam(opponentRaw);
-
-      if (!opponent) return;
-
-      titlesInfo.innerHTML = `
-        <div class="titles-box">
-          <div class="titles-heading">Títulos de liga</div>
-
-          <div class="title-row">
-            <div class="title-label">
-              <span>América</span>
-              <strong>${AMERICA_TITLES}</strong>
-            </div>
-            ${buildSingleIconBar(AMERICA_TITLES, "🦅")}
-          </div>
-
-          <div class="title-row">
-            <div class="title-label">
-              <span>${opponent.name}</span>
-              <strong>${opponent.titles}</strong>
-            </div>
-            ${buildSingleIconBar(opponent.titles, opponent.icon, "linear-gradient(90deg, rgba(255,255,255,0.28), rgba(255,255,255,0.52))")}
-          </div>
-        </div>
-      `;
+      details.innerHTML = `<b>${match}</b>`;
+      setReference(dateText);
     }
 
-    function setReferenceTime(dateText) {
-      const details = document.getElementById("details");
-      const refHtml = `<div class="reference-time">Hora de referencia: ${dateText} (Ciudad de México)</div>`;
-      details.innerHTML += refHtml;
+    else {
+      status.textContent = "No juega hoy";
+      status.className = "status no";
+      showImage("no");
     }
 
-    async function loadMatch() {
-      const status = document.getElementById("status");
-      const details = document.getElementById("details");
-      const titlesInfo = document.getElementById("titlesInfo");
+    renderTitles(event);
+    renderFunFact(event);
 
-      status.textContent = "Consultando...";
-      status.className = "status";
-      details.innerHTML = "";
-      titlesInfo.innerHTML = "";
-      hideAllImages();
+  } catch (e) {
+    status.textContent = "Error";
+    showImage("no");
+  }
+}
 
-      try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-
-        if (!data.events || data.events.length === 0) {
-          status.textContent = "Sin datos";
-          status.className = "status no";
-          showImage("general-no");
-          details.innerHTML = `No se encontró información del próximo partido.`;
-          return;
-        }
-
-        const event = data.events[0];
-        const date = parseDate(event);
-
-        if (!date) {
-          status.textContent = "Error en fecha";
-          status.className = "status no";
-          showImage("general-no");
-          details.innerHTML = `No fue posible interpretar la fecha del partido.`;
-          return;
-        }
-
-        const today = getMexicoDate(new Date());
-        const eventDate = getMexicoDate(date);
-        const finished = (event.strStatus || "").includes("Finished");
-        const cruzAzulMatch = isVsCruzAzul(event);
-
-        const matchText = `${event.strHomeTeam} vs ${event.strAwayTeam}`;
-        const dateText = formatMexicoDateTime(date);
-
-        if (eventDate > today) {
-          status.textContent = "No juega hoy";
-          status.className = "status no";
-
-          if (cruzAzulMatch) {
-            showImage("caz-prox");
-          } else {
-            showImage("general-no");
-          }
-
-          details.innerHTML = `
-            <div><b>Próximo partido</b></div>
-            <div class="meta-line">${matchText}</div>
-          `;
-          setReferenceTime(dateText);
-          renderTitlesInfo(event);
-
-        } else if (eventDate === today) {
-          if (finished) {
-            status.textContent = "Ya jugó hoy";
-            status.className = "status no";
-            showImage("general-no");
-
-            details.innerHTML = `
-              <div><b>${matchText}</b></div>
-            `;
-            setReferenceTime(dateText);
-          } else {
-            status.textContent = "Hoy juega";
-            status.className = "status yes";
-
-            if (cruzAzulMatch) {
-              showImage("caz-hoy");
-            } else {
-              showImage("general-yes");
-            }
-
-            details.innerHTML = `
-              <div><b>${matchText}</b></div>
-              <div class="meta-line" style="margin-top:12px;">Partido programado para hoy</div>
-            `;
-            setReferenceTime(dateText);
-          }
-
-          renderTitlesInfo(event);
-
-        } else {
-          status.textContent = "No juega hoy";
-          status.className = "status no";
-          showImage("general-no");
-
-          details.innerHTML = `
-            <div><b>Último partido registrado</b></div>
-            <div class="meta-line">${matchText}</div>
-          `;
-          setReferenceTime(dateText);
-          renderTitlesInfo(event);
-        }
-
-      } catch (err) {
-        status.textContent = "Error al cargar";
-        status.className = "status no";
-        showImage("general-no");
-        details.innerHTML = `No fue posible cargar la información del partido.`;
-        console.error(err);
-      }
-    }
-
-    loadMatch();
-  </script>
-</body>
-</html>
+loadMatch();
+</script>
