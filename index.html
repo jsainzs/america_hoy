@@ -90,8 +90,10 @@
 
     <div id="status" class="status">Consultando...</div>
 
-    <img id="imgSi" class="hero" src="hoy_juega_america.png">
-    <img id="imgNo" class="hero" src="no_juega_america.png">
+    <img id="imgSi" class="hero" src="hoy_juega_america.png" alt="Hoy juega el América">
+    <img id="imgNo" class="hero" src="no_juega_america.png" alt="No juega el América">
+    <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg" alt="Próximo partido contra Cruz Azul">
+    <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg" alt="Hoy juega contra Cruz Azul">
 
     <div id="details" class="details"></div>
 
@@ -134,14 +136,39 @@
       return isNaN(d) ? null : d;
     }
 
-    function showImage(isPlaying) {
+    function normalizeTeamName(name) {
+      return (name || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+    }
+
+    function isVsCruzAzul(event) {
+      const home = normalizeTeamName(event.strHomeTeam);
+      const away = normalizeTeamName(event.strAwayTeam);
+
+      return home.includes("cruz azul") || away.includes("cruz azul");
+    }
+
+    function hideAllImages() {
       document.getElementById("imgSi").classList.remove("visible");
       document.getElementById("imgNo").classList.remove("visible");
+      document.getElementById("imgCruzAzulProx").classList.remove("visible");
+      document.getElementById("imgCruzAzulHoy").classList.remove("visible");
+    }
 
-      if (isPlaying) {
+    function showImage(mode) {
+      hideAllImages();
+
+      if (mode === "general-yes") {
         document.getElementById("imgSi").classList.add("visible");
-      } else {
+      } else if (mode === "general-no") {
         document.getElementById("imgNo").classList.add("visible");
+      } else if (mode === "caz-prox") {
+        document.getElementById("imgCruzAzulProx").classList.add("visible");
+      } else if (mode === "caz-hoy") {
+        document.getElementById("imgCruzAzulHoy").classList.add("visible");
       }
     }
 
@@ -150,7 +177,9 @@
       const details = document.getElementById("details");
 
       status.textContent = "Consultando...";
+      status.className = "status";
       details.innerHTML = "";
+      hideAllImages();
 
       try {
         const res = await fetch(API_URL);
@@ -158,6 +187,8 @@
 
         if (!data.events || data.events.length === 0) {
           status.textContent = "Sin datos";
+          status.className = "status no";
+          showImage("general-no");
           return;
         }
 
@@ -166,12 +197,15 @@
 
         if (!date) {
           status.textContent = "Error en fecha";
+          status.className = "status no";
+          showImage("general-no");
           return;
         }
 
         const today = getMexicoDate(new Date());
         const eventDate = getMexicoDate(date);
         const finished = (event.strStatus || "").includes("Finished");
+        const cruzAzulMatch = isVsCruzAzul(event);
 
         const matchText = `${event.strHomeTeam} vs ${event.strAwayTeam}`;
         const dateText = formatMexicoDateTime(date);
@@ -179,7 +213,12 @@
         if (eventDate > today) {
           status.textContent = "No juega hoy";
           status.className = "status no";
-          showImage(false);
+
+          if (cruzAzulMatch) {
+            showImage("caz-prox");
+          } else {
+            showImage("general-no");
+          }
 
           details.innerHTML = `
             Próximo partido:<br><b>${matchText}</b><br>${dateText}
@@ -190,7 +229,7 @@
           if (finished) {
             status.textContent = "Ya jugó hoy";
             status.className = "status no";
-            showImage(false);
+            showImage("general-no");
 
             details.innerHTML = `
               ${matchText}<br>${dateText}
@@ -198,7 +237,12 @@
           } else {
             status.textContent = "Hoy juega";
             status.className = "status yes";
-            showImage(true);
+
+            if (cruzAzulMatch) {
+              showImage("caz-hoy");
+            } else {
+              showImage("general-yes");
+            }
 
             details.innerHTML = `
               ${matchText}<br>${dateText}
@@ -209,7 +253,7 @@
         else {
           status.textContent = "No juega hoy";
           status.className = "status no";
-          showImage(false);
+          showImage("general-no");
 
           details.innerHTML = `
             Último partido:<br><b>${matchText}</b><br>${dateText}
@@ -218,6 +262,8 @@
 
       } catch (err) {
         status.textContent = "Error al cargar";
+        status.className = "status no";
+        showImage("general-no");
         console.error(err);
       }
     }
