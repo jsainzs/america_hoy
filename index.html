@@ -320,6 +320,9 @@ const API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=$
 const MARKET_VALUES_URL = "./market_values.json";
 const TZ = "America/Mexico_City";
 
+const FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH = true;
+const LAST_SPECIAL_MATCH_LABEL = "América vs Nashville SC";
+  
 const MARKET_VALUE_TEAM_ALIASES = {
   "america": "club-america",
   "cf america": "club-america",
@@ -648,12 +651,23 @@ async function loadMatch() {
     const data = await matchRes.json();
 
     if (!data.events || data.events.length === 0) {
-      status.textContent = "Sin datos";
-      status.className = "status no";
+  status.textContent = FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH ? "Todavía duele" : "Sin datos";
+  status.className = "status no";
+
+  if (FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH) {
+    showImage("nashville-coco");
+    details.innerHTML = `
+      <div><b>Último partido registrado</b></div>
+      <div class="meta-line">${LAST_SPECIAL_MATCH_LABEL}</div>
+      <div class="reference-time">En lo que aparece el próximo partido, sigue vigente la herida de Nashville.</div>
+    `;
+    } else {
       showImage("general-no");
       details.innerHTML = `No se encontró información del próximo partido.`;
-      return;
     }
+  
+    return;
+  }
 
     const event = data.events[0];
     const date = parseDate(event);
