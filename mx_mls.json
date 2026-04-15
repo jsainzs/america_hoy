@@ -1,0 +1,192 @@
+{
+  "updated_at": "2026-03-01",
+  "source": "Transfermarkt",
+  "currency": "EUR",
+  "teams": [
+    {
+      "team_id": "club-america",
+      "team_name": "América",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 98250000,
+      "rank_in_league": 1
+    },
+    {
+      "team_id": "toluca",
+      "team_name": "Toluca",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 82750000,
+      "rank_in_league": 2
+    },
+    {
+      "team_id": "cruz-azul",
+      "team_name": "Cruz Azul",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 72380000,
+      "rank_in_league": 3
+    },
+    {
+      "team_id": "tigres",
+      "team_name": "Tigres",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 68350000,
+      "rank_in_league": 4
+    },
+    {
+      "team_id": "monterrey",
+      "team_name": "Monterrey",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 60800000,
+      "rank_in_league": 5
+    },
+    {
+      "team_id": "guadalajara",
+      "team_name": "Chivas",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 67850000,
+      "rank_in_league": 6
+    },
+    {
+      "team_id": "pachuca",
+      "team_name": "Pachuca",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 54700000,
+      "rank_in_league": 7
+    },
+    {
+      "team_id": "pumas",
+      "team_name": "Pumas",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 47430000,
+      "rank_in_league": 8
+    },
+    {
+      "team_id": "tijuana",
+      "team_name": "Tijuana",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 42800000,
+      "rank_in_league": 9
+    },
+    {
+      "team_id": "leon",
+      "team_name": "León",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 41000000,
+      "rank_in_league": 10
+    },
+    {
+      "team_id": "necaxa",
+      "team_name": "Necaxa",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 35500000,
+      "rank_in_league": 11
+    },
+    {
+      "team_id": "juarez",
+      "team_name": "Juárez",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 33500000,
+      "rank_in_league": 12
+    },
+    {
+      "team_id": "san-luis",
+      "team_name": "Atlético San Luis",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 32500000,
+      "rank_in_league": 13
+    },
+    {
+      "team_id": "santos",
+      "team_name": "Santos Laguna",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 31500000,
+      "rank_in_league": 14
+    },
+    {
+      "team_id": "atlas",
+      "team_name": "Atlas",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 30500000,
+      "rank_in_league": 15
+    },
+    {
+      "team_id": "queretaro",
+      "team_name": "Querétaro",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 26000000,
+      "rank_in_league": 16
+    },
+    {
+      "team_id": "puebla",
+      "team_name": "Puebla",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 24500000,
+      "rank_in_league": 17
+    },
+    {
+      "team_id": "mazatlan",
+      "team_name": "Mazatlán",
+      "league_code": "liga_mx",
+      "country": "Mexico",
+      "squad_value_eur": 23000000,
+      "rank_in_league": 18
+    },
+
+    {
+      "team_id": "inter-miami",
+      "team_name": "Inter Miami",
+      "league_code": "mls",
+      "country": "USA",
+      "squad_value_eur": 65650000,
+      "rank_in_league": 1
+    },
+    {
+      "team_id": "lafc",
+      "team_name": "LAFC",
+      "league_code": "mls",
+      "country": "USA",
+      "squad_value_eur": 62000000,
+      "rank_in_league": 2
+    },
+    {
+      "team_id": "la-galaxy",
+      "team_name": "LA Galaxy",
+      "league_code": "mls",
+      "country": "USA",
+      "squad_value_eur": 55000000,
+      "rank_in_league": 3
+    },
+    {
+      "team_id": "atlanta-united",
+      "team_name": "Atlanta United",
+      "league_code": "mls",
+      "country": "USA",
+      "squad_value_eur": 51000000,
+      "rank_in_league": 4
+    },
+    {
+      "team_id": "seattle",
+      "team_name": "Seattle Sounders",
+      "league_code": "mls",
+      "country": "USA",
+      "squad_value_eur": 47000000,
+      "rank_in_league": 5
+    }
+  ]
+}
