@@ -183,7 +183,8 @@
       color: rgba(255,255,255,0.8);
     }
 
-    .titles-box {
+    .titles-box,
+    .market-box {
       margin-top: 20px;
       padding: 16px 18px;
       border-radius: 18px;
@@ -191,26 +192,33 @@
       border: 1px solid rgba(255,255,255,0.12);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
-      color: #fff7cc;
       max-width: 640px;
     }
 
-    .titles-heading {
+    .titles-box {
+      color: #fff7cc;
+    }
+
+    .titles-heading,
+    .market-heading {
       font-size: 1rem;
       font-weight: 700;
       margin-bottom: 14px;
       color: #fff;
     }
 
-    .title-row {
+    .title-row,
+    .market-row {
       margin-bottom: 16px;
     }
 
-    .title-row:last-child {
+    .title-row:last-child,
+    .market-row:last-child {
       margin-bottom: 0;
     }
 
-    .title-label {
+    .title-label,
+    .market-label {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -220,7 +228,8 @@
       color: rgba(255,255,255,0.96);
     }
 
-    .title-label strong {
+    .title-label strong,
+    .market-label strong {
       color: #fff;
     }
 
@@ -249,6 +258,42 @@
       line-height: 1;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
       user-select: none;
+    }
+
+    .market-track {
+      position: relative;
+      height: 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
+      overflow: hidden;
+    }
+
+    .market-fill-america {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(250,204,21,0.72), rgba(250,204,21,0.96));
+      box-shadow: 0 0 14px rgba(250,204,21,0.24);
+    }
+
+    .market-fill-rival {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.26), rgba(255,255,255,0.58));
+      box-shadow: 0 0 12px rgba(255,255,255,0.10);
+    }
+
+    .market-verdict {
+      margin-top: 14px;
+      font-size: 0.98rem;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .market-meta {
+      margin-top: 10px;
+      font-size: 0.86rem;
+      color: rgba(255,255,255,0.74);
     }
 
     .confidential-box {
@@ -311,12 +356,14 @@
         max-height: 460px;
       }
 
-      .title-label {
+      .title-label,
+      .market-label {
         text-align: left;
         width: 100%;
       }
 
       .titles-box,
+      .market-box,
       .confidential-box {
         width: 100%;
       }
@@ -348,6 +395,7 @@
         <div id="status" class="status">Consultando...</div>
         <div id="details" class="details"></div>
         <div id="titlesInfo"></div>
+        <div id="marketValueInfo"></div>
         <div id="funFact"></div>
 
         <div class="footer-copy">
@@ -360,6 +408,7 @@
   <script>
     const TEAM_ID = "134193";
     const API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
+    const MARKET_VALUES_URL = "./market_values.json";
     const TZ = "America/Mexico_City";
     const AMERICA_TITLES = 16;
     const MAX_TITLES_FOR_BAR = 16;
@@ -401,6 +450,52 @@
       "tijuana": { name: "Tijuana", titles: 1, icon: "🐕" },
       "xolos": { name: "Tijuana", titles: 1, icon: "🐕" },
       "club tijuana": { name: "Tijuana", titles: 1, icon: "🐕" }
+    };
+
+    const MARKET_VALUE_TEAM_ALIASES = {
+      "america": "club-america",
+      "club america": "club-america",
+      "cruz azul": "cruz-azul",
+      "toluca": "toluca",
+      "tigres": "tigres",
+      "tigres uanl": "tigres",
+      "monterrey": "monterrey",
+      "rayados": "monterrey",
+      "guadalajara": "guadalajara",
+      "club guadalajara": "guadalajara",
+      "chivas": "guadalajara",
+      "pachuca": "pachuca",
+      "pumas": "pumas",
+      "pumas unam": "pumas",
+      "unam": "pumas",
+      "tijuana": "tijuana",
+      "xolos": "tijuana",
+      "club tijuana": "tijuana",
+      "leon": "leon",
+      "club leon": "leon",
+      "necaxa": "necaxa",
+      "juarez": "juarez",
+      "fc juarez": "juarez",
+      "bravos": "juarez",
+      "atletico san luis": "san-luis",
+      "san luis": "san-luis",
+      "santos laguna": "santos",
+      "santos": "santos",
+      "atlas": "atlas",
+      "queretaro": "queretaro",
+      "queretaro fc": "queretaro",
+      "gallos blancos": "queretaro",
+      "puebla": "puebla",
+      "mazatlan": "mazatlan",
+      "mazatlan fc": "mazatlan",
+      "inter miami": "inter-miami",
+      "inter miami cf": "inter-miami",
+      "lafc": "lafc",
+      "los angeles fc": "lafc",
+      "la galaxy": "la-galaxy",
+      "atlanta united": "atlanta-united",
+      "seattle sounders": "seattle",
+      "seattle sounders fc": "seattle"
     };
 
     function getMexicoDate(date) {
@@ -494,6 +589,22 @@
       return null;
     }
 
+    function getMarketTeamId(rawName) {
+      const normalized = normalizeTeamName(rawName);
+
+      if (MARKET_VALUE_TEAM_ALIASES[normalized]) {
+        return MARKET_VALUE_TEAM_ALIASES[normalized];
+      }
+
+      for (const key of Object.keys(MARKET_VALUE_TEAM_ALIASES)) {
+        if (normalized.includes(key) || key.includes(normalized)) {
+          return MARKET_VALUE_TEAM_ALIASES[key];
+        }
+      }
+
+      return null;
+    }
+
     function buildSingleIconBar(titles, icon, fillStyle = "") {
       const widthPercent = Math.max(0, Math.min(100, (titles / MAX_TITLES_FOR_BAR) * 100));
       const fillAttr = fillStyle
@@ -506,6 +617,16 @@
           <div class="bar-icon" style="left:${widthPercent}%">${icon}</div>
         </div>
       `;
+    }
+
+    function formatEurCompact(value) {
+      return new Intl.NumberFormat("es-MX", {
+        style: "currency",
+        currency: "EUR",
+        notation: "compact",
+        compactDisplay: "short",
+        maximumFractionDigits: 1
+      }).format(value);
     }
 
     function renderTitlesInfo(event) {
@@ -535,6 +656,86 @@
               <strong>${opponent.titles}</strong>
             </div>
             ${buildSingleIconBar(opponent.titles, opponent.icon, "linear-gradient(90deg, rgba(255,255,255,0.28), rgba(255,255,255,0.52))")}
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadMarketValues() {
+      const res = await fetch(MARKET_VALUES_URL);
+      if (!res.ok) {
+        throw new Error("No se pudo cargar market_values.json");
+      }
+      return res.json();
+    }
+
+    function buildMarketVerdict(america, rival) {
+      if (!america || !rival) return "";
+
+      const ratio = america.squad_value_eur / rival.squad_value_eur;
+      const ratioText = ratio >= 1
+        ? `${ratio.toFixed(2)}x`
+        : `${(1 / ratio).toFixed(2)}x`;
+
+      if (america.squad_value_eur > rival.squad_value_eur) {
+        return `América vale <strong>${ratioText}</strong> lo que ${rival.team_name}.`;
+      }
+
+      if (america.squad_value_eur < rival.squad_value_eur) {
+        return `${rival.team_name} vale <strong>${ratioText}</strong> lo que América.`;
+      }
+
+      return `América y ${rival.team_name} llegan con el mismo valor de plantilla.`;
+    }
+
+    function renderMarketValueInfo(event, marketData) {
+      const box = document.getElementById("marketValueInfo");
+      box.innerHTML = "";
+
+      if (!marketData || !Array.isArray(marketData.teams)) return;
+
+      const americaId = "club-america";
+      const rivalRaw = getOpponentName(event);
+      const rivalId = getMarketTeamId(rivalRaw);
+
+      const america = marketData.teams.find(team => team.team_id === americaId);
+      const rival = marketData.teams.find(team => team.team_id === rivalId);
+
+      if (!america || !rival) return;
+
+      const maxValue = Math.max(america.squad_value_eur, rival.squad_value_eur);
+      const americaWidth = (america.squad_value_eur / maxValue) * 100;
+      const rivalWidth = (rival.squad_value_eur / maxValue) * 100;
+      const verdict = buildMarketVerdict(america, rival);
+
+      box.innerHTML = `
+        <div class="market-box">
+          <div class="market-heading">Billetómetro (Transfermarkt)</div>
+
+          <div class="market-row">
+            <div class="market-label">
+              <span>América</span>
+              <strong>${formatEurCompact(america.squad_value_eur)}</strong>
+            </div>
+            <div class="market-track">
+              <div class="market-fill-america" style="width:${americaWidth}%"></div>
+            </div>
+          </div>
+
+          <div class="market-row">
+            <div class="market-label">
+              <span>${rival.team_name}</span>
+              <strong>${formatEurCompact(rival.squad_value_eur)}</strong>
+            </div>
+            <div class="market-track">
+              <div class="market-fill-rival" style="width:${rivalWidth}%"></div>
+            </div>
+          </div>
+
+          <div class="market-verdict">${verdict}</div>
+          <div class="market-meta">
+            Ranking en su liga: América #${america.rank_in_league} · ${rival.team_name} #${rival.rank_in_league}<br>
+            Corte de datos: ${marketData.updated_at || "sin fecha"} · Fuente: ${marketData.source || "Transfermarkt"}
           </div>
         </div>
       `;
@@ -570,18 +771,24 @@
       const status = document.getElementById("status");
       const details = document.getElementById("details");
       const titlesInfo = document.getElementById("titlesInfo");
+      const marketValueInfo = document.getElementById("marketValueInfo");
       const funFact = document.getElementById("funFact");
 
       status.textContent = "Consultando...";
       status.className = "status";
       details.innerHTML = "";
       titlesInfo.innerHTML = "";
+      marketValueInfo.innerHTML = "";
       funFact.innerHTML = "";
       hideAllImages();
 
       try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
+        const [matchRes, marketData] = await Promise.all([
+          fetch(API_URL),
+          loadMarketValues().catch(() => null)
+        ]);
+
+        const data = await matchRes.json();
 
         if (!data.events || data.events.length === 0) {
           status.textContent = "Sin datos";
@@ -626,6 +833,7 @@
           `;
           setReferenceTime(dateText);
           renderTitlesInfo(event);
+          renderMarketValueInfo(event, marketData);
           renderFunFact(event);
 
         } else if (eventDate === today) {
@@ -656,6 +864,7 @@
           }
 
           renderTitlesInfo(event);
+          renderMarketValueInfo(event, marketData);
           renderFunFact(event);
 
         } else {
@@ -669,6 +878,7 @@
           `;
           setReferenceTime(dateText);
           renderTitlesInfo(event);
+          renderMarketValueInfo(event, marketData);
           renderFunFact(event);
         }
 
