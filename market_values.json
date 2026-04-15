@@ -157,6 +157,14 @@
       "rank_in_league": 1
     },
     {
+  "team_id": "nashville-sc",
+  "team_name": "Nashville SC",
+  "league_code": "mls",
+  "country": "USA",
+  "squad_value_eur": 40200000,
+  "rank_in_league": 20
+},
+    {
       "team_id": "lafc",
       "team_name": "LAFC",
       "league_code": "mls",
