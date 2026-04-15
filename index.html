@@ -545,6 +545,12 @@
       return home.includes("cruz azul") || away.includes("cruz azul");
     }
 
+    function isVsNashville(event) {
+      const home = normalizeTeamName(event.strHomeTeam);
+      const away = normalizeTeamName(event.strAwayTeam);
+      return home.includes("nashville") || away.includes("nashville");
+    }
+
     function hideAllImages() {
       document.getElementById("imgSi").classList.remove("visible");
       document.getElementById("imgNo").classList.remove("visible");
@@ -747,28 +753,46 @@
     function renderFunFact(event) {
       const box = document.getElementById("funFact");
       box.innerHTML = "";
-
-      if (!isVsCruzAzul(event)) return;
-
-      box.innerHTML = `
-        <div class="confidential-box">
-          <div class="confidential-title">Archivo confidencial del americanismo</div>
-          <div class="confidential-text">
-            Por ahí de 1988 fuimos a un América-Cruz Azul, un partido de liga. Llegamos como hora y media antes del partido,
-            en zona baja detrás de una portería del Azteca. Pablo Larios calentaba. Íbamos mi primo Marco,
-            su papá Jorge y yo. Jorge anunció: “Van a ver que me conoce”, y empezó a gritar muy insistente:
-            “¡Pablo, Pablo!”. Al fin, Larios volteó apenas, saludó con desgano y de reojo.
-            Jorge aceleró para buscar lugar y dictó: “Ya no le vuelvo a prestar dinero”.
+  
+      if (isVsCruzAzul(event)) {
+        box.innerHTML = `
+          <div class="confidential-box">
+            <div class="confidential-title">Expediente íntimo del americanismo</div>
+            <div class="confidential-text">
+              Por ahí de 1988 fuimos a un América-Cruz Azul, un partido de liga. Llegamos como hora y media antes del partido,
+              en zona baja detrás de una portería del Azteca. Pablo Larios calentaba. Íbamos mi primo Marco,
+              su papá Jorge y yo. Jorge anunció: “Van a ver que me conoce”, y empezó a gritar muy insistente:
+              “¡Pablo, Pablo!”. Al fin, Larios volteó apenas, saludó con desgano y de reojo.
+              Jorge aceleró para buscar lugar y dictó: “Ya no le vuelvo a prestar dinero”.
+            </div>
           </div>
-        </div>
-      `;
+        `;
+        return;
+      }
+    
+      if (isVsNashville(event)) {
+        box.innerHTML = `
+          <div class="confidential-box">
+            <div class="confidential-title">Expediente íntimo del americanismo</div>
+            <div class="confidential-text">
+              Corría el año 2023, estaba entrada la noche y el América disputaba con los griguillos del Nashville
+              los playoffs de la Concachampions. Fue un partido trabado que al final ganó el América en penales,
+              con una buena parada de Malagón. Me fui a dormir satisfecho y alegre. Al día siguiente me bañé
+              y me fui peinado al trabajo. Un amigo necaxista me sorprendió con un “¿qué tal la Concachampions?”.
+              Me sorprendió que quisiera hablar del tema, pero aproveché y presumí el poder del ave. Después de un rato,
+              mis colegas del trabajo me dijeron: “¿Apagaste la tele después del penal que detuvo Malagón?” y se empezaron a reír.
+              Después de que los jugadores se fueron a los vestidores, el arbitrario árbitro ordenó repetir el penal
+              y Nashville acabó ganando. A veces nos toca perder, sentir lo que sienten los aficionados de los demás equipos.
+            </div>
+          </div>
+        `;
+      }
     }
-
-    function setReferenceTime(dateText) {
-      const details = document.getElementById("details");
-      const refHtml = `<div class="reference-time">Hora de referencia: ${dateText} (Ciudad de México)</div>`;
-      details.innerHTML += refHtml;
-    }
+      function setReferenceTime(dateText) {
+        const details = document.getElementById("details");
+        const refHtml = `<div class="reference-time">Hora de referencia: ${dateText} (Ciudad de México)</div>`;
+        details.innerHTML += refHtml;
+      }
 
     async function loadMatch() {
       const status = document.getElementById("status");
