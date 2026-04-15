@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trivia americanista</title>
+
+  <style>
+    :root {
+      --text: #f8fafc;
+      --muted: rgba(255,255,255,0.88);
+      --accent: #facc15;
+      --accent-2: #fde68a;
+      --green: #22c55e;
+      --red: #ef4444;
+      --blue-1: #0a1f44;
+      --blue-2: #16386e;
+      --cream: #f3cf18;
+      --card: rgba(0,0,0,0.18);
+      --border: rgba(255,255,255,0.12);
+      --shadow: 0 14px 38px rgba(0,0,0,0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 22% 18%, rgba(255,255,255,0.08), transparent 24%),
+        radial-gradient(circle at 80% 28%, rgba(255,255,255,0.06), transparent 28%),
+        linear-gradient(135deg, var(--blue-1) 0%, var(--blue-2) 42%, var(--cream) 100%);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .bg-tapestry {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      opacity: 0.18;
+    }
+
+    .bg-tapestry::before {
+      content:
+        "CLUB AMÉRICA   AMÉRICA   CUAUHTÉMOC BLANCO   CARLOS REINOSO   MOISÉS MUÑOZ   HENRY MARTÍN   GUILLERMO OCHOA   SALVADOR CABAÑAS   ENRIQUE BORJA   HUGO SÁNCHEZ   CRISTÓBAL ORTEGA   ALFREDO TENA   CLUB AMÉRICA   AMÉRICA   CUAUHTÉMOC BLANCO   CARLOS REINOSO   MOISÉS MUÑOZ   HENRY MARTÍN   GUILLERMO OCHOA   SALVADOR CABAÑAS";
+      white-space: pre-wrap;
+      line-height: 2;
+      letter-spacing: 1.4px;
+      font-weight: 700;
+      font-size: clamp(18px, 2vw, 28px);
+      color: rgba(255,255,255,0.36);
+      display: block;
+      width: 160%;
+      transform: rotate(-14deg) scale(1.14);
+      position: absolute;
+      top: -8%;
+      left: -16%;
+      text-align: justify;
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.16);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .back-link:hover {
+      background: rgba(0,0,0,0.24);
+    }
+
+    .title-wrap {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .title {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.06;
+      font-weight: 800;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.35);
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: clamp(1rem, 1.6vw, 1.15rem);
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 24px;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .start-box {
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .start-box p {
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 0 0 18px;
+      font-size: 1.05rem;
+    }
+
+    .rules {
+      margin: 20px auto 26px;
+      max-width: 580px;
+      text-align: left;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .rules-title {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .rules div {
+      margin: 7px 0;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.12s ease, opacity 0.12s ease, background 0.12s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, rgba(250,204,21,0.92), rgba(253,230,138,0.98));
+      color: #172554;
+      box-shadow: 0 0 18px rgba(250,204,21,0.24);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+
+    .quiz-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .progress-pill {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.95);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .score-mini {
+      color: rgba(255,255,255,0.92);
+      font-weight: 700;
+      font-size: 0.96rem;
+    }
+
+    .question-category {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.95);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .question-text {
+      margin: 0 0 20px;
+      font-size: clamp(1.35rem, 2.4vw, 1.95rem);
+      line-height: 1.3;
+      font-weight: 800;
+      color: #fff;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.28);
+    }
+
+    .options {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      padding: 15px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+    }
+
+    .option-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.12);
+    }
+
+    .option-btn.selected {
+      border-color: rgba(250,204,21,0.95);
+      background: rgba(250,204,21,0.15);
+      box-shadow: 0 0 0 1px rgba(250,204,21,0.3) inset;
+    }
+
+    .option-btn.correct {
+      border-color: rgba(34,197,94,0.9);
+      background: rgba(34,197,94,0.18);
+    }
+
+    .option-btn.incorrect {
+      border-color: rgba(239,68,68,0.9);
+      background: rgba(239,68,68,0.18);
+    }
+
+    .option-btn.dimmed {
+      opacity: 0.72;
+    }
+
+    .feedback {
+      min-height: 76px;
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(0,0,0,0.16);
+      border: 1px solid rgba(255,255,255,0.10);
+      line-height: 1.55;
+      color: rgba(255,255,255,0.93);
+      display: none;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback strong {
+      color: #fff;
+    }
+
+    .quiz-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .result-box {
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .result-badge {
+      display: inline-block;
+      padding: 9px 16px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.95);
+      font-weight: 800;
+      font-size: 0.94rem;
+    }
+
+    .result-title {
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+      font-weight: 900;
+      line-height: 1.15;
+      color: #fff;
+    }
+
+    .result-score {
+      margin: 0 0 12px;
+      font-size: 1.12rem;
+      color: rgba(255,255,255,0.95);
+      font-weight: 700;
+    }
+
+    .result-message {
+      margin: 0 0 24px;
+      font-size: 1.02rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .result-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .answers-review {
+      margin-top: 26px;
+      text-align: left;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .answers-review h3 {
+      margin: 0 0 14px;
+      font-size: 1.05rem;
+    }
+
+    .review-item {
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.92);
+      line-height: 1.5;
+    }
+
+    .review-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .review-ok {
+      color: #86efac;
+      font-weight: 800;
+    }
+
+    .review-bad {
+      color: #fca5a5;
+      font-weight: 800;
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        padding: 18px 14px 40px;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      .quiz-actions {
+        flex-direction: column;
+      }
+
+      .quiz-actions .btn {
+        width: 100%;
+      }
+
+      .result-actions .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-tapestry"></div>
+
+  <main class="shell">
+    <div class="topbar">
+      <a class="back-link" href="index.html">← Volver al inicio</a>
+    </div>
+
+    <div class="title-wrap">
+      <h1 class="title">Trivia americanista</h1>
+      <p class="subtitle">Cinco preguntas. Cero margen para el ridículo. El Ave observa.</p>
+    </div>
+
+    <section id="startScreen" class="screen active">
+      <div class="card start-box">
+        <p>
+          Esta trivia elige <strong>5 preguntas al azar</strong> de un pool más amplio. Cada partida cambia.
+          Responde, confirma y descubre si eres discípulo de Carlos Reinoso o un chivahermano infiltrado.
+        </p>
+
+        <div class="rules">
+          <div class="rules-title">Escala de dignidad americanista</div>
+          <div><strong>5 aciertos:</strong> Nivel Maestro Carlos Reinoso</div>
+          <div><strong>4 aciertos:</strong> Americanista de élite</div>
+          <div><strong>3 aciertos:</strong> Americanista funcional</div>
+          <div><strong>2 aciertos:</strong> Americanista villamelón</div>
+          <div><strong>0 o 1 aciertos:</strong> Chivahermano al descubierto</div>
+        </div>
+
+        <button id="startBtn" class="btn btn-primary">Empezar trivia</button>
+      </div>
+    </section>
+
+    <section id="quizScreen" class="screen">
+      <div class="card">
+        <div class="quiz-head">
+          <div class="progress-pill" id="progressPill">Pregunta 1 de 5</div>
+          <div class="score-mini" id="scoreMini">Aciertos: 0</div>
+        </div>
+
+        <div id="questionCategory" class="question-category">Historia</div>
+        <h2 id="questionText" class="question-text">Pregunta</h2>
+
+        <div id="optionsContainer" class="options"></div>
+
+        <div id="feedbackBox" class="feedback"></div>
+
+        <div class="quiz-actions">
+          <button id="confirmBtn" class="btn btn-primary" disabled>Confirmar respuesta</button>
+          <button id="nextBtn" class="btn btn-secondary" disabled>Siguiente</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="screen">
+      <div class="card result-box">
+        <div class="result-badge">Expediente final del americanismo</div>
+        <h2 id="resultTitle" class="result-title">Resultado</h2>
+        <p id="resultScore" class="result-score">Obtuviste 0 de 5.</p>
+        <p id="resultMessage" class="result-message"></p>
+
+        <div class="result-actions">
+          <button id="restartBtn" class="btn btn-primary">Jugar otra vez</button>
+          <a href="index.html" class="btn btn-secondary" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Volver al inicio</a>
+        </div>
+
+        <div class="answers-review">
+          <h3>Revisión del papelón o de la gloria</h3>
+          <div id="answersReview"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const QUESTION_POOL = [
+      {
+        id: 1,
+        category: "Títulos",
+        question: "¿Cuántos títulos de liga tiene el América?",
+        options: ["14", "15", "16", "17"],
+        correctIndex: 2,
+        explanation: "América suma 16 títulos de liga en Primera División / Liga MX."
+      },
+      {
+        id: 2,
+        category: "Finales",
+        question: "¿Qué portero marcó el gol agónico en la final contra Cruz Azul de 2013?",
+        options: ["Guillermo Ochoa", "Adolfo Ríos", "Moisés Muñoz", "Óscar Jiménez"],
+        correctIndex: 2,
+        explanation: "Moisés Muñoz empató de cabeza y abrió el camino a la remontada más célebre del americanismo reciente."
+      },
+      {
+        id: 3,
+        category: "Ídolos",
+        question: "¿Qué figura chilena es una de las mayores leyendas del América y da nombre al rango máximo de esta trivia?",
+        options: ["Iván Zamorano", "Carlos Reinoso", "Jean Beausejour", "Osvaldo Castro"],
+        correctIndex: 1,
+        explanation: "Carlos Reinoso es una de las máximas figuras históricas del club."
+      },
+      {
+        id: 4,
+        category: "Rivalidades",
+        question: "¿Contra qué equipo se disputó la final del Clausura 2013?",
+        options: ["Toluca", "Santos", "Pumas", "Cruz Azul"],
+        correctIndex: 3,
+        explanation: "La final del Clausura 2013 fue América vs Cruz Azul."
+      },
+      {
+        id: 5,
+        category: "Apodos",
+        question: "¿Cuál es el apodo más clásico del Club América?",
+        options: ["La Máquina", "Las Águilas", "Los Tuzos", "La Furia Azul"],
+        correctIndex: 1,
+        explanation: "El apodo más reconocido del club es Las Águilas."
+      },
+      {
+        id: 6,
+        category: "Estadio",
+        question: "¿En qué estadio ha jugado tradicionalmente el América como local?",
+        options: ["Estadio Jalisco", "Estadio Azul", "Estadio Azteca", "Estadio Nemesio Diez"],
+        correctIndex: 2,
+        explanation: "El Estadio Azteca ha sido su casa histórica."
+      },
+      {
+        id: 7,
+        category: "Jugadores",
+        question: "¿Qué delantero chileno fue conocido como 'Bam-Bam' en el América?",
+        options: ["Carlos Hermosillo", "Nicolás Castillo", "Iván Zamorano", "Héctor Mancilla"],
+        correctIndex: 2,
+        explanation: "Iván Zamorano, el 'Bam-Bam', es uno de los grandes nombres extranjeros del club."
+      },
+      {
+        id: 8,
+        category: "Historia",
+        question: "¿Cuál de estos jugadores está más asociado con la camiseta 10 y el americanismo de época?",
+        options: ["Cuauhtémoc Blanco", "Joaquín del Olmo", "Ramón Ramírez", "Luis García"],
+        correctIndex: 0,
+        explanation: "Cuauhtémoc Blanco es uno de los rostros más emblemáticos del club."
+      },
+      {
+        id: 9,
+        category: "Rivalidades",
+        question: "¿Cómo se conoce popularmente la rivalidad entre América y Guadalajara?",
+        options: ["Clásico Capitalino", "Clásico del Norte", "Clásico Joven", "Clásico Nacional"],
+        correctIndex: 3,
+        explanation: "América vs Guadalajara es el Clásico Nacional."
+      },
+      {
+        id: 10,
+        category: "Rivalidades",
+        question: "¿Cómo se conoce popularmente la rivalidad entre América y Cruz Azul?",
+        options: ["Clásico Nacional", "Clásico Joven", "Clásico del Bajío", "Clásico del Siglo"],
+        correctIndex: 1,
+        explanation: "América vs Cruz Azul se conoce como Clásico Joven."
+      },
+      {
+        id: 11,
+        category: "Capitanes",
+        question: "¿Qué defensor histórico es una referencia del americanismo de los años setenta y ochenta?",
+        options: ["Rafael Márquez", "Alfredo Tena", "Claudio Suárez", "Diego Reyes"],
+        correctIndex: 1,
+        explanation: "Alfredo Tena es uno de los grandes capitanes de la historia azulcrema."
+      },
+      {
+        id: 12,
+        category: "Porteros",
+        question: "¿Qué arquero canterano del América tuvo una destacada carrera también en Europa?",
+        options: ["Guillermo Ochoa", "Moisés Muñoz", "Héctor Zelada", "Oscar Pérez"],
+        correctIndex: 0,
+        explanation: "Guillermo Ochoa surgió del club y luego jugó en Europa."
+      },
+      {
+        id: 13,
+        category: "Uniforme",
+        question: "¿Qué colores se asocian tradicionalmente con el uniforme del América?",
+        options: ["Rojo y blanco", "Azul y crema", "Negro y naranja", "Verde y blanco"],
+        correctIndex: 1,
+        explanation: "Los colores tradicionales del América son azul y crema."
+      },
+      {
+        id: 14,
+        category: "Torneos",
+        question: "Además de la liga, ¿en qué competencia internacional suele medirse el América con clubes de la región?",
+        options: ["Copa Libertadores", "Europa League", "Concacaf Champions Cup", "Copa Sudamericana"],
+        correctIndex: 2,
+        explanation: "El torneo internacional de referencia en la región es la Concacaf Champions Cup."
+      },
+      {
+        id: 15,
+        category: "Memoria dolorosa",
+        question: "En la anécdota incorporada al expediente íntimo del americanismo contra Nashville, ¿qué ocurrió después de una atajada de Malagón y cuando algunos ya pensaban que el América había ganado?",
+        options: [
+          "El partido se suspendió por lluvia",
+          "Se repitió el penal y Nashville terminó ganando",
+          "El VAR anuló todo el partido",
+          "Se fueron directo a tiempos extra"
+        ],
+        correctIndex: 1,
+        explanation: "Esa es precisamente la tragedia cómica de la anécdota: se repitió el penal y Nashville acabó ganando."
+      }
+    ];
+
+    const QUESTIONS_PER_GAME = 5;
+
+    let gameQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let selectedOptionIndex = null;
+    let answerConfirmed = false;
+    let userAnswers = [];
+
+    const startScreen = document.getElementById("startScreen");
+    const quizScreen = document.getElementById("quizScreen");
+    const resultScreen = document.getElementById("resultScreen");
+
+    const startBtn = document.getElementById("startBtn");
+    const progressPill = document.getElementById("progressPill");
+    const scoreMini = document.getElementById("scoreMini");
+    const questionCategory = document.getElementById("questionCategory");
+    const questionText = document.getElementById("questionText");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    const resultTitle = document.getElementById("resultTitle");
+    const resultScore = document.getElementById("resultScore");
+    const resultMessage = document.getElementById("resultMessage");
+    const answersReview = document.getElementById("answersReview");
+    const restartBtn = document.getElementById("restartBtn");
+
+    function shuffleArray(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function pickQuestions(pool, count) {
+      return shuffleArray(pool).slice(0, count);
+    }
+
+    function showScreen(screen) {
+      [startScreen, quizScreen, resultScreen].forEach(section => {
+        section.classList.remove("active");
+      });
+      screen.classList.add("active");
+    }
+
+    function startGame() {
+      gameQuestions = pickQuestions(QUESTION_POOL, QUESTIONS_PER_GAME);
+      currentQuestionIndex = 0;
+      score = 0;
+      selectedOptionIndex = null;
+      answerConfirmed = false;
+      userAnswers = [];
+      showScreen(quizScreen);
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = gameQuestions[currentQuestionIndex];
+
+      progressPill.textContent = `Pregunta ${currentQuestionIndex + 1} de ${gameQuestions.length}`;
+      scoreMini.textContent = `Aciertos: ${score}`;
+      questionCategory.textContent = q.category;
+      questionText.textContent = q.question;
+
+      optionsContainer.innerHTML = "";
+      feedbackBox.classList.remove("show");
+      feedbackBox.innerHTML = "";
+      confirmBtn.disabled = true;
+      nextBtn.disabled = true;
+      selectedOptionIndex = null;
+      answerConfirmed = false;
+
+      q.options.forEach((option, index) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.type = "button";
+        btn.textContent = option;
+        btn.addEventListener("click", () => selectOption(index));
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function selectOption(index) {
+      if (answerConfirmed) return;
+
+      selectedOptionIndex = index;
+      confirmBtn.disabled = false;
+
+      const buttons = optionsContainer.querySelectorAll(".option-btn");
+      buttons.forEach((btn, idx) => {
+        btn.classList.toggle("selected", idx === index);
+      });
+    }
+
+    function confirmAnswer() {
+      if (selectedOptionIndex === null || answerConfirmed) return;
+
+      const q = gameQuestions[currentQuestionIndex];
+      const isCorrect = selectedOptionIndex === q.correctIndex;
+      answerConfirmed = true;
+
+      if (isCorrect) {
+        score += 1;
+      }
+
+      userAnswers.push({
+        question: q.question,
+        selected: q.options[selectedOptionIndex],
+        correct: q.options[q.correctIndex],
+        isCorrect
+      });
+
+      scoreMini.textContent = `Aciertos: ${score}`;
+
+      const buttons = optionsContainer.querySelectorAll(".option-btn");
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+
+        if (idx === q.correctIndex) {
+          btn.classList.add("correct");
+        } else if (idx === selectedOptionIndex && idx !== q.correctIndex) {
+          btn.classList.add("incorrect");
+        } else {
+          btn.classList.add("dimmed");
+        }
+      });
+
+      feedbackBox.classList.add("show");
+      feedbackBox.innerHTML = isCorrect
+        ? `<strong>Correcto.</strong> ${q.explanation}`
+        : `<strong>Incorrecto.</strong> La respuesta correcta era <strong>${q.options[q.correctIndex]}</strong>. ${q.explanation}`;
+
+      confirmBtn.disabled = true;
+      nextBtn.disabled = false;
+      nextBtn.textContent = currentQuestionIndex === gameQuestions.length - 1 ? "Ver resultado" : "Siguiente";
+    }
+
+    function goNext() {
+      if (!answerConfirmed) return;
+
+      if (currentQuestionIndex < gameQuestions.length - 1) {
+        currentQuestionIndex += 1;
+        renderQuestion();
+      } else {
+        renderResults();
+      }
+    }
+
+    function getResultTitle(score) {
+      if (score === 5) return "Nivel Maestro Carlos Reinoso";
+      if (score === 4) return "Americanista de élite";
+      if (score === 3) return "Americanista funcional";
+      if (score === 2) return "Americanista villamelón";
+      return "Chivahermano al descubierto";
+    }
+
+    function getResultMessage(score) {
+      if (score === 5) return "Usted no responde trivia: imparte cátedra desde Coapa.";
+      if (score === 4) return "Muy sólido. Todavía inspira respeto en cualquier sobremesa futbolera.";
+      if (score === 3) return "Cumple, compite y no desentona. Hay archivo, aunque todavía no es enciclopedia.";
+      if (score === 2) return "Hay cariño por el Ave, pero falta hemeroteca y algo de disciplina.";
+      return "Se abrió el expediente y aparecieron señales preocupantes de rojiblancura latente.";
+    }
+
+    function renderResults() {
+      resultTitle.textContent = getResultTitle(score);
+      resultScore.textContent = `Obtuviste ${score} de ${gameQuestions.length} respuestas correctas.`;
+      resultMessage.textContent = getResultMessage(score);
+
+      answersReview.innerHTML = userAnswers.map((item, idx) => `
+        <div class="review-item">
+          <div><strong>${idx + 1}. ${item.question}</strong></div>
+          <div>Tu respuesta: ${item.isCorrect
+            ? `<span class="review-ok">${item.selected}</span>`
+            : `<span class="review-bad">${item.selected}</span>`}</div>
+          ${item.isCorrect ? "" : `<div>Correcta: <span class="review-ok">${item.correct}</span></div>`}
+        </div>
+      `).join("");
+
+      showScreen(resultScreen);
+    }
+
+    startBtn.addEventListener("click", startGame);
+    confirmBtn.addEventListener("click", confirmAnswer);
+    nextBtn.addEventListener("click", goNext);
+    restartBtn.addEventListener("click", startGame);
+  </script>
+</body>
+</html>
