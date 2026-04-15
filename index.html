@@ -18,7 +18,10 @@
   --shadow:0 14px 38px rgba(0,0,0,0.28);
 }
 *{box-sizing:border-box;}
-html,body{margin:0;min-height:100%;}
+html,body{
+  margin:0;
+  min-height:100%;
+}
 body{
   font-family:Arial,Helvetica,sans-serif;
   background:
@@ -28,28 +31,51 @@ body{
   color:var(--text);
   position:relative;
   overflow-x:hidden;
+  overflow-y:auto;
 }
 .bg-tapestry{
   position:fixed;
   inset:0;
   z-index:0;
   pointer-events:none;
+  overflow:hidden;
   opacity:.22;
 }
 .bg-tapestry::before{
-  content:"CLUB AMÉRICA AMÉRICA MOISÉS MUÑOZ CUAUHTÉMOC BLANCO CARLOS REINOSO HENRY MARTÍN GUILLERMO OCHOA SALVADOR CABAÑAS IVÁN ZAMORANO";
+  content:
+    "CLUB AMÉRICA   AMÉRICA   MOISÉS MUÑOZ   CUAUHTÉMOC BLANCO   CARLOS REINOSO   CRISTÓBAL ORTEGA   ALFREDO TENA   GUILLERMO OCHOA   SALVADOR CABAÑAS   ENRIQUE BORJA   LUIS ROBERTO ALVES   HUGO SÁNCHEZ   HENRY MARTÍN   IVÁN ZAMORANO   ORIBE PERALTA   PÁVEL PARDO   RUBENS SAMBUEZA   GUIDO RODRÍGUEZ   HÉCTOR ZELADA   ADOLFO RÍOS   CARLOS HERMOSILLO   CLUB AMÉRICA   AMÉRICA   MOISÉS MUÑOZ   CUAUHTÉMOC BLANCO   CARLOS REINOSO   CRISTÓBAL ORTEGA   ALFREDO TENA   GUILLERMO OCHOA   SALVADOR CABAÑAS   ENRIQUE BORJA   LUIS ROBERTO ALVES   HUGO SÁNCHEZ";
   white-space:pre-wrap;
-  line-height:2;
+  line-height:1.95;
   letter-spacing:1.5px;
   font-weight:700;
   font-size:clamp(20px,2vw,30px);
-  color:rgba(255,255,255,.38);
+  color:rgba(255,255,255,.42);
   display:block;
   width:150%;
   transform:rotate(-14deg) scale(1.16);
+  transform-origin:center center;
   position:absolute;
-  top:-10%;
-  left:-10%;
+  top:-8%;
+  left:-12%;
+  text-align:justify;
+}
+.bg-tapestry::after{
+  content:
+    "AMÉRICA   CLUB AMÉRICA   MOISÉS MUÑOZ   CUAUHTÉMOC BLANCO   CARLOS REINOSO   CRISTÓBAL ORTEGA   ALFREDO TENA   GUILLERMO OCHOA   SALVADOR CABAÑAS   ENRIQUE BORJA   LUIS ROBERTO ALVES   HUGO SÁNCHEZ   HENRY MARTÍN   IVÁN ZAMORANO   ORIBE PERALTA   PÁVEL PARDO   RUBENS SAMBUEZA   GUIDO RODRÍGUEZ   ÓSCAR RUGGERI   CLAUDIO LÓPEZ   ANTONIO CARLOS SANTOS   AMÉRICA   CLUB AMÉRICA   MOISÉS MUÑOZ   CUAUHTÉMOC BLANCO   CARLOS REINOSO";
+  white-space:pre-wrap;
+  line-height:2.15;
+  letter-spacing:1.3px;
+  font-weight:400;
+  font-size:clamp(15px,1.4vw,22px);
+  color:rgba(255,255,255,.28);
+  display:block;
+  width:150%;
+  transform:rotate(-14deg) scale(1.16);
+  transform-origin:center center;
+  position:absolute;
+  top:18%;
+  left:-8%;
+  text-align:justify;
 }
 .shell{
   position:relative;
@@ -57,12 +83,13 @@ body{
   width:100%;
   max-width:1200px;
   margin:0 auto;
-  padding:28px 24px 90px;
+  padding:28px 24px 110px;
 }
 .title{
   margin:0 0 26px;
   text-align:center;
   font-size:clamp(2.1rem,4vw,3.4rem);
+  line-height:1.05;
   font-weight:800;
   text-shadow:0 4px 20px rgba(0,0,0,.35);
 }
@@ -72,7 +99,11 @@ body{
   gap:34px;
   align-items:center;
 }
-.media-wrap{display:flex;justify-content:center;}
+.media-wrap{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
 .hero{
   display:none;
   width:100%;
@@ -81,17 +112,24 @@ body{
   object-fit:contain;
   border-radius:18px;
   box-shadow:var(--shadow);
+  background:transparent;
 }
-.hero.visible{display:block;}
+.hero.visible{
+  display:block;
+}
 .content{
   display:flex;
   flex-direction:column;
   justify-content:center;
+  min-height:100%;
+  padding:8px 0;
 }
 .status{
   margin:0 0 16px;
   font-size:clamp(2rem,3vw,3rem);
   font-weight:800;
+  line-height:1;
+  text-shadow:0 4px 16px rgba(0,0,0,.28);
 }
 .yes{color:var(--green);}
 .no{color:var(--red);}
@@ -100,6 +138,11 @@ body{
   line-height:1.45;
   color:var(--muted);
   margin-bottom:10px;
+  text-shadow:0 2px 14px rgba(0,0,0,.28);
+}
+.details b{
+  color:#fff;
+  font-size:1.08em;
 }
 .meta-line{
   display:inline-block;
@@ -109,37 +152,130 @@ body{
   background:rgba(0,0,0,.18);
   border:1px solid rgba(255,255,255,.12);
   font-size:.95rem;
-  color:#fff;
+  color:rgba(255,255,255,.95);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
 }
 .reference-time{
   margin-top:12px;
   font-size:.94rem;
   color:rgba(255,255,255,.8);
 }
-.box{
+.market-box,
+.confidential-box{
   margin-top:18px;
   padding:16px 18px;
   border-radius:18px;
-  background:rgba(0,0,0,.16);
+  background:rgba(0,0,0,.18);
   border:1px solid rgba(255,255,255,.12);
   backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  max-width:720px;
+  color:rgba(255,255,255,.94);
+  box-shadow:0 10px 30px rgba(0,0,0,.18);
 }
-.box-title{
+.market-heading,
+.confidential-title{
   font-size:1rem;
-  font-weight:700;
-  margin-bottom:14px;
+  font-weight:800;
+  margin-bottom:12px;
+  color:#fff;
+  letter-spacing:.3px;
+}
+.market-row{
+  margin-bottom:16px;
+}
+.market-row:last-child{
+  margin-bottom:0;
+}
+.market-label{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:8px;
+  font-size:.98rem;
+  color:rgba(255,255,255,.96);
+}
+.market-label strong{
+  color:#fff;
+}
+.market-track{
+  position:relative;
+  height:16px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.10);
+  overflow:hidden;
+}
+.market-fill-america{
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg, rgba(250,204,21,.72), rgba(250,204,21,.96));
+  box-shadow:0 0 14px rgba(250,204,21,.24);
+}
+.market-fill-rival{
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg, rgba(255,255,255,.26), rgba(255,255,255,.58));
+  box-shadow:0 0 12px rgba(255,255,255,.10);
+}
+.market-verdict{
+  margin-top:14px;
+  font-size:.98rem;
+  line-height:1.5;
+  color:rgba(255,255,255,.92);
+}
+.market-meta{
+  margin-top:10px;
+  font-size:.86rem;
+  color:rgba(255,255,255,.74);
+}
+.confidential-text{
+  font-size:1rem;
+  line-height:1.55;
+  color:rgba(255,255,255,.9);
 }
 .footer-copy{
-  margin-top:24px;
+  margin-top:30px;
   text-align:center;
 }
 .chanfle-img{
+  display:block;
+  margin:0 auto;
   max-width:220px;
   width:100%;
+  height:auto;
 }
-@media(max-width:860px){
-  .layout{grid-template-columns:1fr;}
-  .content{text-align:center;align-items:center;}
+@media (max-width:860px){
+  .shell{
+    padding:18px 16px 90px;
+  }
+  .layout{
+    grid-template-columns:1fr;
+    gap:22px;
+  }
+  .content{
+    text-align:center;
+    align-items:center;
+  }
+  .hero{
+    max-width:300px;
+    max-height:460px;
+  }
+  .market-label{
+    text-align:left;
+    width:100%;
+  }
+  .market-box,
+  .confidential-box{
+    width:100%;
+  }
+  .bg-tapestry::before,
+  .bg-tapestry::after{
+    width:210%;
+    left:-52%;
+  }
 }
 </style>
 </head>
@@ -148,237 +284,479 @@ body{
 <div class="bg-tapestry"></div>
 
 <main class="shell">
-<h1 class="title">¿Hoy juega el América?</h1>
+  <h1 class="title">¿Hoy juega el América?</h1>
 
-<div class="layout">
+  <div class="layout">
+    <div class="media-wrap">
+      <img id="imgSi" class="hero" src="hoy_juega_america.png" alt="Hoy juega el América">
+      <img id="imgNo" class="hero" src="no_juega_america.png" alt="No juega el América">
+      <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg" alt="Próximo partido contra Cruz Azul">
+      <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg" alt="Hoy juega contra Cruz Azul">
+      <img id="imgNashvilleCoco" class="hero" src="nashville_coco.png" alt="Nashville Coco">
+    </div>
 
-<div class="media-wrap">
-  <img id="imgSi" class="hero" src="hoy_juega_america.png">
-  <img id="imgNo" class="hero" src="no_juega_america.png">
-  <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg">
-  <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg">
-  <img id="imgNashvilleCoco" class="hero" src="nashville_coco.png">
-</div>
+    <div class="content">
+      <div id="status" class="status">Consultando...</div>
+      <div id="details" class="details"></div>
+      <div id="marketValueInfo"></div>
+      <div id="funFact"></div>
 
-<div class="content">
-  <div id="status" class="status">Consultando...</div>
-  <div id="details" class="details"></div>
+      <div style="margin-top:18px;">
+        <a href="trivia.html" class="meta-line" style="text-decoration:none; font-weight:700;">
+          Jugar trivia americanista
+        </a>
+      </div>
 
-  <div id="funFact"></div>
-
-  <div style="margin-top:18px;">
-    <a href="trivia.html" class="meta-line" style="text-decoration:none;font-weight:700;">
-      Jugar trivia americanista
-    </a>
+      <div class="footer-copy">
+        <img src="chanfle.png" alt="El Chanfle" class="chanfle-img">
+      </div>
+    </div>
   </div>
-
-  <div class="footer-copy">
-    <img src="chanfle.png" class="chanfle-img">
-  </div>
-</div>
-
-</div>
 </main>
 
 <script>
-const TEAM_ID="134193";
-const API_URL=`https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
-const TZ="America/Mexico_City";
+const TEAM_ID = "134193";
+const API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
+const MARKET_VALUES_URL = "./market_values.json";
+const TZ = "America/Mexico_City";
 
-function normalizeTeamName(name){
-  return (name||"")
+const MARKET_VALUE_TEAM_ALIASES = {
+  "america": "club-america",
+  "cf america": "club-america",
+  "club america": "club-america",
+  "america mexico": "club-america",
+
+  "cruz azul": "cruz-azul",
+  "toluca": "toluca",
+  "tigres": "tigres",
+  "tigres uanl": "tigres",
+  "monterrey": "monterrey",
+  "rayados": "monterrey",
+  "guadalajara": "guadalajara",
+  "club guadalajara": "guadalajara",
+  "chivas": "guadalajara",
+  "pachuca": "pachuca",
+  "pumas": "pumas",
+  "pumas unam": "pumas",
+  "unam": "pumas",
+  "tijuana": "tijuana",
+  "xolos": "tijuana",
+  "club tijuana": "tijuana",
+  "leon": "leon",
+  "club leon": "leon",
+  "necaxa": "necaxa",
+  "juarez": "juarez",
+  "fc juarez": "juarez",
+  "bravos": "juarez",
+  "atletico san luis": "san-luis",
+  "san luis": "san-luis",
+  "santos laguna": "santos",
+  "santos": "santos",
+  "atlas": "atlas",
+  "queretaro": "queretaro",
+  "queretaro fc": "queretaro",
+  "gallos blancos": "queretaro",
+  "puebla": "puebla",
+  "mazatlan": "mazatlan",
+  "mazatlan fc": "mazatlan",
+
+  "inter miami": "inter-miami",
+  "inter miami cf": "inter-miami",
+  "nashville": "nashville-sc",
+  "nashville sc": "nashville-sc",
+  "lafc": "lafc",
+  "los angeles fc": "lafc",
+  "la galaxy": "la-galaxy",
+  "atlanta united": "atlanta-united",
+  "seattle sounders": "seattle",
+  "seattle sounders fc": "seattle"
+};
+
+function normalizeTeamName(name) {
+  return (name || "")
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
-    .replace(/\./g,"")
-    .replace(/\s+/g," ")
+    .replace(/\./g, "")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
-function isVsCruzAzul(event){
-  const h=normalizeTeamName(event.strHomeTeam);
-  const a=normalizeTeamName(event.strAwayTeam);
-  return h.includes("cruz azul")||a.includes("cruz azul");
+function isVsCruzAzul(event) {
+  const home = normalizeTeamName(event.strHomeTeam);
+  const away = normalizeTeamName(event.strAwayTeam);
+  return home.includes("cruz azul") || away.includes("cruz azul");
 }
 
-function isVsNashville(event){
-  const h=normalizeTeamName(event.strHomeTeam);
-  const a=normalizeTeamName(event.strAwayTeam);
-  return h.includes("nashville")||a.includes("nashville");
+function isVsNashville(event) {
+  const home = normalizeTeamName(event.strHomeTeam);
+  const away = normalizeTeamName(event.strAwayTeam);
+  return home.includes("nashville") || away.includes("nashville");
 }
 
-function isAmericaName(name){
-  return normalizeTeamName(name).includes("america");
+function isAmericaName(name) {
+  const normalized = normalizeTeamName(name);
+  return (
+    normalized === "america" ||
+    normalized === "cf america" ||
+    normalized === "club america" ||
+    normalized.includes("america")
+  );
 }
 
-function getOpponentName(event){
-  if(isAmericaName(event.strHomeTeam)) return event.strAwayTeam;
-  if(isAmericaName(event.strAwayTeam)) return event.strHomeTeam;
+function getOpponentName(event) {
+  if (isAmericaName(event.strHomeTeam)) return event.strAwayTeam;
+  if (isAmericaName(event.strAwayTeam)) return event.strHomeTeam;
   return event.strAwayTeam;
 }
 
-function hideAllImages(){
-  ["imgSi","imgNo","imgCruzAzulProx","imgCruzAzulHoy","imgNashvilleCoco"]
-    .forEach(id=>document.getElementById(id).classList.remove("visible"));
+function getMarketTeamId(rawName) {
+  const normalized = normalizeTeamName(rawName);
+
+  if (MARKET_VALUE_TEAM_ALIASES[normalized]) {
+    return MARKET_VALUE_TEAM_ALIASES[normalized];
+  }
+
+  for (const key of Object.keys(MARKET_VALUE_TEAM_ALIASES)) {
+    if (normalized.includes(key) || key.includes(normalized)) {
+      return MARKET_VALUE_TEAM_ALIASES[key];
+    }
+  }
+
+  return null;
 }
 
-function showImage(mode){
+function hideAllImages() {
+  document.getElementById("imgSi").classList.remove("visible");
+  document.getElementById("imgNo").classList.remove("visible");
+  document.getElementById("imgCruzAzulProx").classList.remove("visible");
+  document.getElementById("imgCruzAzulHoy").classList.remove("visible");
+  document.getElementById("imgNashvilleCoco").classList.remove("visible");
+}
+
+function showImage(mode) {
   hideAllImages();
 
-  const map={
-    "general-yes":"imgSi",
-    "general-no":"imgNo",
-    "caz-prox":"imgCruzAzulProx",
-    "caz-hoy":"imgCruzAzulHoy",
-    "nashville-coco":"imgNashvilleCoco"
-  };
-
-  if(map[mode]) document.getElementById(map[mode]).classList.add("visible");
+  if (mode === "general-yes") {
+    document.getElementById("imgSi").classList.add("visible");
+  } else if (mode === "general-no") {
+    document.getElementById("imgNo").classList.add("visible");
+  } else if (mode === "caz-prox") {
+    document.getElementById("imgCruzAzulProx").classList.add("visible");
+  } else if (mode === "caz-hoy") {
+    document.getElementById("imgCruzAzulHoy").classList.add("visible");
+  } else if (mode === "nashville-coco") {
+    document.getElementById("imgNashvilleCoco").classList.add("visible");
+  }
 }
 
-function getMexicoDate(date){
-  return new Intl.DateTimeFormat("en-CA",{
-    timeZone:TZ,
-    year:"numeric",
-    month:"2-digit",
-    day:"2-digit"
+function getMexicoDate(date) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
   }).format(date);
 }
 
-function formatMexicoDateTime(date){
-  return new Intl.DateTimeFormat("es-MX",{
-    timeZone:TZ,
-    weekday:"long",
-    day:"numeric",
-    month:"long",
-    hour:"2-digit",
-    minute:"2-digit"
+function formatMexicoDateTime(date) {
+  return new Intl.DateTimeFormat("es-MX", {
+    timeZone: TZ,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit"
   }).format(date);
 }
 
-function parseDate(event){
-  let raw=event.strTimestamp||`${event.dateEvent}T${event.strTime}`;
-  if(!raw.endsWith("Z")) raw+="Z";
-  return new Date(raw);
+function parseDate(event) {
+  let raw = event.strTimestamp || `${event.dateEvent}T${event.strTime}`;
+  if (!raw) return null;
+  if (!raw.endsWith("Z")) raw += "Z";
+  const d = new Date(raw);
+  return isNaN(d) ? null : d;
 }
 
-function setReferenceTime(text){
-  document.getElementById("details").innerHTML +=
-    `<div class="reference-time">Hora de referencia: ${text}</div>`;
+function setReferenceTime(dateText) {
+  const details = document.getElementById("details");
+  const refHtml = `<div class="reference-time">Hora de referencia: ${dateText} (Ciudad de México)</div>`;
+  details.innerHTML += refHtml;
 }
 
-function renderFunFact(event){
-  const box=document.getElementById("funFact");
-  box.innerHTML="";
+function formatEurCompact(value) {
+  return new Intl.NumberFormat("es-MX", {
+    style: "currency",
+    currency: "EUR",
+    notation: "compact",
+    compactDisplay: "short",
+    maximumFractionDigits: 1
+  }).format(value);
+}
 
-  if(isVsCruzAzul(event)){
-    box.innerHTML=`
-      <div class="box">
-        <div class="box-title">Expediente íntimo del americanismo</div>
-        Por ahí de 1988 fuimos a un América-Cruz Azul, un partido de liga. Llegamos como hora y media antes del partido,
-        en zona baja detrás de una portería del Azteca. Pablo Larios calentaba. Íbamos mi primo Marco,
-        su papá Jorge y yo. Jorge anunció: “Van a ver que me conoce”, y empezó a gritar muy insistente:
-        “¡Pablo, Pablo!”. Al fin, Larios volteó apenas, saludó con desgano y de reojo.
-        Jorge aceleró para buscar lugar y dictó: “Ya no le vuelvo a prestar dinero”.
-      </div>`;
+async function loadMarketValues() {
+  const res = await fetch(MARKET_VALUES_URL);
+  if (!res.ok) {
+    throw new Error("No se pudo cargar market_values.json");
+  }
+  return res.json();
+}
+
+function buildMarketVerdict(america, rival) {
+  if (!america || !rival) return "";
+
+  const ratio = america.squad_value_eur / rival.squad_value_eur;
+  const ratioText = ratio >= 1
+    ? `${ratio.toFixed(2)}x`
+    : `${(1 / ratio).toFixed(2)}x`;
+
+  if (america.squad_value_eur > rival.squad_value_eur) {
+    return `América vale <strong>${ratioText}</strong> lo que ${rival.team_name}.`;
+  }
+
+  if (america.squad_value_eur < rival.squad_value_eur) {
+    return `${rival.team_name} vale <strong>${ratioText}</strong> lo que América.`;
+  }
+
+  return `América y ${rival.team_name} llegan con el mismo valor de plantilla.`;
+}
+
+function renderMarketValueInfo(event, marketData) {
+  const box = document.getElementById("marketValueInfo");
+  box.innerHTML = "";
+
+  if (!marketData || !Array.isArray(marketData.teams)) return;
+
+  const americaId = "club-america";
+  const rivalRaw = getOpponentName(event);
+  const rivalId = getMarketTeamId(rivalRaw);
+
+  const america = marketData.teams.find(team => team.team_id === americaId);
+
+  let rival = marketData.teams.find(team => team.team_id === rivalId);
+
+  if (!rival) {
+    const normalizedRivalRaw = normalizeTeamName(rivalRaw);
+    rival = marketData.teams.find(team => {
+      const normalizedTeamName = normalizeTeamName(team.team_name);
+      return (
+        normalizedTeamName === normalizedRivalRaw ||
+        normalizedTeamName.includes(normalizedRivalRaw) ||
+        normalizedRivalRaw.includes(normalizedTeamName)
+      );
+    });
+  }
+
+  if (!america || !rival) return;
+
+  const maxValue = Math.max(america.squad_value_eur, rival.squad_value_eur);
+  const americaWidth = (america.squad_value_eur / maxValue) * 100;
+  const rivalWidth = (rival.squad_value_eur / maxValue) * 100;
+  const verdict = buildMarketVerdict(america, rival);
+
+  box.innerHTML = `
+    <div class="market-box">
+      <div class="market-heading">Billetómetro (Transfermarkt)</div>
+
+      <div class="market-row">
+        <div class="market-label">
+          <span>América</span>
+          <strong>${formatEurCompact(america.squad_value_eur)}</strong>
+        </div>
+        <div class="market-track">
+          <div class="market-fill-america" style="width:${americaWidth}%"></div>
+        </div>
+      </div>
+
+      <div class="market-row">
+        <div class="market-label">
+          <span>${rival.team_name}</span>
+          <strong>${formatEurCompact(rival.squad_value_eur)}</strong>
+        </div>
+        <div class="market-track">
+          <div class="market-fill-rival" style="width:${rivalWidth}%"></div>
+        </div>
+      </div>
+
+      <div class="market-verdict">${verdict}</div>
+      <div class="market-meta">
+        Ranking en su liga: América #${america.rank_in_league} · ${rival.team_name} #${rival.rank_in_league}<br>
+        Corte de datos: ${marketData.updated_at || "sin fecha"} · Fuente: ${marketData.source || "Transfermarkt"}
+      </div>
+    </div>
+  `;
+}
+
+function renderFunFact(event) {
+  const box = document.getElementById("funFact");
+  box.innerHTML = "";
+
+  if (isVsCruzAzul(event)) {
+    box.innerHTML = `
+      <div class="confidential-box">
+        <div class="confidential-title">Expediente íntimo del americanismo</div>
+        <div class="confidential-text">
+          Por ahí de 1988 fuimos a un América-Cruz Azul, un partido de liga. Llegamos como hora y media antes del partido,
+          en zona baja detrás de una portería del Azteca. Pablo Larios calentaba. Íbamos mi primo Marco,
+          su papá Jorge y yo. Jorge anunció: “Van a ver que me conoce”, y empezó a gritar muy insistente:
+          “¡Pablo, Pablo!”. Al fin, Larios volteó apenas, saludó con desgano y de reojo.
+          Jorge aceleró para buscar lugar y dictó: “Ya no le vuelvo a prestar dinero”.
+        </div>
+      </div>
+    `;
     return;
   }
 
-  if(isVsNashville(event)){
-    box.innerHTML=`
-      <div class="box">
-        <div class="box-title">Expediente íntimo del americanismo</div>
-        Corría el año 2023, estaba entrada la noche y el América disputaba con los griguillos del Nashville
-        los playoffs de la Concachampions. Fue un partido trabado que al final ganó el América en penales,
-        con una buena parada de Malagón. Me fui a dormir satisfecho y alegre. Al día siguiente me bañé
-        y me fui peinado al trabajo. Un amigo necaxista me sorprendió con un “¿qué tal la Concachampions?”.
-        Me sorprendió que quisiera hablar del tema, pero aproveché y presumí el poder del ave.
-        Después de un rato, mis colegas del trabajo me dijeron:
-        “¿Apagaste la tele después del penal que detuvo Malagón?” y se empezaron a reír.
-        Después de que los jugadores se fueron a los vestidores, el arbitrario árbitro ordenó repetir el penal,
-        y Nashville acabó ganando. A veces nos toca perder, sentir lo que sienten los aficionados de los demás equipos.
-      </div>`;
+  if (isVsNashville(event)) {
+    box.innerHTML = `
+      <div class="confidential-box">
+        <div class="confidential-title">Expediente íntimo del americanismo</div>
+        <div class="confidential-text">
+          Corría el año 2023, estaba entrada la noche y el América disputaba con los griguillos del Nashville
+          los playoffs de la Concachampions. Fue un partido trabado que al final ganó el América en penales,
+          con una buena parada de Malagón. Me fui a dormir satisfecho y alegre. Al día siguiente me bañé
+          y me fui peinado al trabajo. Un amigo necaxista me sorprendió con un “¿qué tal la Concachampions?”.
+          Me sorprendió que quisiera hablar del tema, pero aproveché y presumí el poder del ave. Después de un rato,
+          mis colegas del trabajo me dijeron: “¿Apagaste la tele después del penal que detuvo Malagón?” y se empezaron a reír.
+          Después de que los jugadores se fueron a los vestidores, el arbitrario árbitro ordenó repetir el penal,
+          y Nashville acabó ganando. A veces nos toca perder, sentir lo que sienten los aficionados de los demás equipos.
+        </div>
+      </div>
+    `;
   }
 }
 
-async function loadMatch(){
-  try{
-    const matchRes=await fetch(API_URL);
-    const data=await matchRes.json();
+async function loadMatch() {
+  const status = document.getElementById("status");
+  const details = document.getElementById("details");
+  const marketValueInfo = document.getElementById("marketValueInfo");
+  const funFact = document.getElementById("funFact");
 
-    const event=data.events[0];
-    const date=parseDate(event);
+  status.textContent = "Consultando...";
+  status.className = "status";
+  details.innerHTML = "";
+  marketValueInfo.innerHTML = "";
+  funFact.innerHTML = "";
+  hideAllImages();
 
-    const today=getMexicoDate(new Date());
-    const eventDate=getMexicoDate(date);
+  try {
+    const [matchRes, marketData] = await Promise.all([
+      fetch(API_URL),
+      loadMarketValues().catch(() => null)
+    ]);
 
-    const finished=(event.strStatus||"").includes("Finished");
-    const cruzAzul=isVsCruzAzul(event);
-    const nashville=isVsNashville(event);
+    const data = await matchRes.json();
 
-    const matchText=`${event.strHomeTeam} vs ${event.strAwayTeam}`;
-    const dateText=formatMexicoDateTime(date);
+    if (!data.events || data.events.length === 0) {
+      status.textContent = "Sin datos";
+      status.className = "status no";
+      showImage("general-no");
+      details.innerHTML = `No se encontró información del próximo partido.`;
+      return;
+    }
 
-    const status=document.getElementById("status");
-    const details=document.getElementById("details");
+    const event = data.events[0];
+    const date = parseDate(event);
 
-    if(eventDate>today){
-      status.textContent="No juega hoy";
-      status.className="status no";
+    if (!date) {
+      status.textContent = "Error en fecha";
+      status.className = "status no";
+      showImage("general-no");
+      details.innerHTML = `No fue posible interpretar la fecha del partido.`;
+      return;
+    }
 
-      if(cruzAzul) showImage("caz-prox");
-      else showImage("general-no");
+    const today = getMexicoDate(new Date());
+    const eventDate = getMexicoDate(date);
+    const finished = (event.strStatus || "").includes("Finished");
+    const cruzAzulMatch = isVsCruzAzul(event);
+    const nashvilleMatch = isVsNashville(event);
 
-      details.innerHTML=`
+    const matchText = `${event.strHomeTeam} vs ${event.strAwayTeam}`;
+    const dateText = formatMexicoDateTime(date);
+
+    if (eventDate > today) {
+      status.textContent = "No juega hoy";
+      status.className = "status no";
+
+      if (cruzAzulMatch) {
+        showImage("caz-prox");
+      } else {
+        showImage("general-no");
+      }
+
+      details.innerHTML = `
         <div><b>Próximo partido</b></div>
         <div class="meta-line">${matchText}</div>
       `;
+      setReferenceTime(dateText);
+      renderMarketValueInfo(event, marketData);
+      renderFunFact(event);
 
-    }else if(eventDate===today){
+    } else if (eventDate === today) {
+      if (finished) {
+        status.textContent = nashvilleMatch ? "Todavía duele" : "Ya jugó hoy";
+        status.className = "status no";
 
-      if(finished){
-        status.textContent=nashville?"Todavía duele":"Ya jugó hoy";
-        status.className="status no";
+        if (nashvilleMatch) {
+          showImage("nashville-coco");
+        } else {
+          showImage("general-no");
+        }
 
-        if(nashville) showImage("nashville-coco");
-        else showImage("general-no");
+        details.innerHTML = `
+          <div><b>${matchText}</b></div>
+        `;
+        setReferenceTime(dateText);
+      } else {
+        status.textContent = "Hoy juega";
+        status.className = "status yes";
 
-      }else{
-        status.textContent="Hoy juega";
-        status.className="status yes";
+        if (cruzAzulMatch) {
+          showImage("caz-hoy");
+        } else {
+          showImage("general-yes");
+        }
 
-        if(cruzAzul) showImage("caz-hoy");
-        else showImage("general-yes");
+        details.innerHTML = `
+          <div><b>${matchText}</b></div>
+          <div class="meta-line" style="margin-top:12px;">Partido programado para hoy</div>
+        `;
+        setReferenceTime(dateText);
       }
 
-      details.innerHTML=`<div><b>${matchText}</b></div>`;
+      renderMarketValueInfo(event, marketData);
+      renderFunFact(event);
 
-    }else{
-      status.textContent=nashville?"Todavía duele":"No juega hoy";
-      status.className="status no";
+    } else {
+      status.textContent = nashvilleMatch ? "Todavía duele" : "No juega hoy";
+      status.className = "status no";
 
-      if(nashville) showImage("nashville-coco");
-      else showImage("general-no");
+      if (nashvilleMatch) {
+        showImage("nashville-coco");
+      } else {
+        showImage("general-no");
+      }
 
-      details.innerHTML=`
+      details.innerHTML = `
         <div><b>Último partido registrado</b></div>
         <div class="meta-line">${matchText}</div>
       `;
+      setReferenceTime(dateText);
+      renderMarketValueInfo(event, marketData);
+      renderFunFact(event);
     }
 
-    setReferenceTime(dateText);
-    renderFunFact(event);
-
-  }catch(err){
-    console.error(err);
-    document.getElementById("status").textContent="Error al cargar";
-    document.getElementById("status").className="status no";
+  } catch (err) {
+    status.textContent = "Error al cargar";
+    status.className = "status no";
     showImage("general-no");
+    details.innerHTML = `No fue posible cargar la información del partido.`;
+    console.error(err);
   }
 }
 
 loadMatch();
 </script>
-
 </body>
 </html>
