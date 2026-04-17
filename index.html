@@ -190,6 +190,78 @@ body{
   color:var(--accent);
 }
 
+/* ── Tabla de posiciones recortada ── */
+.standings-box{
+  margin-top:18px;
+  padding:16px 18px;
+  border-radius:18px;
+  background:rgba(0,0,0,.18);
+  border:1px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  max-width:720px;
+  box-shadow:0 10px 30px rgba(0,0,0,.18);
+}
+.standings-heading{
+  font-size:1rem;
+  font-weight:800;
+  margin-bottom:14px;
+  color:#fff;
+  letter-spacing:.3px;
+}
+.standings-season{
+  font-size:.82rem;
+  font-weight:400;
+  color:rgba(255,255,255,.55);
+  margin-left:8px;
+}
+.standings-table{
+  width:100%;
+  border-collapse:collapse;
+}
+.standings-table th{
+  font-size:.78rem;
+  font-weight:700;
+  color:rgba(255,255,255,.45);
+  text-align:left;
+  padding:0 6px 8px;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+}
+.standings-table th.num{ text-align:center; }
+.standings-table td{
+  font-size:.95rem;
+  color:rgba(255,255,255,.88);
+  padding:6px 6px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.standings-table td.num{ text-align:center; }
+.standings-table tr.highlight-america td{
+  color:var(--accent);
+  font-weight:700;
+}
+.standings-table tr.highlight-rival td{
+  color:#93c5fd;
+  font-weight:700;
+}
+.standings-gap td{
+  text-align:center;
+  color:rgba(255,255,255,.25);
+  font-size:.8rem;
+  padding:2px 0;
+  border-top:none;
+}
+.standings-meta{
+  margin-top:12px;
+  font-size:.82rem;
+  color:rgba(255,255,255,.45);
+}
+.pos-badge{
+  display:inline-block;
+  width:24px;
+  text-align:center;
+}
+
 .market-box,
 .confidential-box{
   margin-top:18px;
@@ -240,13 +312,13 @@ body{
 .market-fill-america{
   height:100%;
   border-radius:999px;
-  background:linear-gradient(90deg, rgba(250,204,21,.72), rgba(250,204,21,.96));
+  background:linear-gradient(90deg,rgba(250,204,21,.72),rgba(250,204,21,.96));
   box-shadow:0 0 14px rgba(250,204,21,.24);
 }
 .market-fill-rival{
   height:100%;
   border-radius:999px;
-  background:linear-gradient(90deg, rgba(255,255,255,.26), rgba(255,255,255,.58));
+  background:linear-gradient(90deg,rgba(255,255,255,.26),rgba(255,255,255,.58));
   box-shadow:0 0 12px rgba(255,255,255,.10);
 }
 .market-verdict{
@@ -276,35 +348,18 @@ body{
   width:100%;
   height:auto;
 }
+
 @media (max-width:860px){
-  .shell{
-    padding:18px 16px 90px;
-  }
-  .layout{
-    grid-template-columns:1fr;
-    gap:22px;
-  }
-  .content{
-    text-align:center;
-    align-items:center;
-  }
-  .hero{
-    max-width:300px;
-    max-height:460px;
-  }
-  .market-label{
-    text-align:left;
-    width:100%;
-  }
+  .shell{ padding:18px 16px 90px; }
+  .layout{ grid-template-columns:1fr; gap:22px; }
+  .content{ text-align:center; align-items:center; }
+  .hero{ max-width:300px; max-height:460px; }
+  .market-label{ text-align:left; width:100%; }
   .market-box,
-  .confidential-box{
-    width:100%;
-  }
+  .confidential-box,
+  .standings-box{ width:100%; }
   .bg-tapestry::before,
-  .bg-tapestry::after{
-    width:210%;
-    left:-52%;
-  }
+  .bg-tapestry::after{ width:210%; left:-52%; }
 }
 </style>
 </head>
@@ -317,22 +372,23 @@ body{
 
   <div class="layout">
     <div class="media-wrap">
-      <img id="imgSi" class="hero" src="hoy_juega_america.png" alt="Hoy juega el América">
-      <img id="imgNo" class="hero" src="no_juega_america.png" alt="No juega el América">
-      <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg" alt="Próximo partido contra Cruz Azul">
-      <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg" alt="Hoy juega contra Cruz Azul">
-      <img id="imgNashvilleCoco" class="hero" src="nashville_coco.png" alt="Nashville Coco">
+      <img id="imgSi"           class="hero" src="hoy_juega_america.png"  alt="Hoy juega el América">
+      <img id="imgNo"           class="hero" src="no_juega_america.png"   alt="No juega el América">
+      <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg"     alt="Próximo partido contra Cruz Azul">
+      <img id="imgCruzAzulHoy"  class="hero" src="CAZ_hoy_2026.jpeg"      alt="Hoy juega contra Cruz Azul">
+      <img id="imgNashvilleCoco"class="hero" src="nashville_coco.png"     alt="Nashville Coco">
     </div>
 
     <div class="content">
-      <div id="status" class="status">Consultando...</div>
-      <div id="details" class="details"></div>
+      <div id="status"        class="status">Consultando...</div>
+      <div id="details"       class="details"></div>
       <div id="broadcastInfo"></div>
+      <div id="standingsInfo"></div>
       <div id="marketValueInfo"></div>
       <div id="funFact"></div>
 
       <div style="margin-top:18px;">
-        <a href="trivia.html" class="meta-line" style="text-decoration:none; font-weight:700;">
+        <a href="trivia.html" class="meta-line" style="text-decoration:none;font-weight:700;">
           Jugar trivia americanista
         </a>
       </div>
@@ -345,9 +401,10 @@ body{
 </main>
 
 <script>
-const TEAM_ID = "134193";
-const API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
+const TEAM_ID   = "134193";
+const API_URL   = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
 const MARKET_VALUES_URL = "./market_values.json";
+const STANDINGS_URL     = "./standings.json";
 const TZ = "America/Mexico_City";
 
 const FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH = true;
@@ -355,276 +412,286 @@ const LAST_SPECIAL_MATCH_LABEL = "América vs Nashville SC";
 
 // ─────────────────────────────────────────────
 // CANALES POR TORNEO (México)
-// Edita esta tabla cuando cambie la temporada.
-// La clave es el valor exacto de event.strLeague
-// que devuelve la API (revisa la consola si dudas).
-// Puedes poner varios canales separados por " · "
+// Edita cuando cambie la temporada.
+// La clave es el valor exacto de event.strLeague.
 // ─────────────────────────────────────────────
 const BROADCAST_BY_LEAGUE = {
-  "Liga MX":                  "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
-  "Liga BBVA MX":             "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
-  "Apertura":                 "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
-  "Clausura":                 "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
-  "CONCACAF Champions Cup":   "Fox Sports · VIX",
-  "CONCACAF Champions League":"Fox Sports · VIX",
-  "Copa MX":                  "VIX",
-  "FIFA Club World Cup":      "DAZN · Azteca 7",
-  "Leagues Cup":              "Apple TV+",
-  "Friendly":                 "VIX (confirmar)",
+  "Liga MX":                   "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
+  "Liga BBVA MX":              "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
+  "Apertura":                  "Canal 5 · TUDN · VIX Premium",
+  "Clausura":                  "Canal 5 · TUDN · VIX Premium",
+  "CONCACAF Champions Cup":    "Fox Sports · VIX",
+  "CONCACAF Champions League": "Fox Sports · VIX",
+  "Copa MX":                   "VIX",
+  "FIFA Club World Cup":       "DAZN · Azteca 7",
+  "Leagues Cup":               "Apple TV+",
+  "Friendly":                  "VIX (confirmar)",
 };
-
-// Canales genéricos si no se encuentra la liga en la tabla
 const BROADCAST_FALLBACK = "VIX (confirmar canal)";
 
+// ─────────────────────────────────────────────
+// LIGAS QUE CUENTAN COMO LIGA MX
+// para mostrar la tabla de posiciones
+// ─────────────────────────────────────────────
+const LIGA_MX_KEYWORDS = [
+  "liga mx", "liga bbva mx", "apertura", "clausura",
+  "liga mx apertura", "liga mx clausura"
+];
+
 const MARKET_VALUE_TEAM_ALIASES = {
-  "america": "club-america",
-  "cf america": "club-america",
-  "club america": "club-america",
-  "america mexico": "club-america",
-  "cruz azul": "cruz-azul",
-  "toluca": "toluca",
-  "tigres": "tigres",
-  "tigres uanl": "tigres",
-  "monterrey": "monterrey",
-  "rayados": "monterrey",
-  "guadalajara": "guadalajara",
-  "club guadalajara": "guadalajara",
-  "chivas": "guadalajara",
-  "pachuca": "pachuca",
-  "pumas": "pumas",
-  "pumas unam": "pumas",
-  "unam": "pumas",
-  "tijuana": "tijuana",
-  "xolos": "tijuana",
-  "club tijuana": "tijuana",
-  "leon": "leon",
-  "club leon": "leon",
-  "necaxa": "necaxa",
-  "juarez": "juarez",
-  "fc juarez": "juarez",
-  "bravos": "juarez",
-  "atletico san luis": "san-luis",
-  "san luis": "san-luis",
-  "santos laguna": "santos",
-  "santos": "santos",
-  "atlas": "atlas",
-  "queretaro": "queretaro",
-  "queretaro fc": "queretaro",
-  "gallos blancos": "queretaro",
-  "puebla": "puebla",
-  "mazatlan": "mazatlan",
-  "mazatlan fc": "mazatlan",
-  "inter miami": "inter-miami",
-  "inter miami cf": "inter-miami",
-  "nashville": "nashville-sc",
-  "nashville sc": "nashville-sc",
-  "lafc": "lafc",
-  "los angeles fc": "lafc",
-  "la galaxy": "la-galaxy",
-  "atlanta united": "atlanta-united",
-  "seattle sounders": "seattle",
-  "seattle sounders fc": "seattle"
+  "america":"club-america","cf america":"club-america",
+  "club america":"club-america","america mexico":"club-america",
+  "cruz azul":"cruz-azul","toluca":"toluca",
+  "tigres":"tigres","tigres uanl":"tigres",
+  "monterrey":"monterrey","rayados":"monterrey",
+  "guadalajara":"guadalajara","club guadalajara":"guadalajara","chivas":"guadalajara",
+  "pachuca":"pachuca","pumas":"pumas","pumas unam":"pumas","unam":"pumas",
+  "tijuana":"tijuana","xolos":"tijuana","club tijuana":"tijuana",
+  "leon":"leon","club leon":"leon","necaxa":"necaxa",
+  "juarez":"juarez","fc juarez":"juarez","bravos":"juarez",
+  "atletico san luis":"san-luis","san luis":"san-luis",
+  "santos laguna":"santos","santos":"santos","atlas":"atlas",
+  "queretaro":"queretaro","queretaro fc":"queretaro","gallos blancos":"queretaro",
+  "puebla":"puebla","mazatlan":"mazatlan","mazatlan fc":"mazatlan",
+  "inter miami":"inter-miami","inter miami cf":"inter-miami",
+  "nashville":"nashville-sc","nashville sc":"nashville-sc",
+  "lafc":"lafc","los angeles fc":"lafc",
+  "la galaxy":"la-galaxy","atlanta united":"atlanta-united",
+  "seattle sounders":"seattle","seattle sounders fc":"seattle"
 };
 
-function normalizeTeamName(name) {
-  return (name || "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/\./g, "")
-    .replace(/\s+/g, " ")
-    .trim();
+// ─────────────────────────────────────────────
+// UTILIDADES
+// ─────────────────────────────────────────────
+function normalizeTeamName(name){
+  return (name||"")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .toLowerCase().replace(/\./g,"").replace(/\s+/g," ").trim();
 }
-
-function isVsCruzAzul(event) {
-  const home = normalizeTeamName(event.strHomeTeam);
-  const away = normalizeTeamName(event.strAwayTeam);
-  return home.includes("cruz azul") || away.includes("cruz azul");
+function isVsCruzAzul(event){
+  const h=normalizeTeamName(event.strHomeTeam);
+  const a=normalizeTeamName(event.strAwayTeam);
+  return h.includes("cruz azul")||a.includes("cruz azul");
 }
-
-function isVsNashville(event) {
-  const home = normalizeTeamName(event.strHomeTeam);
-  const away = normalizeTeamName(event.strAwayTeam);
-  return home.includes("nashville") || away.includes("nashville");
+function isVsNashville(event){
+  const h=normalizeTeamName(event.strHomeTeam);
+  const a=normalizeTeamName(event.strAwayTeam);
+  return h.includes("nashville")||a.includes("nashville");
 }
-
-function isAmericaName(name) {
-  const normalized = normalizeTeamName(name);
-  return (
-    normalized === "america" ||
-    normalized === "cf america" ||
-    normalized === "club america" ||
-    normalized.includes("america")
-  );
+function isAmericaName(name){
+  const n=normalizeTeamName(name);
+  return n==="america"||n==="cf america"||n==="club america"||n.includes("america");
 }
-
-function getOpponentName(event) {
-  if (isAmericaName(event.strHomeTeam)) return event.strAwayTeam;
-  if (isAmericaName(event.strAwayTeam)) return event.strHomeTeam;
+function getOpponentName(event){
+  if(isAmericaName(event.strHomeTeam)) return event.strAwayTeam;
+  if(isAmericaName(event.strAwayTeam)) return event.strHomeTeam;
   return event.strAwayTeam;
 }
-
-function getMarketTeamId(rawName) {
-  const normalized = normalizeTeamName(rawName);
-  if (MARKET_VALUE_TEAM_ALIASES[normalized]) {
-    return MARKET_VALUE_TEAM_ALIASES[normalized];
-  }
-  for (const key of Object.keys(MARKET_VALUE_TEAM_ALIASES)) {
-    if (normalized.includes(key) || key.includes(normalized)) {
-      return MARKET_VALUE_TEAM_ALIASES[key];
-    }
+function getMarketTeamId(rawName){
+  const n=normalizeTeamName(rawName);
+  if(MARKET_VALUE_TEAM_ALIASES[n]) return MARKET_VALUE_TEAM_ALIASES[n];
+  for(const key of Object.keys(MARKET_VALUE_TEAM_ALIASES)){
+    if(n.includes(key)||key.includes(n)) return MARKET_VALUE_TEAM_ALIASES[key];
   }
   return null;
 }
-
-function hideAllImages() {
-  document.getElementById("imgSi").classList.remove("visible");
-  document.getElementById("imgNo").classList.remove("visible");
-  document.getElementById("imgCruzAzulProx").classList.remove("visible");
-  document.getElementById("imgCruzAzulHoy").classList.remove("visible");
-  document.getElementById("imgNashvilleCoco").classList.remove("visible");
+function isLigaMX(event){
+  const league=(event.strLeague||"").toLowerCase().trim();
+  return LIGA_MX_KEYWORDS.some(l=>league.includes(l));
 }
-
-function showImage(mode) {
-  hideAllImages();
-  if (mode === "general-yes")   document.getElementById("imgSi").classList.add("visible");
-  else if (mode === "general-no")    document.getElementById("imgNo").classList.add("visible");
-  else if (mode === "caz-prox")      document.getElementById("imgCruzAzulProx").classList.add("visible");
-  else if (mode === "caz-hoy")       document.getElementById("imgCruzAzulHoy").classList.add("visible");
-  else if (mode === "nashville-coco")document.getElementById("imgNashvilleCoco").classList.add("visible");
-}
-
-function getMexicoDate(date) {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: TZ,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
+function getMexicoDate(date){
+  return new Intl.DateTimeFormat("en-CA",{
+    timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit"
   }).format(date);
 }
-
-function formatMexicoDateTime(date) {
-  return new Intl.DateTimeFormat("es-MX", {
-    timeZone: TZ,
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    hour: "2-digit",
-    minute: "2-digit"
+function formatMexicoDateTime(date){
+  return new Intl.DateTimeFormat("es-MX",{
+    timeZone:TZ,weekday:"long",day:"numeric",month:"long",
+    hour:"2-digit",minute:"2-digit"
   }).format(date);
 }
-
-function parseDate(event) {
-  let raw = event.strTimestamp || `${event.dateEvent}T${event.strTime}`;
-  if (!raw) return null;
-  if (!raw.endsWith("Z")) raw += "Z";
-  const d = new Date(raw);
-  return isNaN(d) ? null : d;
+function parseDate(event){
+  let raw=event.strTimestamp||`${event.dateEvent}T${event.strTime}`;
+  if(!raw) return null;
+  if(!raw.endsWith("Z")) raw+="Z";
+  const d=new Date(raw);
+  return isNaN(d)?null:d;
 }
-
-function setReferenceTime(dateText) {
-  const details = document.getElementById("details");
-  const refHtml = `<div class="reference-time">Hora de referencia: ${dateText} (Ciudad de México)</div>`;
-  details.innerHTML += refHtml;
-}
-
-function formatEurCompact(value) {
-  return new Intl.NumberFormat("es-MX", {
-    style: "currency",
-    currency: "EUR",
-    notation: "compact",
-    compactDisplay: "short",
-    maximumFractionDigits: 1
+function formatEurCompact(value){
+  return new Intl.NumberFormat("es-MX",{
+    style:"currency",currency:"EUR",
+    notation:"compact",compactDisplay:"short",maximumFractionDigits:1
   }).format(value);
 }
 
 // ─────────────────────────────────────────────
-// DÓNDE VER EL PARTIDO
-// Primero intenta con el campo de la API,
-// si no, busca en la tabla por liga.
-// Solo se muestra cuando hay partido (hoy o próximo).
+// IMÁGENES
 // ─────────────────────────────────────────────
-function renderBroadcastInfo(event) {
-  const box = document.getElementById("broadcastInfo");
-  box.innerHTML = "";
+function hideAllImages(){
+  ["imgSi","imgNo","imgCruzAzulProx","imgCruzAzulHoy","imgNashvilleCoco"]
+    .forEach(id=>document.getElementById(id).classList.remove("visible"));
+}
+function showImage(mode){
+  hideAllImages();
+  const map={
+    "general-yes":"imgSi","general-no":"imgNo",
+    "caz-prox":"imgCruzAzulProx","caz-hoy":"imgCruzAzulHoy",
+    "nashville-coco":"imgNashvilleCoco"
+  };
+  if(map[mode]) document.getElementById(map[mode]).classList.add("visible");
+}
 
-  // 1. La API a veces trae el canal directamente
-  const apiChannel = (event.strTVStation || "").trim();
+// ─────────────────────────────────────────────
+// HORA DE REFERENCIA
+// ─────────────────────────────────────────────
+function setReferenceTime(dateText){
+  document.getElementById("details").innerHTML+=
+    `<div class="reference-time">Hora de referencia: ${dateText} (Ciudad de México)</div>`;
+}
 
-  // 2. Si no, buscar en la tabla por nombre de liga
-  const league = (event.strLeague || "").trim();
-  const tableChannel = BROADCAST_BY_LEAGUE[league] || null;
-
-  // 3. Elegir fuente: API tiene prioridad
-  const channels = apiChannel || tableChannel || BROADCAST_FALLBACK;
-
-  box.innerHTML = `
+// ─────────────────────────────────────────────
+// DÓNDE VER EL PARTIDO
+// ─────────────────────────────────────────────
+function renderBroadcastInfo(event){
+  const box=document.getElementById("broadcastInfo");
+  box.innerHTML="";
+  const apiChannel=(event.strTVStation||"").trim();
+  const league=(event.strLeague||"").trim();
+  const tableChannel=BROADCAST_BY_LEAGUE[league]||null;
+  const channels=apiChannel||tableChannel||BROADCAST_FALLBACK;
+  box.innerHTML=`
     <div class="broadcast-box">
       <span class="tv-icon">📺</span>
       <span class="tv-label">Dónde verlo:</span>
       <span class="tv-channels">${channels}</span>
-    </div>
-  `;
+    </div>`;
 }
 
-async function loadMarketValues() {
-  const res = await fetch(MARKET_VALUES_URL);
-  if (!res.ok) throw new Error("No se pudo cargar market_values.json");
+// ─────────────────────────────────────────────
+// TABLA DE POSICIONES
+// ─────────────────────────────────────────────
+async function loadStandings(){
+  const res=await fetch(STANDINGS_URL);
+  if(!res.ok) throw new Error("No se pudo cargar standings.json");
   return res.json();
 }
 
-function buildMarketVerdict(america, rival) {
-  if (!america || !rival) return "";
-  const ratio = america.squad_value_eur / rival.squad_value_eur;
-  const ratioText = ratio >= 1
-    ? `${ratio.toFixed(2)}x`
-    : `${(1 / ratio).toFixed(2)}x`;
-  if (america.squad_value_eur > rival.squad_value_eur) {
-    return `América vale <strong>${ratioText}</strong> lo que ${rival.team_name}.`;
+function renderStandings(event,standingsData){
+  const box=document.getElementById("standingsInfo");
+  box.innerHTML="";
+  if(!standingsData||!Array.isArray(standingsData.standings)) return;
+  if(!isLigaMX(event)) return;
+
+  const table=standingsData.standings;
+  const rivalRaw=getOpponentName(event);
+  const rivalId=getMarketTeamId(rivalRaw);
+
+  const americaIdx=table.findIndex(t=>t.team_id==="club-america");
+  const rivalIdx=table.findIndex(t=>
+    t.team_id===rivalId||
+    normalizeTeamName(t.team)===normalizeTeamName(rivalRaw)
+  );
+  if(americaIdx===-1||rivalIdx===-1) return;
+
+  const WINDOW=2;
+  const len=table.length;
+  function range(idx){
+    return{from:Math.max(0,idx-WINDOW),to:Math.min(len-1,idx+WINDOW)};
   }
-  if (america.squad_value_eur < rival.squad_value_eur) {
-    return `${rival.team_name} vale <strong>${ratioText}</strong> lo que América.`;
+  const rA=range(americaIdx);
+  const rR=range(rivalIdx);
+  const indices=new Set();
+  for(let i=rA.from;i<=rA.to;i++) indices.add(i);
+  for(let i=rR.from;i<=rR.to;i++) indices.add(i);
+  const sorted=[...indices].sort((a,b)=>a-b);
+
+  let rows="";
+  let prev=null;
+  for(const i of sorted){
+    if(prev!==null&&i>prev+1){
+      rows+=`<tr class="standings-gap"><td colspan="3">· · ·</td></tr>`;
+    }
+    const t=table[i];
+    const isAmerica=i===americaIdx;
+    const isRival=i===rivalIdx;
+    const cls=isAmerica?"highlight-america":isRival?"highlight-rival":"";
+    const label=isAmerica?" 🦅":isRival?" ⚽":"";
+    rows+=`
+      <tr class="${cls}">
+        <td class="num pos-badge">${t.position}</td>
+        <td>${t.team}${label}</td>
+        <td class="num">${t.points} pts</td>
+      </tr>`;
+    prev=i;
   }
-  return `América y ${rival.team_name} llegan con el mismo valor de plantilla.`;
+
+  box.innerHTML=`
+    <div class="standings-box">
+      <div class="standings-heading">
+        Tabla de posiciones
+        <span class="standings-season">${standingsData.season||""}</span>
+      </div>
+      <table class="standings-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Equipo</th>
+            <th class="num">Pts</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="standings-meta">Actualizado: ${standingsData.updated_at||"sin fecha"}</div>
+    </div>`;
 }
 
-function renderMarketValueInfo(event, marketData) {
-  const box = document.getElementById("marketValueInfo");
-  box.innerHTML = "";
-  if (!marketData || !Array.isArray(marketData.teams)) return;
+// ─────────────────────────────────────────────
+// BILLETÓMETRO (TRANSFERMARKT)
+// ─────────────────────────────────────────────
+async function loadMarketValues(){
+  const res=await fetch(MARKET_VALUES_URL);
+  if(!res.ok) throw new Error("No se pudo cargar market_values.json");
+  return res.json();
+}
+function buildMarketVerdict(america,rival){
+  if(!america||!rival) return "";
+  const ratio=america.squad_value_eur/rival.squad_value_eur;
+  const ratioText=ratio>=1?`${ratio.toFixed(2)}x`:`${(1/ratio).toFixed(2)}x`;
+  if(america.squad_value_eur>rival.squad_value_eur)
+    return `América vale <strong>${ratioText}</strong> lo que ${rival.team_name}.`;
+  if(america.squad_value_eur<rival.squad_value_eur)
+    return `${rival.team_name} vale <strong>${ratioText}</strong> lo que América.`;
+  return `América y ${rival.team_name} llegan con el mismo valor de plantilla.`;
+}
+function renderMarketValueInfo(event,marketData){
+  const box=document.getElementById("marketValueInfo");
+  box.innerHTML="";
+  if(!marketData||!Array.isArray(marketData.teams)) return;
 
-  const americaId = "club-america";
-  const rivalRaw = getOpponentName(event);
-  const rivalId = getMarketTeamId(rivalRaw);
-  const america = marketData.teams.find(team => team.team_id === americaId);
-  let rival = marketData.teams.find(team => team.team_id === rivalId);
-
-  if (!rival) {
-    const normalizedRivalRaw = normalizeTeamName(rivalRaw);
-    rival = marketData.teams.find(team => {
-      const normalizedTeamName = normalizeTeamName(team.team_name);
-      return (
-        normalizedTeamName === normalizedRivalRaw ||
-        normalizedTeamName.includes(normalizedRivalRaw) ||
-        normalizedRivalRaw.includes(normalizedTeamName)
-      );
+  const rivalRaw=getOpponentName(event);
+  const rivalId=getMarketTeamId(rivalRaw);
+  const america=marketData.teams.find(t=>t.team_id==="club-america");
+  let rival=marketData.teams.find(t=>t.team_id===rivalId);
+  if(!rival){
+    const nr=normalizeTeamName(rivalRaw);
+    rival=marketData.teams.find(t=>{
+      const nt=normalizeTeamName(t.team_name);
+      return nt===nr||nt.includes(nr)||nr.includes(nt);
     });
   }
+  if(!america||!rival) return;
 
-  if (!america || !rival) return;
+  const maxValue=Math.max(america.squad_value_eur,rival.squad_value_eur);
+  const americaWidth=(america.squad_value_eur/maxValue)*100;
+  const rivalWidth=(rival.squad_value_eur/maxValue)*100;
+  const verdict=buildMarketVerdict(america,rival);
 
-  const maxValue = Math.max(america.squad_value_eur, rival.squad_value_eur);
-  const americaWidth = (america.squad_value_eur / maxValue) * 100;
-  const rivalWidth = (rival.squad_value_eur / maxValue) * 100;
-  const verdict = buildMarketVerdict(america, rival);
-
-  box.innerHTML = `
+  box.innerHTML=`
     <div class="market-box">
       <div class="market-heading">Billetómetro (Transfermarkt)</div>
       <div class="market-row">
         <div class="market-label">
-          <span>América</span>
-          <strong>${formatEurCompact(america.squad_value_eur)}</strong>
+          <span>América</span><strong>${formatEurCompact(america.squad_value_eur)}</strong>
         </div>
         <div class="market-track">
           <div class="market-fill-america" style="width:${americaWidth}%"></div>
@@ -632,8 +699,7 @@ function renderMarketValueInfo(event, marketData) {
       </div>
       <div class="market-row">
         <div class="market-label">
-          <span>${rival.team_name}</span>
-          <strong>${formatEurCompact(rival.squad_value_eur)}</strong>
+          <span>${rival.team_name}</span><strong>${formatEurCompact(rival.squad_value_eur)}</strong>
         </div>
         <div class="market-track">
           <div class="market-fill-rival" style="width:${rivalWidth}%"></div>
@@ -642,18 +708,19 @@ function renderMarketValueInfo(event, marketData) {
       <div class="market-verdict">${verdict}</div>
       <div class="market-meta">
         Ranking en su liga: América #${america.rank_in_league} · ${rival.team_name} #${rival.rank_in_league}<br>
-        Corte de datos: ${marketData.updated_at || "sin fecha"} · Fuente: ${marketData.source || "Transfermarkt"}
+        Corte de datos: ${marketData.updated_at||"sin fecha"} · Fuente: ${marketData.source||"Transfermarkt"}
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-function renderFunFact(event) {
-  const box = document.getElementById("funFact");
-  box.innerHTML = "";
-
-  if (isVsCruzAzul(event)) {
-    box.innerHTML = `
+// ─────────────────────────────────────────────
+// ANÉCDOTAS
+// ─────────────────────────────────────────────
+function renderFunFact(event){
+  const box=document.getElementById("funFact");
+  box.innerHTML="";
+  if(isVsCruzAzul(event)){
+    box.innerHTML=`
       <div class="confidential-box">
         <div class="confidential-title">Expediente íntimo del americanismo</div>
         <div class="confidential-text">
@@ -663,13 +730,11 @@ function renderFunFact(event) {
           "¡Pablo, Pablo!". Al fin, Larios volteó apenas, saludó con desgano y de reojo.
           Jorge aceleró para buscar lugar y dictó: "Ya no le vuelvo a prestar dinero".
         </div>
-      </div>
-    `;
+      </div>`;
     return;
   }
-
-  if (isVsNashville(event)) {
-    box.innerHTML = `
+  if(isVsNashville(event)){
+    box.innerHTML=`
       <div class="confidential-box">
         <div class="confidential-title">Expediente íntimo del americanismo</div>
         <div class="confidential-text">
@@ -682,137 +747,133 @@ function renderFunFact(event) {
           Después de que los jugadores se fueron a los vestidores, el arbitrario árbitro ordenó repetir el penal,
           y Nashville acabó ganando. A veces nos toca perder, sentir lo que sienten los aficionados de los demás equipos.
         </div>
-      </div>
-    `;
+      </div>`;
   }
 }
 
-async function loadMatch() {
-  const status = document.getElementById("status");
-  const details = document.getElementById("details");
+// ─────────────────────────────────────────────
+// FUNCIÓN PRINCIPAL
+// ─────────────────────────────────────────────
+async function loadMatch(){
+  const status        = document.getElementById("status");
+  const details       = document.getElementById("details");
   const broadcastInfo = document.getElementById("broadcastInfo");
-  const marketValueInfo = document.getElementById("marketValueInfo");
-  const funFact = document.getElementById("funFact");
+  const standingsInfo = document.getElementById("standingsInfo");
+  const marketValueInfo=document.getElementById("marketValueInfo");
+  const funFact       = document.getElementById("funFact");
 
-  status.textContent = "Consultando...";
-  status.className = "status";
-  details.innerHTML = "";
-  broadcastInfo.innerHTML = "";
-  marketValueInfo.innerHTML = "";
-  funFact.innerHTML = "";
+  status.textContent="Consultando...";
+  status.className="status";
+  details.innerHTML="";
+  broadcastInfo.innerHTML="";
+  standingsInfo.innerHTML="";
+  marketValueInfo.innerHTML="";
+  funFact.innerHTML="";
   hideAllImages();
 
-  try {
-    const [matchRes, marketData] = await Promise.all([
+  try{
+    const [matchRes, marketData, standingsData]=await Promise.all([
       fetch(API_URL),
-      loadMarketValues().catch(() => null)
+      loadMarketValues().catch(()=>null),
+      loadStandings().catch(()=>null)
     ]);
 
-    const data = await matchRes.json();
+    const data=await matchRes.json();
 
-    if (!data.events || data.events.length === 0) {
-      status.textContent = FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH ? "Todavía duele" : "Sin datos";
-      status.className = "status no";
-
-      if (FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH) {
+    if(!data.events||data.events.length===0){
+      status.textContent=FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH?"Todavía duele":"Sin datos";
+      status.className="status no";
+      if(FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH){
         showImage("nashville-coco");
-        details.innerHTML = `
+        details.innerHTML=`
           <div><b>Último partido registrado</b></div>
           <div class="meta-line">${LAST_SPECIAL_MATCH_LABEL}</div>
-          <div class="reference-time">En lo que aparece el próximo partido, sigue vigente la herida de Nashville.</div>
-        `;
+          <div class="reference-time">En lo que aparece el próximo partido, sigue vigente la herida de Nashville.</div>`;
       } else {
         showImage("general-no");
-        details.innerHTML = `No se encontró información del próximo partido.`;
+        details.innerHTML=`No se encontró información del próximo partido.`;
       }
       return;
     }
 
-    const event = data.events[0];
-    const date = parseDate(event);
+    const event=data.events[0];
+    const date=parseDate(event);
 
-    if (!date) {
-      status.textContent = "Error en fecha";
-      status.className = "status no";
+    if(!date){
+      status.textContent="Error en fecha";
+      status.className="status no";
       showImage("general-no");
-      details.innerHTML = `No fue posible interpretar la fecha del partido.`;
+      details.innerHTML=`No fue posible interpretar la fecha del partido.`;
       return;
     }
 
-    const today = getMexicoDate(new Date());
-    const eventDate = getMexicoDate(date);
-    const finished = (event.strStatus || "").includes("Finished");
-    const cruzAzulMatch = isVsCruzAzul(event);
-    const nashvilleMatch = isVsNashville(event);
+    const today     =getMexicoDate(new Date());
+    const eventDate =getMexicoDate(date);
+    const finished  =(event.strStatus||"").includes("Finished");
+    const cruzAzulMatch=isVsCruzAzul(event);
+    const nashvilleMatch=isVsNashville(event);
+    const matchText =`${event.strHomeTeam} vs ${event.strAwayTeam}`;
+    const dateText  =formatMexicoDateTime(date);
 
-    const matchText = `${event.strHomeTeam} vs ${event.strAwayTeam}`;
-    const dateText = formatMexicoDateTime(date);
-
-    if (eventDate > today) {
-      // Próximo partido (no es hoy)
-      status.textContent = "No juega hoy";
-      status.className = "status no";
-      showImage(cruzAzulMatch ? "caz-prox" : "general-no");
-
-      details.innerHTML = `
+    if(eventDate>today){
+      // ── Próximo partido (no es hoy) ──
+      status.textContent="No juega hoy";
+      status.className="status no";
+      showImage(cruzAzulMatch?"caz-prox":"general-no");
+      details.innerHTML=`
         <div><b>Próximo partido</b></div>
-        <div class="meta-line">${matchText}</div>
-      `;
+        <div class="meta-line">${matchText}</div>`;
       setReferenceTime(dateText);
       renderBroadcastInfo(event);
-      renderMarketValueInfo(event, marketData);
+      renderStandings(event,standingsData);
+      renderMarketValueInfo(event,marketData);
       renderFunFact(event);
 
-    } else if (eventDate === today) {
-      if (finished) {
-        // Ya terminó hoy
-        status.textContent = nashvilleMatch ? "Todavía duele" : "Ya jugó hoy";
-        status.className = "status no";
-        showImage(nashvilleMatch ? "nashville-coco" : "general-no");
-
-        details.innerHTML = `<div><b>${matchText}</b></div>`;
+    } else if(eventDate===today){
+      if(finished){
+        // ── Ya terminó hoy ──
+        status.textContent=nashvilleMatch?"Todavía duele":"Ya jugó hoy";
+        status.className="status no";
+        showImage(nashvilleMatch?"nashville-coco":"general-no");
+        details.innerHTML=`<div><b>${matchText}</b></div>`;
         setReferenceTime(dateText);
-        // No mostramos dónde ver si ya terminó
-        renderMarketValueInfo(event, marketData);
+        renderStandings(event,standingsData);
+        renderMarketValueInfo(event,marketData);
         renderFunFact(event);
-
       } else {
-        // Juega hoy y no ha terminado
-        status.textContent = "Hoy juega";
-        status.className = "status yes";
-        showImage(cruzAzulMatch ? "caz-hoy" : "general-yes");
-
-        details.innerHTML = `
+        // ── Juega hoy y no ha terminado ──
+        status.textContent="Hoy juega";
+        status.className="status yes";
+        showImage(cruzAzulMatch?"caz-hoy":"general-yes");
+        details.innerHTML=`
           <div><b>${matchText}</b></div>
-          <div class="meta-line" style="margin-top:12px;">Partido programado para hoy</div>
-        `;
+          <div class="meta-line" style="margin-top:12px;">Partido programado para hoy</div>`;
         setReferenceTime(dateText);
         renderBroadcastInfo(event);
-        renderMarketValueInfo(event, marketData);
+        renderStandings(event,standingsData);
+        renderMarketValueInfo(event,marketData);
         renderFunFact(event);
       }
 
     } else {
-      // El evento ya pasó (fecha anterior a hoy)
-      status.textContent = nashvilleMatch ? "Todavía duele" : "No juega hoy";
-      status.className = "status no";
-      showImage(nashvilleMatch ? "nashville-coco" : "general-no");
-
-      details.innerHTML = `
+      // ── El evento ya pasó ──
+      status.textContent=nashvilleMatch?"Todavía duele":"No juega hoy";
+      status.className="status no";
+      showImage(nashvilleMatch?"nashville-coco":"general-no");
+      details.innerHTML=`
         <div><b>Último partido registrado</b></div>
-        <div class="meta-line">${matchText}</div>
-      `;
+        <div class="meta-line">${matchText}</div>`;
       setReferenceTime(dateText);
-      // No mostramos dónde ver si ya pasó
-      renderMarketValueInfo(event, marketData);
+      renderStandings(event,standingsData);
+      renderMarketValueInfo(event,marketData);
       renderFunFact(event);
     }
 
-  } catch (err) {
-    status.textContent = "Error al cargar";
-    status.className = "status no";
+  } catch(err){
+    status.textContent="Error al cargar";
+    status.className="status no";
     showImage("general-no");
-    details.innerHTML = `No fue posible cargar la información del partido.`;
+    details.innerHTML=`No fue posible cargar la información del partido.`;
     console.error(err);
   }
 }
