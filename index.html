@@ -797,7 +797,8 @@ async function loadMatch(){
     }
 
     const event=data.events[0];
-    console.log("Liga:", event.strLeague, "| Rival:", event.strHomeTeam, "vs", event.strAwayTeam);    const date=parseDate(event);
+    console.log("Liga:", event.strLeague, "| Rival:", event.strHomeTeam, "vs", event.strAwayTeam);    
+    const date=parseDate(event);
 
     if(!date){
       status.textContent="Error en fecha";
