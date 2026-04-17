@@ -161,6 +161,35 @@ body{
   font-size:.94rem;
   color:rgba(255,255,255,.8);
 }
+
+/* ── Cajita de dónde ver el partido ── */
+.broadcast-box{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:14px;
+  padding:9px 16px;
+  border-radius:999px;
+  background:rgba(250,204,21,.13);
+  border:1px solid rgba(250,204,21,.28);
+  font-size:.95rem;
+  color:#fff;
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+}
+.broadcast-box .tv-icon{
+  font-size:1.1rem;
+  flex-shrink:0;
+}
+.broadcast-box .tv-label{
+  color:rgba(255,255,255,.7);
+  margin-right:4px;
+}
+.broadcast-box .tv-channels{
+  font-weight:700;
+  color:var(--accent);
+}
+
 .market-box,
 .confidential-box{
   margin-top:18px;
@@ -298,6 +327,7 @@ body{
     <div class="content">
       <div id="status" class="status">Consultando...</div>
       <div id="details" class="details"></div>
+      <div id="broadcastInfo"></div>
       <div id="marketValueInfo"></div>
       <div id="funFact"></div>
 
@@ -322,13 +352,35 @@ const TZ = "America/Mexico_City";
 
 const FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH = true;
 const LAST_SPECIAL_MATCH_LABEL = "América vs Nashville SC";
-  
+
+// ─────────────────────────────────────────────
+// CANALES POR TORNEO (México)
+// Edita esta tabla cuando cambie la temporada.
+// La clave es el valor exacto de event.strLeague
+// que devuelve la API (revisa la consola si dudas).
+// Puedes poner varios canales separados por " · "
+// ─────────────────────────────────────────────
+const BROADCAST_BY_LEAGUE = {
+  "Liga MX":                  "VIX · Canal 5",
+  "Liga BBVA MX":             "VIX · Canal 5",
+  "Apertura":                 "VIX · Canal 5",
+  "Clausura":                 "VIX · Canal 5",
+  "CONCACAF Champions Cup":   "Fox Sports · VIX",
+  "CONCACAF Champions League":"Fox Sports · VIX",
+  "Copa MX":                  "VIX",
+  "FIFA Club World Cup":      "DAZN · Azteca 7",
+  "Leagues Cup":              "Apple TV+",
+  "Friendly":                 "VIX (confirmar)",
+};
+
+// Canales genéricos si no se encuentra la liga en la tabla
+const BROADCAST_FALLBACK = "VIX (confirmar canal)";
+
 const MARKET_VALUE_TEAM_ALIASES = {
   "america": "club-america",
   "cf america": "club-america",
   "club america": "club-america",
   "america mexico": "club-america",
-
   "cruz azul": "cruz-azul",
   "toluca": "toluca",
   "tigres": "tigres",
@@ -362,7 +414,6 @@ const MARKET_VALUE_TEAM_ALIASES = {
   "puebla": "puebla",
   "mazatlan": "mazatlan",
   "mazatlan fc": "mazatlan",
-
   "inter miami": "inter-miami",
   "inter miami cf": "inter-miami",
   "nashville": "nashville-sc",
@@ -415,17 +466,14 @@ function getOpponentName(event) {
 
 function getMarketTeamId(rawName) {
   const normalized = normalizeTeamName(rawName);
-
   if (MARKET_VALUE_TEAM_ALIASES[normalized]) {
     return MARKET_VALUE_TEAM_ALIASES[normalized];
   }
-
   for (const key of Object.keys(MARKET_VALUE_TEAM_ALIASES)) {
     if (normalized.includes(key) || key.includes(normalized)) {
       return MARKET_VALUE_TEAM_ALIASES[key];
     }
   }
-
   return null;
 }
 
@@ -439,18 +487,11 @@ function hideAllImages() {
 
 function showImage(mode) {
   hideAllImages();
-
-  if (mode === "general-yes") {
-    document.getElementById("imgSi").classList.add("visible");
-  } else if (mode === "general-no") {
-    document.getElementById("imgNo").classList.add("visible");
-  } else if (mode === "caz-prox") {
-    document.getElementById("imgCruzAzulProx").classList.add("visible");
-  } else if (mode === "caz-hoy") {
-    document.getElementById("imgCruzAzulHoy").classList.add("visible");
-  } else if (mode === "nashville-coco") {
-    document.getElementById("imgNashvilleCoco").classList.add("visible");
-  }
+  if (mode === "general-yes")   document.getElementById("imgSi").classList.add("visible");
+  else if (mode === "general-no")    document.getElementById("imgNo").classList.add("visible");
+  else if (mode === "caz-prox")      document.getElementById("imgCruzAzulProx").classList.add("visible");
+  else if (mode === "caz-hoy")       document.getElementById("imgCruzAzulHoy").classList.add("visible");
+  else if (mode === "nashville-coco")document.getElementById("imgNashvilleCoco").classList.add("visible");
 }
 
 function getMexicoDate(date) {
@@ -497,45 +538,65 @@ function formatEurCompact(value) {
   }).format(value);
 }
 
+// ─────────────────────────────────────────────
+// DÓNDE VER EL PARTIDO
+// Primero intenta con el campo de la API,
+// si no, busca en la tabla por liga.
+// Solo se muestra cuando hay partido (hoy o próximo).
+// ─────────────────────────────────────────────
+function renderBroadcastInfo(event) {
+  const box = document.getElementById("broadcastInfo");
+  box.innerHTML = "";
+
+  // 1. La API a veces trae el canal directamente
+  const apiChannel = (event.strTVStation || "").trim();
+
+  // 2. Si no, buscar en la tabla por nombre de liga
+  const league = (event.strLeague || "").trim();
+  const tableChannel = BROADCAST_BY_LEAGUE[league] || null;
+
+  // 3. Elegir fuente: API tiene prioridad
+  const channels = apiChannel || tableChannel || BROADCAST_FALLBACK;
+
+  box.innerHTML = `
+    <div class="broadcast-box">
+      <span class="tv-icon">📺</span>
+      <span class="tv-label">Dónde verlo:</span>
+      <span class="tv-channels">${channels}</span>
+    </div>
+  `;
+}
+
 async function loadMarketValues() {
   const res = await fetch(MARKET_VALUES_URL);
-  if (!res.ok) {
-    throw new Error("No se pudo cargar market_values.json");
-  }
+  if (!res.ok) throw new Error("No se pudo cargar market_values.json");
   return res.json();
 }
 
 function buildMarketVerdict(america, rival) {
   if (!america || !rival) return "";
-
   const ratio = america.squad_value_eur / rival.squad_value_eur;
   const ratioText = ratio >= 1
     ? `${ratio.toFixed(2)}x`
     : `${(1 / ratio).toFixed(2)}x`;
-
   if (america.squad_value_eur > rival.squad_value_eur) {
     return `América vale <strong>${ratioText}</strong> lo que ${rival.team_name}.`;
   }
-
   if (america.squad_value_eur < rival.squad_value_eur) {
     return `${rival.team_name} vale <strong>${ratioText}</strong> lo que América.`;
   }
-
   return `América y ${rival.team_name} llegan con el mismo valor de plantilla.`;
 }
 
 function renderMarketValueInfo(event, marketData) {
   const box = document.getElementById("marketValueInfo");
   box.innerHTML = "";
-
   if (!marketData || !Array.isArray(marketData.teams)) return;
 
   const americaId = "club-america";
   const rivalRaw = getOpponentName(event);
   const rivalId = getMarketTeamId(rivalRaw);
-
   const america = marketData.teams.find(team => team.team_id === americaId);
-
   let rival = marketData.teams.find(team => team.team_id === rivalId);
 
   if (!rival) {
@@ -560,7 +621,6 @@ function renderMarketValueInfo(event, marketData) {
   box.innerHTML = `
     <div class="market-box">
       <div class="market-heading">Billetómetro (Transfermarkt)</div>
-
       <div class="market-row">
         <div class="market-label">
           <span>América</span>
@@ -570,7 +630,6 @@ function renderMarketValueInfo(event, marketData) {
           <div class="market-fill-america" style="width:${americaWidth}%"></div>
         </div>
       </div>
-
       <div class="market-row">
         <div class="market-label">
           <span>${rival.team_name}</span>
@@ -580,7 +639,6 @@ function renderMarketValueInfo(event, marketData) {
           <div class="market-fill-rival" style="width:${rivalWidth}%"></div>
         </div>
       </div>
-
       <div class="market-verdict">${verdict}</div>
       <div class="market-meta">
         Ranking en su liga: América #${america.rank_in_league} · ${rival.team_name} #${rival.rank_in_league}<br>
@@ -601,9 +659,9 @@ function renderFunFact(event) {
         <div class="confidential-text">
           Por ahí de 1988 fuimos a un América-Cruz Azul, un partido de liga. Llegamos como hora y media antes del partido,
           en zona baja detrás de una portería del Azteca. Pablo Larios calentaba. Íbamos mi primo Marco,
-          su papá Jorge y yo. Jorge anunció: “Van a ver que me conoce”, y empezó a gritar muy insistente:
-          “¡Pablo, Pablo!”. Al fin, Larios volteó apenas, saludó con desgano y de reojo.
-          Jorge aceleró para buscar lugar y dictó: “Ya no le vuelvo a prestar dinero”.
+          su papá Jorge y yo. Jorge anunció: "Van a ver que me conoce", y empezó a gritar muy insistente:
+          "¡Pablo, Pablo!". Al fin, Larios volteó apenas, saludó con desgano y de reojo.
+          Jorge aceleró para buscar lugar y dictó: "Ya no le vuelvo a prestar dinero".
         </div>
       </div>
     `;
@@ -618,9 +676,9 @@ function renderFunFact(event) {
           Corría el año 2023, estaba entrada la noche y el América disputaba con los griguillos del Nashville
           los playoffs de la Concachampions. Fue un partido trabado que al final ganó el América en penales,
           con una buena parada de Malagón. Me fui a dormir satisfecho y alegre. Al día siguiente me bañé
-          y me fui peinado al trabajo. Un amigo necaxista me sorprendió con un “¿qué tal la Concachampions?”.
+          y me fui peinado al trabajo. Un amigo necaxista me sorprendió con un "¿qué tal la Concachampions?".
           Me sorprendió que quisiera hablar del tema, pero aproveché y presumí el poder del ave. Después de un rato,
-          mis colegas del trabajo me dijeron: “¿Apagaste la tele después del penal que detuvo Malagón?” y se empezaron a reír.
+          mis colegas del trabajo me dijeron: "¿Apagaste la tele después del penal que detuvo Malagón?" y se empezaron a reír.
           Después de que los jugadores se fueron a los vestidores, el arbitrario árbitro ordenó repetir el penal,
           y Nashville acabó ganando. A veces nos toca perder, sentir lo que sienten los aficionados de los demás equipos.
         </div>
@@ -632,12 +690,14 @@ function renderFunFact(event) {
 async function loadMatch() {
   const status = document.getElementById("status");
   const details = document.getElementById("details");
+  const broadcastInfo = document.getElementById("broadcastInfo");
   const marketValueInfo = document.getElementById("marketValueInfo");
   const funFact = document.getElementById("funFact");
 
   status.textContent = "Consultando...";
   status.className = "status";
   details.innerHTML = "";
+  broadcastInfo.innerHTML = "";
   marketValueInfo.innerHTML = "";
   funFact.innerHTML = "";
   hideAllImages();
@@ -651,23 +711,22 @@ async function loadMatch() {
     const data = await matchRes.json();
 
     if (!data.events || data.events.length === 0) {
-  status.textContent = FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH ? "Todavía duele" : "Sin datos";
-  status.className = "status no";
+      status.textContent = FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH ? "Todavía duele" : "Sin datos";
+      status.className = "status no";
 
-  if (FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH) {
-    showImage("nashville-coco");
-    details.innerHTML = `
-      <div><b>Último partido registrado</b></div>
-      <div class="meta-line">${LAST_SPECIAL_MATCH_LABEL}</div>
-      <div class="reference-time">En lo que aparece el próximo partido, sigue vigente la herida de Nashville.</div>
-    `;
-    } else {
-      showImage("general-no");
-      details.innerHTML = `No se encontró información del próximo partido.`;
+      if (FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH) {
+        showImage("nashville-coco");
+        details.innerHTML = `
+          <div><b>Último partido registrado</b></div>
+          <div class="meta-line">${LAST_SPECIAL_MATCH_LABEL}</div>
+          <div class="reference-time">En lo que aparece el próximo partido, sigue vigente la herida de Nashville.</div>
+        `;
+      } else {
+        showImage("general-no");
+        details.innerHTML = `No se encontró información del próximo partido.`;
+      }
+      return;
     }
-  
-    return;
-  }
 
     const event = data.events[0];
     const date = parseDate(event);
@@ -690,73 +749,61 @@ async function loadMatch() {
     const dateText = formatMexicoDateTime(date);
 
     if (eventDate > today) {
+      // Próximo partido (no es hoy)
       status.textContent = "No juega hoy";
       status.className = "status no";
-
-      if (cruzAzulMatch) {
-        showImage("caz-prox");
-      } else {
-        showImage("general-no");
-      }
+      showImage(cruzAzulMatch ? "caz-prox" : "general-no");
 
       details.innerHTML = `
         <div><b>Próximo partido</b></div>
         <div class="meta-line">${matchText}</div>
       `;
       setReferenceTime(dateText);
+      renderBroadcastInfo(event);
       renderMarketValueInfo(event, marketData);
       renderFunFact(event);
 
     } else if (eventDate === today) {
       if (finished) {
+        // Ya terminó hoy
         status.textContent = nashvilleMatch ? "Todavía duele" : "Ya jugó hoy";
         status.className = "status no";
+        showImage(nashvilleMatch ? "nashville-coco" : "general-no");
 
-        if (nashvilleMatch) {
-          showImage("nashville-coco");
-        } else {
-          showImage("general-no");
-        }
-
-        details.innerHTML = `
-          <div><b>${matchText}</b></div>
-        `;
+        details.innerHTML = `<div><b>${matchText}</b></div>`;
         setReferenceTime(dateText);
+        // No mostramos dónde ver si ya terminó
+        renderMarketValueInfo(event, marketData);
+        renderFunFact(event);
+
       } else {
+        // Juega hoy y no ha terminado
         status.textContent = "Hoy juega";
         status.className = "status yes";
-
-        if (cruzAzulMatch) {
-          showImage("caz-hoy");
-        } else {
-          showImage("general-yes");
-        }
+        showImage(cruzAzulMatch ? "caz-hoy" : "general-yes");
 
         details.innerHTML = `
           <div><b>${matchText}</b></div>
           <div class="meta-line" style="margin-top:12px;">Partido programado para hoy</div>
         `;
         setReferenceTime(dateText);
+        renderBroadcastInfo(event);
+        renderMarketValueInfo(event, marketData);
+        renderFunFact(event);
       }
-
-      renderMarketValueInfo(event, marketData);
-      renderFunFact(event);
 
     } else {
+      // El evento ya pasó (fecha anterior a hoy)
       status.textContent = nashvilleMatch ? "Todavía duele" : "No juega hoy";
       status.className = "status no";
-
-      if (nashvilleMatch) {
-        showImage("nashville-coco");
-      } else {
-        showImage("general-no");
-      }
+      showImage(nashvilleMatch ? "nashville-coco" : "general-no");
 
       details.innerHTML = `
         <div><b>Último partido registrado</b></div>
         <div class="meta-line">${matchText}</div>
       `;
       setReferenceTime(dateText);
+      // No mostramos dónde ver si ya pasó
       renderMarketValueInfo(event, marketData);
       renderFunFact(event);
     }
