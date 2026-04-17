@@ -779,7 +779,7 @@ async function loadMatch(){
     ]);
 
     const data=await matchRes.json();
-
+    console.log("Respuesta API:", JSON.stringify(data));
     if(!data.events||data.events.length===0){
       status.textContent=FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH?"Todavía duele":"Sin datos";
       status.className="status no";
