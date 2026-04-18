@@ -377,6 +377,7 @@ body{
       <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg"     alt="Próximo partido contra Cruz Azul">
       <img id="imgCruzAzulHoy"  class="hero" src="CAZ_hoy_2026.jpeg"      alt="Hoy juega contra Cruz Azul">
       <img id="imgNashvilleCoco"class="hero" src="nashville_coco.png"     alt="Nashville Coco">
+      <img id="imgAmeTolucaSraAnti" class="hero" src="ame-toluca-sra_anti.png" alt="América vs Toluca">
     </div>
 
     <div class="content">
@@ -475,6 +476,11 @@ function isVsCruzAzul(event){
   const a=normalizeTeamName(event.strAwayTeam);
   return h.includes("cruz azul")||a.includes("cruz azul");
 }
+function isVsToluca(event){
+  const h = normalizeTeamName(event.strHomeTeam);
+  const a = normalizeTeamName(event.strAwayTeam);
+  return h.includes("toluca") || a.includes("toluca");
+}
 function isVsNashville(event){
   const h=normalizeTeamName(event.strHomeTeam);
   const a=normalizeTeamName(event.strAwayTeam);
@@ -539,6 +545,8 @@ function showImage(mode){
     "general-yes":"imgSi","general-no":"imgNo",
     "caz-prox":"imgCruzAzulProx","caz-hoy":"imgCruzAzulHoy",
     "nashville-coco":"imgNashvilleCoco"
+    "imgAmeTolucaSraAnti"
+     "toluca-hoy": "imgAmeTolucaSraAnti"
   };
   if(map[mode]) document.getElementById(map[mode]).classList.add("visible");
 }
@@ -815,6 +823,7 @@ async function loadMatch(){
     const finished  =(event.strStatus||"").includes("Finished");
     const cruzAzulMatch=isVsCruzAzul(event);
     const nashvilleMatch=isVsNashville(event);
+    const tolucaMatch=isVsToluca(event);
     const matchText =`${event.strHomeTeam} vs ${event.strAwayTeam}`;
     const dateText  =formatMexicoDateTime(date);
 
@@ -847,7 +856,11 @@ async function loadMatch(){
         // ── Juega hoy y no ha terminado ──
         status.textContent="Hoy juega";
         status.className="status yes";
-        showImage(cruzAzulMatch?"caz-hoy":"general-yes");
+        showImage(
+          cruzAzulMatch ? "caz-hoy" :
+          tolucaMatch   ? "toluca-hoy" :
+                          "general-yes"
+        );
         details.innerHTML=`
           <div><b>${matchText}</b></div>
           <div class="meta-line" style="margin-top:12px;">Partido programado para hoy</div>`;
