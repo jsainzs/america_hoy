@@ -812,28 +812,13 @@ function renderFunFact(event){
   }
 }
 
-// ─────────────────────────────────────────────
-// CONTADOR
-// ─────────────────────────────────────────────
-document.addEventListener("DOMContentLoaded", async function() {
-  const el = document.getElementById("visits");
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var el = document.getElementById("visits");
   if (!el) return;
-
-  try {
-    const namespace = "jsainzs";
-    const key = "america_hoy";
-
-    await fetch(`https://api.countapi.xyz/create?namespace=${namespace}&key=${key}&value=0`);
-
-    const res = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
-    const data = await res.json();
-
-    el.textContent = (typeof data.value !== "undefined") ? data.value : "—";
-  } catch (err) {
-    console.error("Error contador:", err);
-    el.textContent = "—";
-  }
+  el.textContent = "123";
 });
+</script>
 // ─────────────────────────────────────────────
 // FUNCIÓN PRINCIPAL
 // ─────────────────────────────────────────────
