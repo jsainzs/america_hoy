@@ -815,25 +815,25 @@ function renderFunFact(event){
 // ─────────────────────────────────────────────
 // CONTADOR
 // ─────────────────────────────────────────────
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", async function() {
   const el = document.getElementById("visits");
   if (!el) return;
 
-  fetch("https://api.countapi.xyz/hit/jsainzs/america_hoy")
-    .then(res => res.json())
-    .then(res => {
-      if (typeof res.value !== "undefined") {
-        el.textContent = res.value;
-      } else {
-        el.textContent = "—";
-      }
-    })
-    .catch(err => {
-      console.error("Error contador:", err);
-      el.textContent = "—";
-    });
-});
+  try {
+    const namespace = "jsainzs";
+    const key = "america_hoy";
 
+    await fetch(`https://api.countapi.xyz/create?namespace=${namespace}&key=${key}&value=0`);
+
+    const res = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
+    const data = await res.json();
+
+    el.textContent = (typeof data.value !== "undefined") ? data.value : "—";
+  } catch (err) {
+    console.error("Error contador:", err);
+    el.textContent = "—";
+  }
+});
 // ─────────────────────────────────────────────
 // FUNCIÓN PRINCIPAL
 // ─────────────────────────────────────────────
