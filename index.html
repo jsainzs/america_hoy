@@ -535,22 +535,38 @@ function formatEurCompact(value){
 // ─────────────────────────────────────────────
 // IMÁGENES
 // ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// IMÁGENES
+// ─────────────────────────────────────────────
 function hideAllImages(){
-  ["imgSi","imgNo","imgCruzAzulProx","imgCruzAzulHoy","imgNashvilleCoco"]
-    .forEach(id=>document.getElementById(id).classList.remove("visible"));
-}
-function showImage(mode){
-  hideAllImages();
-  const map={
-    "general-yes":"imgSi","general-no":"imgNo",
-    "caz-prox":"imgCruzAzulProx","caz-hoy":"imgCruzAzulHoy",
-    "nashville-coco":"imgNashvilleCoco"
+  [
+    "imgSi",
+    "imgNo",
+    "imgCruzAzulProx",
+    "imgCruzAzulHoy",
+    "imgNashvilleCoco",
     "imgAmeTolucaSraAnti"
-     "toluca-hoy": "imgAmeTolucaSraAnti"
-  };
-  if(map[mode]) document.getElementById(map[mode]).classList.add("visible");
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove("visible");
+  });
 }
 
+function showImage(mode){
+  hideAllImages();
+  const map = {
+    "general-yes": "imgSi",
+    "general-no": "imgNo",
+    "caz-prox": "imgCruzAzulProx",
+    "caz-hoy": "imgCruzAzulHoy",
+    "nashville-coco": "imgNashvilleCoco",
+    "toluca-hoy": "imgAmeTolucaSraAnti"
+  };
+  if (map[mode]) {
+    const el = document.getElementById(map[mode]);
+    if (el) el.classList.add("visible");
+  }
+}
 // ─────────────────────────────────────────────
 // HORA DE REFERENCIA
 // ─────────────────────────────────────────────
