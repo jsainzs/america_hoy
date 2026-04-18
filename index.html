@@ -22,15 +22,6 @@ html,body{
   margin:0;
   min-height:100%;
 }
-
-<script>
-fetch('https://api.countapi.xyz/hit/jsainzs/america_hoy')
-  .then(res => res.json())
-  .then(res => {
-    document.getElementById('visits').innerText = res.value;
-  });
-</script>
-  
 body{
   font-family:Arial,Helvetica,sans-serif;
   background:
@@ -94,29 +85,44 @@ body{
   margin:0 auto;
   padding:28px 24px 110px;
 }
-
 .memorama-link {
-  display: inline-block;
-  margin-top: 16px;
-  padding: 10px 18px;
-  background: #facc15;
-  color: #0a1f44;
-  text-decoration: none;
-  font-weight: bold;
-  border-radius: 10px;
+  display:inline-block;
+  margin-top:16px;
+  padding:10px 18px;
+  background:#facc15;
+  color:#0a1f44;
+  text-decoration:none;
+  font-weight:bold;
+  border-radius:10px;
 }
-
 .memorama-link:hover {
-  opacity: 0.9;
+  opacity:0.9;
 }
-  
 .title{
-  margin:0 0 26px;
+  margin:0 0 12px;
   text-align:center;
   font-size:clamp(2.1rem,4vw,3.4rem);
   line-height:1.05;
   font-weight:800;
   text-shadow:0 4px 20px rgba(0,0,0,.35);
+}
+.visit-counter{
+  display:block;
+  width:max-content;
+  max-width:100%;
+  margin:0 auto 26px;
+  padding:8px 14px;
+  border-radius:999px;
+  background:rgba(250,204,21,.16);
+  border:1px solid rgba(250,204,21,.30);
+  color:#fff;
+  font-size:.95rem;
+  font-weight:700;
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+}
+.visit-counter span{
+  color:var(--accent);
 }
 .layout{
   display:grid;
@@ -186,8 +192,6 @@ body{
   font-size:.94rem;
   color:rgba(255,255,255,.8);
 }
-
-/* ── Cajita de dónde ver el partido ── */
 .broadcast-box{
   display:inline-flex;
   align-items:center;
@@ -214,8 +218,6 @@ body{
   font-weight:700;
   color:var(--accent);
 }
-
-/* ── Tabla de posiciones recortada ── */
 .standings-box{
   margin-top:18px;
   padding:16px 18px;
@@ -286,7 +288,6 @@ body{
   width:24px;
   text-align:center;
 }
-
 .market-box,
 .confidential-box{
   margin-top:18px;
@@ -373,7 +374,6 @@ body{
   width:100%;
   height:auto;
 }
-
 @media (max-width:860px){
   .shell{ padding:18px 16px 90px; }
   .layout{ grid-template-columns:1fr; gap:22px; }
@@ -394,20 +394,21 @@ body{
 
 <main class="shell">
   <h1 class="title">¿Hoy juega el América?</h1>
+  <div class="visit-counter">👀 Visitas: <span id="visits">...</span></div>
 
   <div class="layout">
     <div class="media-wrap">
-      <img id="imgSi"           class="hero" src="hoy_juega_america.png"  alt="Hoy juega el América">
-      <img id="imgNo"           class="hero" src="no_juega_america.png"   alt="No juega el América">
-      <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg"     alt="Próximo partido contra Cruz Azul">
-      <img id="imgCruzAzulHoy"  class="hero" src="CAZ_hoy_2026.jpeg"      alt="Hoy juega contra Cruz Azul">
-      <img id="imgNashvilleCoco"class="hero" src="nashville_coco.png"     alt="Nashville Coco">
+      <img id="imgSi" class="hero" src="hoy_juega_america.png" alt="Hoy juega el América">
+      <img id="imgNo" class="hero" src="no_juega_america.png" alt="No juega el América">
+      <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg" alt="Próximo partido contra Cruz Azul">
+      <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg" alt="Hoy juega contra Cruz Azul">
+      <img id="imgNashvilleCoco" class="hero" src="nashville_coco.png" alt="Nashville Coco">
       <img id="imgAmeTolucaSraAnti" class="hero" src="ame-toluca-sra_anti.png" alt="América vs Toluca">
     </div>
 
     <div class="content">
-      <div id="status"        class="status">Consultando...</div>
-      <div id="details"       class="details"></div>
+      <div id="status" class="status">Consultando...</div>
+      <div id="details" class="details"></div>
       <div id="broadcastInfo"></div>
       <div id="standingsInfo"></div>
       <div id="marketValueInfo"></div>
@@ -422,7 +423,7 @@ body{
       <a href="https://jsainzs.github.io/memory-game-udacity/" class="memorama-link">
         Ejercita tu memoria, papá
       </a>
-      
+
       <div class="footer-copy">
         <img src="chanfle.png" alt="El Chanfle" class="chanfle-img">
       </div>
@@ -431,6 +432,20 @@ body{
 </main>
 
 <script>
+document.addEventListener("DOMContentLoaded", function() {
+  fetch('https://api.countapi.xyz/hit/jsainzs/america_hoy')
+    .then(function(res) { return res.json(); })
+    .then(function(res) {
+      var el = document.getElementById('visits');
+      if (el) {
+        el.innerText = res.value;
+      }
+    })
+    .catch(function(err) {
+      console.error('Error al cargar contador:', err);
+    });
+});
+
 const TEAM_ID   = "134193";
 const API_URL   = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
 const MARKET_VALUES_URL = "./market_values.json";
@@ -440,11 +455,6 @@ const TZ = "America/Mexico_City";
 const FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH = true;
 const LAST_SPECIAL_MATCH_LABEL = "América vs Nashville SC";
 
-// ─────────────────────────────────────────────
-// CANALES POR TORNEO (México)
-// Edita cuando cambie la temporada.
-// La clave es el valor exacto de event.strLeague.
-// ─────────────────────────────────────────────
 const BROADCAST_BY_LEAGUE = {
   "Liga MX":                   "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
   "Liga BBVA MX":              "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
@@ -455,15 +465,11 @@ const BROADCAST_BY_LEAGUE = {
   "Copa MX":                   "VIX",
   "FIFA Club World Cup":       "DAZN · Azteca 7",
   "Leagues Cup":               "Apple TV+",
-  "Mexican Primera League": "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
+  "Mexican Primera League":    "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
   "Friendly":                  "VIX (confirmar)",
 };
 const BROADCAST_FALLBACK = "VIX (confirmar canal)";
 
-// ─────────────────────────────────────────────
-// LIGAS QUE CUENTAN COMO LIGA MX
-// para mostrar la tabla de posiciones
-// ─────────────────────────────────────────────
 const LIGA_MX_KEYWORDS = [
   "liga mx", "liga bbva mx", "apertura", "clausura",
   "liga mx apertura", "liga mx clausura",
@@ -492,9 +498,6 @@ const MARKET_VALUE_TEAM_ALIASES = {
   "seattle sounders":"seattle","seattle sounders fc":"seattle"
 };
 
-// ─────────────────────────────────────────────
-// UTILIDADES
-// ─────────────────────────────────────────────
 function normalizeTeamName(name){
   return (name||"")
     .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
@@ -506,9 +509,9 @@ function isVsCruzAzul(event){
   return h.includes("cruz azul")||a.includes("cruz azul");
 }
 function isVsToluca(event){
-  const h = normalizeTeamName(event.strHomeTeam);
-  const a = normalizeTeamName(event.strAwayTeam);
-  return h.includes("toluca") || a.includes("toluca");
+  const h=normalizeTeamName(event.strHomeTeam);
+  const a=normalizeTeamName(event.strAwayTeam);
+  return h.includes("toluca")||a.includes("toluca");
 }
 function isVsNashville(event){
   const h=normalizeTeamName(event.strHomeTeam);
@@ -561,12 +564,6 @@ function formatEurCompact(value){
   }).format(value);
 }
 
-// ─────────────────────────────────────────────
-// IMÁGENES
-// ─────────────────────────────────────────────
-// ─────────────────────────────────────────────
-// IMÁGENES
-// ─────────────────────────────────────────────
 function hideAllImages(){
   [
     "imgSi",
@@ -596,17 +593,12 @@ function showImage(mode){
     if (el) el.classList.add("visible");
   }
 }
-// ─────────────────────────────────────────────
-// HORA DE REFERENCIA
-// ─────────────────────────────────────────────
+
 function setReferenceTime(dateText){
-  document.getElementById("details").innerHTML+=
+  document.getElementById("details").innerHTML +=
     `<div class="reference-time">Hora de referencia: ${dateText} (Ciudad de México)</div>`;
 }
 
-// ─────────────────────────────────────────────
-// DÓNDE VER EL PARTIDO
-// ─────────────────────────────────────────────
 function renderBroadcastInfo(event){
   const box=document.getElementById("broadcastInfo");
   box.innerHTML="";
@@ -622,9 +614,6 @@ function renderBroadcastInfo(event){
     </div>`;
 }
 
-// ─────────────────────────────────────────────
-// TABLA DE POSICIONES
-// ─────────────────────────────────────────────
 async function loadStandings(){
   const res=await fetch(STANDINGS_URL);
   if(!res.ok) throw new Error("No se pudo cargar standings.json");
@@ -651,7 +640,7 @@ function renderStandings(event,standingsData){
   const WINDOW=2;
   const len=table.length;
   function range(idx){
-    return{from:Math.max(0,idx-WINDOW),to:Math.min(len-1,idx+WINDOW)};
+    return {from:Math.max(0,idx-WINDOW),to:Math.min(len-1,idx+WINDOW)};
   }
   const rA=range(americaIdx);
   const rR=range(rivalIdx);
@@ -700,9 +689,6 @@ function renderStandings(event,standingsData){
     </div>`;
 }
 
-// ─────────────────────────────────────────────
-// BILLETÓMETRO (TRANSFERMARKT)
-// ─────────────────────────────────────────────
 async function loadMarketValues(){
   const res=await fetch(MARKET_VALUES_URL);
   if(!res.ok) throw new Error("No se pudo cargar market_values.json");
@@ -768,9 +754,6 @@ function renderMarketValueInfo(event,marketData){
     </div>`;
 }
 
-// ─────────────────────────────────────────────
-// ANÉCDOTAS
-// ─────────────────────────────────────────────
 function renderFunFact(event){
   const box=document.getElementById("funFact");
   box.innerHTML="";
@@ -806,16 +789,13 @@ function renderFunFact(event){
   }
 }
 
-// ─────────────────────────────────────────────
-// FUNCIÓN PRINCIPAL
-// ─────────────────────────────────────────────
 async function loadMatch(){
-  const status        = document.getElementById("status");
-  const details       = document.getElementById("details");
-  const broadcastInfo = document.getElementById("broadcastInfo");
-  const standingsInfo = document.getElementById("standingsInfo");
+  const status=document.getElementById("status");
+  const details=document.getElementById("details");
+  const broadcastInfo=document.getElementById("broadcastInfo");
+  const standingsInfo=document.getElementById("standingsInfo");
   const marketValueInfo=document.getElementById("marketValueInfo");
-  const funFact       = document.getElementById("funFact");
+  const funFact=document.getElementById("funFact");
 
   status.textContent="Consultando...";
   status.className="status";
@@ -852,7 +832,7 @@ async function loadMatch(){
     }
 
     const event=data.events[0];
-    console.log("Liga:", event.strLeague, "| Rival:", event.strHomeTeam, "vs", event.strAwayTeam);    
+    console.log("Liga:", event.strLeague, "| Rival:", event.strHomeTeam, "vs", event.strAwayTeam);
     const date=parseDate(event);
 
     if(!date){
@@ -863,17 +843,16 @@ async function loadMatch(){
       return;
     }
 
-    const today     =getMexicoDate(new Date());
-    const eventDate =getMexicoDate(date);
-    const finished  =(event.strStatus||"").includes("Finished");
+    const today=getMexicoDate(new Date());
+    const eventDate=getMexicoDate(date);
+    const finished=(event.strStatus||"").includes("Finished");
     const cruzAzulMatch=isVsCruzAzul(event);
     const nashvilleMatch=isVsNashville(event);
     const tolucaMatch=isVsToluca(event);
-    const matchText =`${event.strHomeTeam} vs ${event.strAwayTeam}`;
-    const dateText  =formatMexicoDateTime(date);
+    const matchText=`${event.strHomeTeam} vs ${event.strAwayTeam}`;
+    const dateText=formatMexicoDateTime(date);
 
     if(eventDate>today){
-      // ── Próximo partido (no es hoy) ──
       status.textContent="No juega hoy";
       status.className="status no";
       showImage(cruzAzulMatch?"caz-prox":"general-no");
@@ -888,7 +867,6 @@ async function loadMatch(){
 
     } else if(eventDate===today){
       if(finished){
-        // ── Ya terminó hoy ──
         status.textContent=nashvilleMatch?"Todavía duele":"Ya jugó hoy";
         status.className="status no";
         showImage(nashvilleMatch?"nashville-coco":"general-no");
@@ -898,7 +876,6 @@ async function loadMatch(){
         renderMarketValueInfo(event,marketData);
         renderFunFact(event);
       } else {
-        // ── Juega hoy y no ha terminado ──
         status.textContent="Hoy juega";
         status.className="status yes";
         showImage(
@@ -917,7 +894,6 @@ async function loadMatch(){
       }
 
     } else {
-      // ── El evento ya pasó ──
       status.textContent=nashvilleMatch?"Todavía duele":"No juega hoy";
       status.className="status no";
       showImage(nashvilleMatch?"nashville-coco":"general-no");
