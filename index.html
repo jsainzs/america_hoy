@@ -812,12 +812,19 @@ function renderFunFact(event){
   }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   var el = document.getElementById("visits");
   if (!el) return;
-  el.textContent = "123";
-});
 
+  try {
+    var res = await fetch("https://api.countapi.xyz/hit/jsainzs/america_hoy");
+    var data = await res.json();
+    el.textContent = (typeof data.value !== "undefined") ? data.value : "—";
+  } catch (e) {
+    console.error("Error contador:", e);
+    el.textContent = "—";
+  }
+});
 // ─────────────────────────────────────────────
 // FUNCIÓN PRINCIPAL
 // ─────────────────────────────────────────────
