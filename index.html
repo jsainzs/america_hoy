@@ -8,44 +8,53 @@
 <style>
 :root{
   --text:#f8fafc;
+  --muted:rgba(255,255,255,0.9);
   --accent:#facc15;
+  --green:#22c55e;
+  --red:#ef4444;
   --bg-blue:#0a1f44;
   --bg-blue-2:#16386e;
   --bg-cream:#f3cf18;
+  --shadow:0 14px 38px rgba(0,0,0,0.28);
 }
+
+*{box-sizing:border-box;}
 
 body{
   margin:0;
   font-family:Arial,Helvetica,sans-serif;
-  background: linear-gradient(135deg,var(--bg-blue),var(--bg-blue-2),var(--bg-cream));
+  background:
+    linear-gradient(135deg,var(--bg-blue),var(--bg-blue-2),var(--bg-cream));
   color:var(--text);
 }
 
 .shell{
-  max-width:1000px;
+  max-width:1200px;
   margin:auto;
-  padding:30px;
+  padding:28px;
   text-align:center;
 }
 
 .title{
-  font-size:2.8rem;
+  font-size:clamp(2rem,4vw,3rem);
   font-weight:800;
 }
 
 /* contador */
 .visit-counter{
-  margin:20px auto;
-  padding:8px 16px;
-  border-radius:20px;
-  background:rgba(250,204,21,.2);
+  margin:10px auto 20px;
+  padding:8px 14px;
+  border-radius:999px;
+  background:rgba(250,204,21,.15);
+  border:1px solid rgba(250,204,21,.3);
   display:inline-block;
   font-weight:bold;
 }
 
+/* botón memorama */
 .memorama-link{
   display:inline-block;
-  margin-top:20px;
+  margin-top:18px;
   padding:10px 18px;
   background:#facc15;
   color:#0a1f44;
@@ -67,7 +76,13 @@ body{
   👀 Visitas: <span id="visits">...</span>
 </div>
 
-<div id="status">Consultando...</div>
+<!-- CONTENIDO ORIGINAL -->
+<div id="status" class="status">Consultando...</div>
+<div id="details"></div>
+<div id="broadcastInfo"></div>
+<div id="standingsInfo"></div>
+<div id="marketValueInfo"></div>
+<div id="funFact"></div>
 
 <a href="https://jsainzs.github.io/memory-game-udacity/" class="memorama-link">
   Ejercita tu memoria, papá
@@ -75,7 +90,7 @@ body{
 
 </main>
 
-<!-- SCRIPT DEL CONTADOR (CLAVE) -->
+<!-- SCRIPT CONTADOR -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   const el = document.getElementById('visits');
@@ -90,6 +105,34 @@ document.addEventListener("DOMContentLoaded", function() {
       el.innerText = "—";
     });
 });
+</script>
+
+<!-- TU SCRIPT ORIGINAL -->
+<script>
+const TEAM_ID = "134193";
+const API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
+
+async function loadMatch(){
+  const status = document.getElementById("status");
+
+  try{
+    const res = await fetch(API_URL);
+    const data = await res.json();
+
+    if(!data.events || data.events.length === 0){
+      status.innerText = "No hay datos";
+      return;
+    }
+
+    const event = data.events[0];
+    status.innerText = `${event.strHomeTeam} vs ${event.strAwayTeam}`;
+  } catch(err){
+    status.innerText = "Error al cargar";
+    console.error(err);
+  }
+}
+
+loadMatch();
 </script>
 
 </body>
