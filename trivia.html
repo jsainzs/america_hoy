@@ -21,14 +21,8 @@
       --shadow: 0 14px 38px rgba(0,0,0,0.28);
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      margin: 0;
-      min-height: 100%;
-    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
 
     body {
       font-family: Arial, Helvetica, sans-serif;
@@ -101,9 +95,7 @@
       -webkit-backdrop-filter: blur(6px);
     }
 
-    .back-link:hover {
-      background: rgba(0,0,0,0.24);
-    }
+    .back-link:hover { background: rgba(0,0,0,0.24); }
 
     .title-wrap {
       text-align: center;
@@ -135,13 +127,8 @@
       padding: 24px;
     }
 
-    .screen {
-      display: none;
-    }
-
-    .screen.active {
-      display: block;
-    }
+    .screen { display: none; }
+    .screen.active { display: block; }
 
     .start-box {
       max-width: 760px;
@@ -158,7 +145,7 @@
 
     .rules {
       margin: 20px auto 26px;
-      max-width: 580px;
+      max-width: 620px;
       text-align: left;
       padding: 16px 18px;
       border-radius: 18px;
@@ -173,10 +160,34 @@
       color: #fff;
     }
 
-    .rules div {
-      margin: 7px 0;
-      color: rgba(255,255,255,0.92);
+    .rules div { margin: 7px 0; color: rgba(255,255,255,0.92); }
+
+    .mode-picker {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.10);
     }
+
+    .mode-row {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .mode-option {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+    }
+
+    .mode-option input { margin-top: 3px; }
+    .mode-option strong { display: block; margin-bottom: 3px; }
+    .mode-option span { color: rgba(255,255,255,0.84); font-size: 0.94rem; line-height: 1.45; }
 
     .btn {
       border: none;
@@ -188,15 +199,8 @@
       transition: transform 0.12s ease, opacity 0.12s ease, background 0.12s ease;
     }
 
-    .btn:hover {
-      transform: translateY(-1px);
-    }
-
-    .btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      transform: none;
-    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
     .btn-primary {
       background: linear-gradient(90deg, rgba(250,204,21,0.92), rgba(253,230,138,0.98));
@@ -236,17 +240,30 @@
       font-size: 0.96rem;
     }
 
-    .question-category {
-      display: inline-block;
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
       margin-bottom: 14px;
+    }
+
+    .question-category,
+    .question-difficulty,
+    .question-mode {
+      display: inline-block;
       padding: 7px 12px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.09);
       border: 1px solid rgba(255,255,255,0.10);
       color: rgba(255,255,255,0.95);
       font-size: 0.88rem;
       font-weight: 700;
     }
+
+    .question-category { background: rgba(255,255,255,0.09); }
+    .question-mode { background: rgba(10,31,68,0.35); }
+    .question-difficulty.basica { background: rgba(34,197,94,0.18); }
+    .question-difficulty.media { background: rgba(250,204,21,0.16); }
+    .question-difficulty.experta { background: rgba(239,68,68,0.18); }
 
     .question-text {
       margin: 0 0 20px;
@@ -298,9 +315,7 @@
       background: rgba(239,68,68,0.18);
     }
 
-    .option-btn.dimmed {
-      opacity: 0.72;
-    }
+    .option-btn.dimmed { opacity: 0.72; }
 
     .feedback {
       min-height: 76px;
@@ -314,13 +329,8 @@
       display: none;
     }
 
-    .feedback.show {
-      display: block;
-    }
-
-    .feedback strong {
-      color: #fff;
-    }
+    .feedback.show { display: block; }
+    .feedback strong { color: #fff; }
 
     .quiz-actions {
       display: flex;
@@ -402,36 +412,21 @@
       padding-bottom: 0;
     }
 
-    .review-ok {
-      color: #86efac;
-      font-weight: 800;
+    .review-meta {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.74);
+      margin: 3px 0 6px;
     }
 
-    .review-bad {
-      color: #fca5a5;
-      font-weight: 800;
-    }
+    .review-ok { color: #86efac; font-weight: 800; }
+    .review-bad { color: #fca5a5; font-weight: 800; }
 
     @media (max-width: 720px) {
-      .shell {
-        padding: 18px 14px 40px;
-      }
-
-      .card {
-        padding: 18px;
-      }
-
-      .quiz-actions {
-        flex-direction: column;
-      }
-
-      .quiz-actions .btn {
-        width: 100%;
-      }
-
-      .result-actions .btn {
-        width: 100%;
-      }
+      .shell { padding: 18px 14px 40px; }
+      .card { padding: 18px; }
+      .quiz-actions { flex-direction: column; }
+      .quiz-actions .btn,
+      .result-actions .btn { width: 100%; }
     }
   </style>
 </head>
@@ -451,15 +446,37 @@
     <section id="startScreen" class="screen active">
       <div class="card start-box">
         <p>
-          Esta trivia elige <strong>5 preguntas al azar</strong> de un pool más amplio. Cada partida cambia.
-          Responde, confirma y descubre si eres discípulo de Carlos Reinoso o un chivahermano infiltrado.
+          Esta trivia ahora tiene <strong>niveles de dificultad</strong> y dos modos de juego.
+          En <strong>Mixto</strong> sale una combinación razonable de preguntas básicas, medias y una experta.
+          En <strong>Nivel experto</strong>, todo el cuestionario va con archivo, hemeroteca y memoria selectiva.
         </p>
 
         <div class="rules">
           <div class="rules-title">Instrucciones</div>
-          <div>Se seleccionan <strong>5 preguntas al azar</strong> de un pool más amplio.</div>
+          <div>Se juegan <strong>5 preguntas</strong> por partida.</div>
           <div>Cada pregunta tiene <strong>cuatro opciones</strong> y solo una es correcta.</div>
-          <div>Al final sabrás si eres archivo vivo del americanismo o un infiltrado vergonzante.</div>
+          <div>El modo <strong>Mixto</strong> intenta balancear dificultad; el modo <strong>Experto</strong> toma solo preguntas expertas.</div>
+          <div>Al final sabrás si eres archivo vivo del americanismo o simple portador de camiseta.</div>
+
+          <div class="mode-picker">
+            <div class="rules-title">Modo de juego</div>
+            <div class="mode-row">
+              <label class="mode-option">
+                <input type="radio" name="difficultyMode" value="mixto" checked>
+                <span>
+                  <strong>Mixto</strong>
+                  2 básicas, 2 medias y 1 experta, cuando el banco lo permite.
+                </span>
+              </label>
+              <label class="mode-option">
+                <input type="radio" name="difficultyMode" value="experta">
+                <span>
+                  <strong>Nivel experto</strong>
+                  Solo preguntas expertas. Aquí sí conviene haber vivido finales, polémicas y traumas ajenos.
+                </span>
+              </label>
+            </div>
+          </div>
         </div>
 
         <button id="startBtn" class="btn btn-primary">Empezar trivia</button>
@@ -473,11 +490,15 @@
           <div class="score-mini" id="scoreMini">Aciertos: 0</div>
         </div>
 
-        <div id="questionCategory" class="question-category">Historia</div>
+        <div class="meta-row">
+          <div id="questionCategory" class="question-category">Historia</div>
+          <div id="questionDifficulty" class="question-difficulty media">Media</div>
+          <div id="questionMode" class="question-mode">Modo mixto</div>
+        </div>
+
         <h2 id="questionText" class="question-text">Pregunta</h2>
 
         <div id="optionsContainer" class="options"></div>
-
         <div id="feedbackBox" class="feedback"></div>
 
         <div class="quiz-actions">
@@ -509,215 +530,328 @@
 
   <script>
     const QUESTION_POOL = [
-  {
-    id: 1,
-    category: "Títulos",
-    question: "¿Cuántos títulos de liga tiene el América?",
-    options: ["14", "15", "16", "17"],
-    correctIndex: 2,
-    explanation: "América suma 16 títulos de liga en Primera División / Liga MX."
-  },
-  {
-    id: 2,
-    category: "Finales",
-    question: "¿Qué portero marcó el gol agónico en la final contra Cruz Azul de 2013?",
-    options: ["Guillermo Ochoa", "Adolfo Ríos", "Moisés Muñoz", "Óscar Jiménez"],
-    correctIndex: 2,
-    explanation: "Moisés Muñoz empató de cabeza y abrió la remontada más célebre."
-  },
-  {
-    id: 3,
-    category: "Ídolos",
-    question: "¿Qué figura chilena es una de las mayores leyendas del América?",
-    options: ["Iván Zamorano", "Carlos Reinoso", "Jean Beausejour", "Osvaldo Castro"],
-    correctIndex: 1,
-    explanation: "Carlos Reinoso es uno de los máximos ídolos del club."
-  },
-  {
-    id: 4,
-    category: "Rivalidades",
-    question: "¿Contra qué equipo se disputó la final del Clausura 2013?",
-    options: ["Toluca", "Santos", "Pumas", "Cruz Azul"],
-    correctIndex: 3,
-    explanation: "La final fue América vs Cruz Azul."
-  },
-  {
-    id: 5,
-    category: "Apodos",
-    question: "¿Cuál es el apodo más clásico del Club América?",
-    options: ["La Máquina", "Las Águilas", "Los Tuzos", "La Furia Azul"],
-    correctIndex: 1,
-    explanation: "El apodo más reconocido es Las Águilas."
-  },
-  {
-    id: 6,
-    category: "Estadio",
-    question: "¿En qué estadio ha jugado tradicionalmente el América como local?",
-    options: ["Estadio Jalisco", "Estadio Azul", "Estadio Azteca", "Estadio Nemesio Diez"],
-    correctIndex: 2,
-    explanation: "El Estadio Azteca es su casa histórica."
-  },
-  {
-    id: 7,
-    category: "Jugadores",
-    question: "¿Qué delantero chileno fue conocido como 'Bam-Bam'?",
-    options: ["Carlos Hermosillo", "Nicolás Castillo", "Iván Zamorano", "Héctor Mancilla"],
-    correctIndex: 2,
-    explanation: "Iván Zamorano fue figura clave del América."
-  },
-  {
-    id: 8,
-    category: "Historia",
-    question: "¿Qué jugador está más asociado con la camiseta 10 del americanismo?",
-    options: ["Cuauhtémoc Blanco", "Joaquín del Olmo", "Ramón Ramírez", "Luis García"],
-    correctIndex: 0,
-    explanation: "Cuauhtémoc Blanco es el 10 más emblemático."
-  },
-  {
-    id: 9,
-    category: "Rivalidades",
-    question: "¿Cómo se conoce América vs Guadalajara?",
-    options: ["Clásico Capitalino", "Clásico del Norte", "Clásico Joven", "Clásico Nacional"],
-    correctIndex: 3,
-    explanation: "Es el Clásico Nacional."
-  },
-  {
-    id: 10,
-    category: "Rivalidades",
-    question: "¿Cómo se conoce América vs Cruz Azul?",
-    options: ["Clásico Nacional", "Clásico Joven", "Clásico del Bajío", "Clásico del Siglo"],
-    correctIndex: 1,
-    explanation: "Se conoce como Clásico Joven."
-  },
-  {
-    id: 11,
-    category: "Capitanes",
-    question: "¿Qué defensor fue líder del América en los 70s y 80s?",
-    options: ["Rafael Márquez", "Alfredo Tena", "Claudio Suárez", "Diego Reyes"],
-    correctIndex: 1,
-    explanation: "Alfredo Tena es uno de los grandes capitanes."
-  },
-  {
-    id: 12,
-    category: "Porteros",
-    question: "¿Qué arquero del América jugó en Europa?",
-    options: ["Guillermo Ochoa", "Moisés Muñoz", "Héctor Zelada", "Oscar Pérez"],
-    correctIndex: 0,
-    explanation: "Ochoa tuvo una larga carrera en Europa."
-  },
-  {
-    id: 13,
-    category: "Uniforme",
-    question: "¿Qué colores identifican al América?",
-    options: ["Rojo y blanco", "Azul y crema", "Negro y naranja", "Verde y blanco"],
-    correctIndex: 1,
-    explanation: "Azul y crema son los colores tradicionales."
-  },
-  {
-    id: 14,
-    category: "Torneos",
-    question: "¿Cuál es el principal torneo internacional del América hoy?",
-    options: ["Libertadores", "Europa League", "Concacaf Champions Cup", "Sudamericana"],
-    correctIndex: 2,
-    explanation: "La Concacaf Champions Cup es el torneo clave."
-  },
+      {
+        id: 1,
+        category: "Títulos",
+        difficulty: "basica",
+        question: "¿Cuántos títulos de liga tiene el América?",
+        options: ["14", "15", "16", "17"],
+        correctIndex: 2,
+        explanation: "América suma 16 títulos de liga."
+      },
+      {
+        id: 2,
+        category: "Finales",
+        difficulty: "media",
+        question: "¿Qué portero marcó el gol agónico en la final contra Cruz Azul de 2013?",
+        options: ["Guillermo Ochoa", "Adolfo Ríos", "Moisés Muñoz", "Óscar Jiménez"],
+        correctIndex: 2,
+        explanation: "Moisés Muñoz empató de cabeza y abrió la remontada más célebre del americanismo moderno."
+      },
+      {
+        id: 3,
+        category: "Ídolos",
+        difficulty: "media",
+        question: "¿Qué figura chilena es una de las mayores leyendas del América?",
+        options: ["Iván Zamorano", "Carlos Reinoso", "Jean Beausejour", "Osvaldo Castro"],
+        correctIndex: 1,
+        explanation: "Carlos Reinoso es uno de los máximos ídolos de la historia del club."
+      },
+      {
+        id: 4,
+        category: "Finales",
+        difficulty: "basica",
+        question: "¿Contra qué equipo se disputó la final del Clausura 2013?",
+        options: ["Toluca", "Santos", "Pumas", "Cruz Azul"],
+        correctIndex: 3,
+        explanation: "La final del Clausura 2013 fue América contra Cruz Azul."
+      },
+      {
+        id: 5,
+        category: "Apodos",
+        difficulty: "basica",
+        question: "¿Cuál es el apodo más clásico del Club América?",
+        options: ["La Máquina", "Las Águilas", "Los Tuzos", "La Furia Azul"],
+        correctIndex: 1,
+        explanation: "El apodo más reconocido es Las Águilas."
+      },
+      {
+        id: 6,
+        category: "Estadio",
+        difficulty: "basica",
+        question: "¿En qué estadio ha jugado tradicionalmente el América como local?",
+        options: ["Estadio Jalisco", "Estadio Azul", "Estadio Azteca", "Estadio Nemesio Diez"],
+        correctIndex: 2,
+        explanation: "El Estadio Azteca ha sido la casa histórica del club."
+      },
+      {
+        id: 7,
+        category: "Jugadores",
+        difficulty: "media",
+        question: "¿Qué delantero chileno fue conocido como 'Bam-Bam'?",
+        options: ["Carlos Hermosillo", "Nicolás Castillo", "Iván Zamorano", "Héctor Mancilla"],
+        correctIndex: 2,
+        explanation: "Iván Zamorano fue una figura muy querida en Coapa."
+      },
+      {
+        id: 8,
+        category: "Historia",
+        difficulty: "basica",
+        question: "¿Qué jugador está más asociado con la camiseta 10 del americanismo?",
+        options: ["Cuauhtémoc Blanco", "Joaquín del Olmo", "Ramón Ramírez", "Luis García"],
+        correctIndex: 0,
+        explanation: "Cuauhtémoc Blanco es el 10 más emblemático del americanismo contemporáneo."
+      },
+      {
+        id: 9,
+        category: "Rivalidades",
+        difficulty: "basica",
+        question: "¿Cómo se conoce América vs Guadalajara?",
+        options: ["Clásico Capitalino", "Clásico del Norte", "Clásico Joven", "Clásico Nacional"],
+        correctIndex: 3,
+        explanation: "América contra Guadalajara es el Clásico Nacional."
+      },
+      {
+        id: 10,
+        category: "Rivalidades",
+        difficulty: "basica",
+        question: "¿Cómo se conoce América vs Cruz Azul?",
+        options: ["Clásico Nacional", "Clásico Joven", "Clásico del Bajío", "Clásico del Siglo"],
+        correctIndex: 1,
+        explanation: "América contra Cruz Azul es el Clásico Joven."
+      },
+      {
+        id: 11,
+        category: "Capitanes",
+        difficulty: "media",
+        question: "¿Qué defensor fue líder del América en los 70 y 80?",
+        options: ["Rafael Márquez", "Alfredo Tena", "Claudio Suárez", "Diego Reyes"],
+        correctIndex: 1,
+        explanation: "Alfredo Tena es uno de los grandes capitanes de la historia azulcrema."
+      },
+      {
+        id: 12,
+        category: "Porteros",
+        difficulty: "media",
+        question: "¿Qué arquero del América jugó en Europa?",
+        options: ["Guillermo Ochoa", "Moisés Muñoz", "Héctor Zelada", "Óscar Pérez"],
+        correctIndex: 0,
+        explanation: "Guillermo Ochoa tuvo una larga carrera en Europa."
+      },
+      {
+        id: 13,
+        category: "Uniforme",
+        difficulty: "basica",
+        question: "¿Qué colores identifican al América?",
+        options: ["Rojo y blanco", "Azul y crema", "Negro y naranja", "Verde y blanco"],
+        correctIndex: 1,
+        explanation: "Azul y crema son los colores tradicionales."
+      },
+      {
+        id: 14,
+        category: "Torneos",
+        difficulty: "basica",
+        question: "¿Cuál es el principal torneo internacional del América hoy?",
+        options: ["Libertadores", "Europa League", "Concacaf Champions Cup", "Sudamericana"],
+        correctIndex: 2,
+        explanation: "Hoy el torneo internacional clave para el club es la Concacaf Champions Cup."
+      },
+      {
+        id: 15,
+        category: "Entrenadores",
+        difficulty: "experta",
+        question: "¿Cuál de los siguientes NO fue campeón de liga con el América?",
+        options: ["Zurdo López", "Jorge Vieira", "André Jardine", "Leo Beenhakker"],
+        correctIndex: 3,
+        explanation: "Leo Beenhakker dirigió al club, pero no fue campeón de liga con América."
+      },
+      {
+        id: 16,
+        category: "Internacional",
+        difficulty: "experta",
+        question: "¿Contra qué equipo ganó América la Copa Interamericana de 1978?",
+        options: ["River Plate", "Boca Juniors", "Peñarol", "Nacional"],
+        correctIndex: 1,
+        explanation: "América venció a Boca Juniors en la Copa Interamericana de 1978."
+      },
+      {
+        id: 17,
+        category: "Jugadores de culto",
+        difficulty: "experta",
+        question: "¿Qué jugador era conocido por revolucionar partidos desde la banca?",
+        options: ["Fanny Munguía", "Abuelo Cruz", "Jamaicón Villegas", "Armando Manzo"],
+        correctIndex: 0,
+        explanation: "Fanny Munguía quedó muy asociado con ese perfil de revulsivo."
+      },
+      {
+        id: 18,
+        category: "Finales",
+        difficulty: "experta",
+        question: "¿Quién fue expulsado en la final América-Chivas de 1984-85?",
+        options: ["Armando Manzo", "Alfredo Tena", "Cristóbal Ortega", "Eduardo Bacas"],
+        correctIndex: 0,
+        explanation: "Armando Manzo fue expulsado en esa final histórica."
+      },
+      {
+        id: 19,
+        category: "Historia",
+        difficulty: "experta",
+        question: "¿Qué jugador del América fue campeón del mundo en 1986?",
+        options: ["Héctor Zelada", "Guillermo Ochoa", "Cuauhtémoc Blanco", "Pavel Pardo"],
+        correctIndex: 0,
+        explanation: "Héctor Zelada fue campeón del mundo con Argentina en México 86."
+      },
+      {
+        id: 20,
+        category: "Fundación",
+        difficulty: "experta",
+        question: "¿Quién es el fundador más directamente asociado al nacimiento del América?",
+        options: ["Rafael Garza Gutiérrez", "Emilio Azcárraga", "Guillermo Cañedo", "Ernesto Cuchiaroni"],
+        correctIndex: 0,
+        explanation: "Rafael Garza Gutiérrez 'Récord' es la figura fundacional central en la historia del club."
+      },
+      {
+        id: 21,
+        category: "Finales",
+        difficulty: "experta",
+        question: "¿A qué jugador de Chivas le atajó Zelada un penal en la final de 1984-85?",
+        options: ["Quirarte", "Galindo", "Cisneros", "Madero"],
+        correctIndex: 2,
+        explanation: "Zelada le atajó el penal a Eduardo Cisneros, uno de los momentos más recordados de aquella final."
+      },
+      {
+        id: 22,
+        category: "Goleadores",
+        difficulty: "experta",
+        question: "¿Quién es el máximo goleador histórico del América?",
+        options: ["Cuauhtémoc Blanco", "Carlos Hermosillo", "Enrique Borja", "Zague"],
+        correctIndex: 3,
+        explanation: "Zague es el máximo goleador histórico del club."
+      },
+      {
+        id: 23,
+        category: "Finales",
+        difficulty: "experta",
+        question: "¿Cuántas finales de liga América vs Pumas se han jugado?",
+        options: ["2", "3", "4", "5"],
+        correctIndex: 1,
+        explanation: "América y Pumas han disputado 3 finales de liga."
+      },
+      {
+        id: 24,
+        category: "Historia curiosa",
+        difficulty: "experta",
+        question: "¿Qué circunstancia curiosa se atribuye a un jugador americanista durante la gira de 1923 en Guatemala?",
+        options: [
+          "Inventó la porra 'siquiti-bum a la bim-bom-bá'",
+          "Diseñó por primera vez el escudo del América",
+          "Propuso el apodo de 'Las Águilas'",
+          "Anotó el primer gol olímpico de un equipo mexicano"
+        ],
+        correctIndex: 0,
+        explanation: "Según la historia oficial del club, durante la gira de 1923 en Guatemala, Carlos Garcés inventó la famosa porra 'siquiti-bum a la bim-bom-bá'."
+      },
+      {
+        id: 25,
+        category: "Finales",
+        difficulty: "experta",
+        question: "¿Cuántas finales de liga América vs Cruz Azul se habían jugado hasta 2025?",
+        options: ["2", "3", "4", "5"],
+        correctIndex: 3,
+        explanation: "Hasta 2025, América y Cruz Azul ya habían disputado 5 finales de liga."
+      },
+      {
+        id: 26,
+        category: "Finales recientes",
+        difficulty: "experta",
+        question: "¿Qué rival enfrentó América en la final del Clausura 2005?",
+        options: ["Tecos", "Necaxa", "Toluca", "Cruz Azul"],
+        correctIndex: 0,
+        explanation: "América fue campeón del Clausura 2005 frente a Tecos de la UAG."
+      },
+      {
+        id: 27,
+        category: "Liguilla",
+        difficulty: "experta",
+        question: "¿Qué equipo se llevó un 6-1 en la vuelta de semifinales del Apertura 2018?",
+        options: ["Pumas", "Cruz Azul", "Toluca", "Tigres"],
+        correctIndex: 0,
+        explanation: "América aplastó 6-1 a Pumas en la vuelta de semifinales del Apertura 2018."
+      },
+      {
+        id: 28,
+        category: "Finales recientes",
+        difficulty: "experta",
+        question: "¿Contra qué equipo ganó América la liga en el Apertura 2014?",
+        options: ["León", "Santos", "Tigres", "Monterrey"],
+        correctIndex: 2,
+        explanation: "América ganó el Apertura 2014 contra Tigres."
+      },
+      {
+        id: 29,
+        category: "Finales recientes",
+        difficulty: "experta",
+        question: "¿Contra qué equipo consiguió América el título del Apertura 2023?",
+        options: ["Tigres", "Chivas", "Monterrey", "Pumas"],
+        correctIndex: 0,
+        explanation: "El Apertura 2023 se ganó en la final frente a Tigres."
+      },
+      {
+        id: 30,
+        category: "Finales recientes",
+        difficulty: "experta",
+        question: "¿Contra qué equipo consiguió América el bicampeonato en el Clausura 2024?",
+        options: ["Cruz Azul", "Tigres", "Monterrey", "Toluca"],
+        correctIndex: 0,
+        explanation: "El bicampeonato del Clausura 2024 llegó contra Cruz Azul."
+      },
+      {
+        id: 31,
+        category: "Finales recientes",
+        difficulty: "experta",
+        question: "¿Contra qué equipo consiguió América el tricampeonato en el Apertura 2024?",
+        options: ["Monterrey", "Tigres", "Cruz Azul", "Pumas"],
+        correctIndex: 0,
+        explanation: "El tricampeonato del Apertura 2024 se logró frente a Monterrey."
+      },
+      {
+        id: 32,
+        category: "Entrenadores",
+        difficulty: "experta",
+        question: "¿Qué director técnico llevó al América al título del Apertura 2014?",
+        options: ["Miguel Herrera", "Antonio Mohamed", "Mario Carrillo", "Ricardo La Volpe"],
+        correctIndex: 1,
+        explanation: "Antonio Mohamed fue el técnico campeón del Apertura 2014."
+      },
+      {
+        id: 33,
+        category: "Femenil",
+        difficulty: "experta",
+        question: "¿En qué torneo obtuvo América Femenil su primer título de liga?",
+        options: ["Clausura 2018", "Apertura 2018", "Clausura 2019", "Apertura 2019"],
+        correctIndex: 1,
+        explanation: "América Femenil fue campeón por primera vez en el Apertura 2018."
+      },
+      {
+        id: 34,
+        category: "Femenil",
+        difficulty: "experta",
+        question: "¿Qué rival perdió la final del Clausura 2023 contra América Femenil?",
+        options: ["Tigres", "Chivas", "Pachuca", "Rayadas"],
+        correctIndex: 2,
+        explanation: "América Femenil conquistó el Clausura 2023 frente a Pachuca."
+      },
+      {
+        id: 35,
+        category: "Entrenadores",
+        difficulty: "experta",
+        question: "¿Qué técnico ha encabezado el tricampeonato reciente del América?",
+        options: ["Miguel Herrera", "Santiago Solari", "André Jardine", "Fernando Ortiz"],
+        correctIndex: 2,
+        explanation: "André Jardine condujo al América al tricampeonato reciente."
+      }
+    ];
 
-  // 🔥 NUEVAS (más difíciles)
-
-  {
-    id: 15,
-    category: "Entrenadores",
-    question: "¿Cuál de los siguientes NO fue campeón con el América?",
-    options: ["Zurdo López", "Jorge Vieira", "André Jardine", "Leo Beenhakker"],
-    correctIndex: 3,
-    explanation: "Beenhakker dirigió al club, pero no fue campeón."
-  },
-  {
-    id: 16,
-    category: "Internacional",
-    question: "¿Contra qué equipo ganó América la Copa Interamericana de 1978?",
-    options: ["River Plate", "Boca Juniors", "Peñarol", "Nacional"],
-    correctIndex: 1,
-    explanation: "América venció a Boca Juniors en la Interamericana."
-  },
-  {
-    id: 17,
-    category: "Jugadores de culto",
-    question: "¿Qué jugador era conocido por revolucionar partidos desde la banca?",
-    options: ["Fanny Munguía", "Abuelo Cruz", "Jamaicón Villegas", "Armando Manzo"],
-    correctIndex: 0,
-    explanation: "El 'Fanny' Munguía tenía ese perfil de revulsivo."
-  },
-  {
-    id: 18,
-    category: "Finales",
-    question: "¿Quién fue expulsado en la final América-Chivas de los 80?",
-    options: ["Armando Manzo", "Alfredo Tena", "Cristóbal Ortega", "Eduardo Bacas"],
-    correctIndex: 0,
-    explanation: "Manzo fue expulsado en esa final histórica."
-  },
-  {
-    id: 19,
-    category: "Historia",
-    question: "¿Qué jugador del América fue campeón del mundo?",
-    options: ["Zelada", "Ochoa", "Blanco", "Pardo"],
-    correctIndex: 0,
-    explanation: "Zelada ganó el Mundial 86 con Argentina."
-  },
-  {
-    id: 20,
-    category: "Fundación",
-    question: "¿Quién es el fundador del América?",
-    options: ["Rafael Garza Gutiérrez", "Azcárraga", "Cañedo", "Cuchiaroni"],
-    correctIndex: 0,
-    explanation: "'Récord' Garza Gutiérrez fundó el club."
-  },
-  {
-    id: 21,
-    category: "Finales",
-    question: "¿A qué jugador de Chivas le atajó Zelada un penal en la final?",
-    options: ["Quirarte", "Galindo", "Cisneros", "Madero"],
-    correctIndex: 2,
-    explanation: "Zelada le atajó el penal a Cisneros."
-  },
-  {
-    id: 22,
-    category: "Goleadores",
-    question: "¿Quién es el máximo goleador histórico del América?",
-    options: ["Cuauhtémoc", "Hermosillo", "Borja", "Zaguinho"],
-    correctIndex: 3,
-    explanation: "Zaguinho es el máximo goleador histórico."
-  },
-  {
-    id: 23,
-    category: "Finales",
-    question: "¿Cuántas finales América vs Pumas se han jugado?",
-    options: ["2", "3", "4", "5"],
-    correctIndex: 1,
-    explanation: "Han sido 3 finales."
-  },
-  {
-  id: 24,
-  category: "Historia curiosa",
-  question: "¿Qué circunstancia curiosa se atribuye a un jugador americanista durante la gira de 1923 en Guatemala?",
-  options: [
-    "Inventó la porra 'siquiti-bum a la bim-bom-bá'",
-    "Diseñó por primera vez el escudo del América",
-    "Propuso el apodo de 'Las Águilas'",
-    "Anotó el primer gol olímpico de un equipo mexicano"
-    ],
-      correctIndex: 0,
-      explanation: "Según la historia oficial del club, durante la gira de 1923 en Guatemala, Carlos Garcés, jugador del América, inventó la famosa porra 'siquiti-bum a la bim-bom-bá'."
-    },
-  {
-    id: 25,
-    category: "Finales",
-    question: "¿Cuántas finales América vs Cruz Azul se han jugado?",
-    options: ["2", "3", "4", "5"],
-    correctIndex: 1,
-    explanation: "Han sido 3 finales."
-  }
-];
     const QUESTIONS_PER_GAME = 5;
 
     let gameQuestions = [];
@@ -726,6 +860,7 @@
     let selectedOptionIndex = null;
     let answerConfirmed = false;
     let userAnswers = [];
+    let selectedDifficultyMode = "mixto";
 
     const startScreen = document.getElementById("startScreen");
     const quizScreen = document.getElementById("quizScreen");
@@ -735,6 +870,8 @@
     const progressPill = document.getElementById("progressPill");
     const scoreMini = document.getElementById("scoreMini");
     const questionCategory = document.getElementById("questionCategory");
+    const questionDifficulty = document.getElementById("questionDifficulty");
+    const questionMode = document.getElementById("questionMode");
     const questionText = document.getElementById("questionText");
     const optionsContainer = document.getElementById("optionsContainer");
     const feedbackBox = document.getElementById("feedbackBox");
@@ -747,6 +884,12 @@
     const answersReview = document.getElementById("answersReview");
     const restartBtn = document.getElementById("restartBtn");
 
+    const difficultyLabel = {
+      basica: "Básica",
+      media: "Media",
+      experta: "Experta"
+    };
+
     function shuffleArray(array) {
       const copy = [...array];
       for (let i = copy.length - 1; i > 0; i--) {
@@ -756,8 +899,37 @@
       return copy;
     }
 
+    function takeRandom(array, count) {
+      return shuffleArray(array).slice(0, Math.min(count, array.length));
+    }
+
     function pickQuestions(pool, count) {
       return shuffleArray(pool).slice(0, count);
+    }
+
+    function pickQuestionsByMode() {
+      if (selectedDifficultyMode === "experta") {
+        const expertPool = QUESTION_POOL.filter(q => q.difficulty === "experta");
+        return pickQuestions(expertPool, QUESTIONS_PER_GAME);
+      }
+
+      const basicPool = QUESTION_POOL.filter(q => q.difficulty === "basica");
+      const mediumPool = QUESTION_POOL.filter(q => q.difficulty === "media");
+      const expertPool = QUESTION_POOL.filter(q => q.difficulty === "experta");
+
+      let selected = [
+        ...takeRandom(basicPool, 2),
+        ...takeRandom(mediumPool, 2),
+        ...takeRandom(expertPool, 1)
+      ];
+
+      if (selected.length < QUESTIONS_PER_GAME) {
+        const selectedIds = new Set(selected.map(q => q.id));
+        const leftovers = QUESTION_POOL.filter(q => !selectedIds.has(q.id));
+        selected = [...selected, ...takeRandom(leftovers, QUESTIONS_PER_GAME - selected.length)];
+      }
+
+      return shuffleArray(selected);
     }
 
     function showScreen(screen) {
@@ -768,7 +940,18 @@
     }
 
     function startGame() {
-      gameQuestions = pickQuestions(QUESTION_POOL, QUESTIONS_PER_GAME);
+      const selectedMode = document.querySelector('input[name="difficultyMode"]:checked');
+      selectedDifficultyMode = selectedMode ? selectedMode.value : "mixto";
+
+      if (selectedDifficultyMode === "experta") {
+        const expertCount = QUESTION_POOL.filter(q => q.difficulty === "experta").length;
+        if (expertCount < QUESTIONS_PER_GAME) {
+          alert("No hay suficientes preguntas expertas todavía.");
+          return;
+        }
+      }
+
+      gameQuestions = pickQuestionsByMode();
       currentQuestionIndex = 0;
       score = 0;
       selectedOptionIndex = null;
@@ -784,6 +967,9 @@
       progressPill.textContent = `Pregunta ${currentQuestionIndex + 1} de ${gameQuestions.length}`;
       scoreMini.textContent = `Aciertos: ${score}`;
       questionCategory.textContent = q.category;
+      questionDifficulty.textContent = difficultyLabel[q.difficulty] || "Sin nivel";
+      questionDifficulty.className = `question-difficulty ${q.difficulty || "media"}`;
+      questionMode.textContent = selectedDifficultyMode === "experta" ? "Modo experto" : "Modo mixto";
       questionText.textContent = q.question;
 
       optionsContainer.innerHTML = "";
@@ -823,11 +1009,11 @@
       const isCorrect = selectedOptionIndex === q.correctIndex;
       answerConfirmed = true;
 
-      if (isCorrect) {
-        score += 1;
-      }
+      if (isCorrect) score += 1;
 
       userAnswers.push({
+        category: q.category,
+        difficulty: difficultyLabel[q.difficulty] || "Sin nivel",
         question: q.question,
         selected: q.options[selectedOptionIndex],
         correct: q.options[q.correctIndex],
@@ -871,6 +1057,14 @@
     }
 
     function getResultTitle(score) {
+      if (selectedDifficultyMode === "experta") {
+        if (score === 5) return "Archivo viviente del americanismo";
+        if (score === 4) return "Americanista enciclopédico";
+        if (score === 3) return "Americanista muy serio";
+        if (score === 2) return "Sabes, pero todavía no impones";
+        return "Mucho escudo, poca hemeroteca";
+      }
+
       if (score === 5) return "Nivel Maestro Carlos Reinoso";
       if (score === 4) return "Americanista de élite";
       if (score === 3) return "Americanista funcional";
@@ -879,6 +1073,14 @@
     }
 
     function getResultMessage(score) {
+      if (selectedDifficultyMode === "experta") {
+        if (score === 5) return "Usted no contesta trivia: resguarda archivos secretos de Coapa y corrige a los cronistas.";
+        if (score === 4) return "Muy alto nivel. Ya puede humillar con elegancia en sobremesas futboleras.";
+        if (score === 3) return "Hay memoria seria. Todavía falta una fina capa de obsesión saludable.";
+        if (score === 2) return "No está mal, pero todavía hay lagunas en finales, técnicos y episodios de culto.";
+        return "Se recomienda volver al archivo histórico antes de autoproclamarse experto.";
+      }
+
       if (score === 5) return "Usted no responde trivia: imparte cátedra desde Coapa.";
       if (score === 4) return "Muy sólido. Todavía inspira respeto en cualquier sobremesa futbolera.";
       if (score === 3) return "Cumple, compite y no desentona. Hay archivo, aunque todavía no es enciclopedia.";
@@ -894,6 +1096,7 @@
       answersReview.innerHTML = userAnswers.map((item, idx) => `
         <div class="review-item">
           <div><strong>${idx + 1}. ${item.question}</strong></div>
+          <div class="review-meta">${item.category} · ${item.difficulty}</div>
           <div>Tu respuesta: ${item.isCorrect
             ? `<span class="review-ok">${item.selected}</span>`
             : `<span class="review-bad">${item.selected}</span>`}</div>
