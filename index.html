@@ -417,6 +417,7 @@ body{
       <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg" alt="Hoy juega contra Cruz Azul">
       <img id="imgNashvilleCoco" class="hero" src="nashville_coco.png" alt="Nashville Coco">
       <img id="imgAmeTolucaSraAnti" class="hero" src="ame-toluca-sra_anti.png" alt="América vs Toluca">
+      <img id="imgBatallaToluca" class="hero" src="toluca_campal.png" alt="Batalla América vs Toluca">
     </div>
 
     <div class="content">
@@ -597,7 +598,8 @@ function showImage(mode){
     "caz-prox": "imgCruzAzulProx",
     "caz-hoy": "imgCruzAzulHoy",
     "nashville-coco": "imgNashvilleCoco",
-    "toluca-hoy": "imgAmeTolucaSraAnti"
+    "toluca-hoy": "imgAmeTolucaSraAnti",
+    "toluca-pasado": "imgBatallaToluca"
   };
   if (map[mode]) {
     const el = document.getElementById(map[mode]);
@@ -908,45 +910,57 @@ async function loadMatch(){
       renderFunFact(event);
 
     } else if(eventDate===today){
-      if(finished){
-        status.textContent=nashvilleMatch?"Todavía duele":"Ya jugó hoy";
-        status.className="status no";
-        showImage(nashvilleMatch?"nashville-coco":"general-no");
-        details.innerHTML=`<div><b>${matchText}</b></div>`;
-        setReferenceTime(dateText);
-        renderStandings(event,standingsData);
-        renderMarketValueInfo(event,marketData);
-        renderFunFact(event);
-      } else {
-        status.textContent="Hoy juega";
-        status.className="status yes";
-        showImage(
-          cruzAzulMatch ? "caz-hoy" :
-          tolucaMatch   ? "toluca-hoy" :
-                          "general-yes"
-        );
-        details.innerHTML=`
-          <div><b>${matchText}</b></div>
-          <div class="meta-line" style="margin-top:12px;">Partido programado para hoy</div>`;
-        setReferenceTime(dateText);
-        renderBroadcastInfo(event);
-        renderStandings(event,standingsData);
-        renderMarketValueInfo(event,marketData);
-        renderFunFact(event);
-      }
+     if(finished){
+  status.textContent = nashvilleMatch ? "Todavía duele" : "Ya jugó hoy";
+  status.className = "status no";
 
-    } else {
-      status.textContent=nashvilleMatch?"Todavía duele":"No juega hoy";
-      status.className="status no";
-      showImage(nashvilleMatch?"nashville-coco":"general-no");
-      details.innerHTML=`
-        <div><b>Último partido registrado</b></div>
-        <div class="meta-line">${matchText}</div>`;
-      setReferenceTime(dateText);
-      renderStandings(event,standingsData);
-      renderMarketValueInfo(event,marketData);
-      renderFunFact(event);
-    }
+  showImage(
+    nashvilleMatch ? "nashville-coco" :
+    tolucaMatch    ? "toluca-pasado" :
+                     "general-no"
+  );
+
+  details.innerHTML = `<div><b>${matchText}</b></div>`;
+  setReferenceTime(dateText);
+  renderStandings(event,standingsData);
+  renderMarketValueInfo(event,marketData);
+  renderFunFact(event);
+
+} else {
+  status.textContent="Hoy juega";
+  status.className="status yes";
+  showImage(
+    cruzAzulMatch ? "caz-hoy" :
+    tolucaMatch   ? "toluca-hoy" :
+                    "general-yes"
+  );
+  details.innerHTML=`
+    <div><b>${matchText}</b></div>
+    <div class="meta-line" style="margin-top:12px;">Partido programado para hoy</div>`;
+  setReferenceTime(dateText);
+  renderBroadcastInfo(event);
+  renderStandings(event,standingsData);
+  renderMarketValueInfo(event,marketData);
+  renderFunFact(event);
+}
+   } else {
+  status.textContent = nashvilleMatch ? "Todavía duele" : "No juega hoy";
+  status.className = "status no";
+
+  showImage(
+    nashvilleMatch ? "nashville-coco" :
+    tolucaMatch    ? "toluca-pasado" :
+                     "general-no"
+  );
+
+  details.innerHTML=`
+    <div><b>Último partido registrado</b></div>
+    <div class="meta-line">${matchText}</div>`;
+  setReferenceTime(dateText);
+  renderStandings(event,standingsData);
+  renderMarketValueInfo(event,marketData);
+  renderFunFact(event);
+}
 
   } catch(err){
     status.textContent="Error al cargar";
