@@ -509,133 +509,202 @@
 
   <script>
     const QUESTION_POOL = [
-      {
-        id: 1,
-        category: "Títulos",
-        question: "¿Cuántos títulos de liga tiene el América?",
-        options: ["14", "15", "16", "17"],
-        correctIndex: 2,
-        explanation: "América suma 16 títulos de liga en Primera División / Liga MX."
-      },
-      {
-        id: 2,
-        category: "Finales",
-        question: "¿Qué portero marcó el gol agónico en la final contra Cruz Azul de 2013?",
-        options: ["Guillermo Ochoa", "Adolfo Ríos", "Moisés Muñoz", "Óscar Jiménez"],
-        correctIndex: 2,
-        explanation: "Moisés Muñoz empató de cabeza y abrió el camino a la remontada más célebre del americanismo reciente."
-      },
-      {
-        id: 3,
-        category: "Ídolos",
-        question: "¿Qué figura chilena es una de las mayores leyendas del América y da nombre al rango máximo de esta trivia?",
-        options: ["Iván Zamorano", "Carlos Reinoso", "Jean Beausejour", "Osvaldo Castro"],
-        correctIndex: 1,
-        explanation: "Carlos Reinoso es una de las máximas figuras históricas del club."
-      },
-      {
-        id: 4,
-        category: "Rivalidades",
-        question: "¿Contra qué equipo se disputó la final del Clausura 2013?",
-        options: ["Toluca", "Santos", "Pumas", "Cruz Azul"],
-        correctIndex: 3,
-        explanation: "La final del Clausura 2013 fue América vs Cruz Azul."
-      },
-      {
-        id: 5,
-        category: "Apodos",
-        question: "¿Cuál es el apodo más clásico del Club América?",
-        options: ["La Máquina", "Las Águilas", "Los Tuzos", "La Furia Azul"],
-        correctIndex: 1,
-        explanation: "El apodo más reconocido del club es Las Águilas."
-      },
-      {
-        id: 6,
-        category: "Estadio",
-        question: "¿En qué estadio ha jugado tradicionalmente el América como local?",
-        options: ["Estadio Jalisco", "Estadio Azul", "Estadio Azteca", "Estadio Nemesio Diez"],
-        correctIndex: 2,
-        explanation: "El Estadio Azteca ha sido su casa histórica."
-      },
-      {
-        id: 7,
-        category: "Jugadores",
-        question: "¿Qué delantero chileno fue conocido como 'Bam-Bam' en el América?",
-        options: ["Carlos Hermosillo", "Nicolás Castillo", "Iván Zamorano", "Héctor Mancilla"],
-        correctIndex: 2,
-        explanation: "Iván Zamorano, el 'Bam-Bam', es uno de los grandes nombres extranjeros del club."
-      },
-      {
-        id: 8,
-        category: "Historia",
-        question: "¿Cuál de estos jugadores está más asociado con la camiseta 10 y el americanismo de época?",
-        options: ["Cuauhtémoc Blanco", "Joaquín del Olmo", "Ramón Ramírez", "Luis García"],
-        correctIndex: 0,
-        explanation: "Cuauhtémoc Blanco es uno de los rostros más emblemáticos del club."
-      },
-      {
-        id: 9,
-        category: "Rivalidades",
-        question: "¿Cómo se conoce popularmente la rivalidad entre América y Guadalajara?",
-        options: ["Clásico Capitalino", "Clásico del Norte", "Clásico Joven", "Clásico Nacional"],
-        correctIndex: 3,
-        explanation: "América vs Guadalajara es el Clásico Nacional."
-      },
-      {
-        id: 10,
-        category: "Rivalidades",
-        question: "¿Cómo se conoce popularmente la rivalidad entre América y Cruz Azul?",
-        options: ["Clásico Nacional", "Clásico Joven", "Clásico del Bajío", "Clásico del Siglo"],
-        correctIndex: 1,
-        explanation: "América vs Cruz Azul se conoce como Clásico Joven."
-      },
-      {
-        id: 11,
-        category: "Capitanes",
-        question: "¿Qué defensor histórico es una referencia del americanismo de los años setenta y ochenta?",
-        options: ["Rafael Márquez", "Alfredo Tena", "Claudio Suárez", "Diego Reyes"],
-        correctIndex: 1,
-        explanation: "Alfredo Tena es uno de los grandes capitanes de la historia azulcrema."
-      },
-      {
-        id: 12,
-        category: "Porteros",
-        question: "¿Qué arquero canterano del América tuvo una destacada carrera también en Europa?",
-        options: ["Guillermo Ochoa", "Moisés Muñoz", "Héctor Zelada", "Oscar Pérez"],
-        correctIndex: 0,
-        explanation: "Guillermo Ochoa surgió del club y luego jugó en Europa."
-      },
-      {
-        id: 13,
-        category: "Uniforme",
-        question: "¿Qué colores se asocian tradicionalmente con el uniforme del América?",
-        options: ["Rojo y blanco", "Azul y crema", "Negro y naranja", "Verde y blanco"],
-        correctIndex: 1,
-        explanation: "Los colores tradicionales del América son azul y crema."
-      },
-      {
-        id: 14,
-        category: "Torneos",
-        question: "Además de la liga, ¿en qué competencia internacional suele medirse el América con clubes de la región?",
-        options: ["Copa Libertadores", "Europa League", "Concacaf Champions Cup", "Copa Sudamericana"],
-        correctIndex: 2,
-        explanation: "El torneo internacional de referencia en la región es la Concacaf Champions Cup."
-      },
-      {
-        id: 15,
-        category: "Memoria dolorosa",
-        question: "En la anécdota incorporada al expediente íntimo del americanismo contra Nashville, ¿qué ocurrió después de una atajada de Malagón y cuando algunos ya pensaban que el América había ganado?",
-        options: [
-          "El partido se suspendió por lluvia",
-          "Se repitió el penal y Nashville terminó ganando",
-          "El VAR anuló todo el partido",
-          "Se fueron directo a tiempos extra"
-        ],
-        correctIndex: 1,
-        explanation: "Esa es precisamente la tragedia cómica de la anécdota: se repitió el penal y Nashville acabó ganando."
-      }
-    ];
+  {
+    id: 1,
+    category: "Títulos",
+    question: "¿Cuántos títulos de liga tiene el América?",
+    options: ["14", "15", "16", "17"],
+    correctIndex: 2,
+    explanation: "América suma 16 títulos de liga en Primera División / Liga MX."
+  },
+  {
+    id: 2,
+    category: "Finales",
+    question: "¿Qué portero marcó el gol agónico en la final contra Cruz Azul de 2013?",
+    options: ["Guillermo Ochoa", "Adolfo Ríos", "Moisés Muñoz", "Óscar Jiménez"],
+    correctIndex: 2,
+    explanation: "Moisés Muñoz empató de cabeza y abrió la remontada más célebre."
+  },
+  {
+    id: 3,
+    category: "Ídolos",
+    question: "¿Qué figura chilena es una de las mayores leyendas del América?",
+    options: ["Iván Zamorano", "Carlos Reinoso", "Jean Beausejour", "Osvaldo Castro"],
+    correctIndex: 1,
+    explanation: "Carlos Reinoso es uno de los máximos ídolos del club."
+  },
+  {
+    id: 4,
+    category: "Rivalidades",
+    question: "¿Contra qué equipo se disputó la final del Clausura 2013?",
+    options: ["Toluca", "Santos", "Pumas", "Cruz Azul"],
+    correctIndex: 3,
+    explanation: "La final fue América vs Cruz Azul."
+  },
+  {
+    id: 5,
+    category: "Apodos",
+    question: "¿Cuál es el apodo más clásico del Club América?",
+    options: ["La Máquina", "Las Águilas", "Los Tuzos", "La Furia Azul"],
+    correctIndex: 1,
+    explanation: "El apodo más reconocido es Las Águilas."
+  },
+  {
+    id: 6,
+    category: "Estadio",
+    question: "¿En qué estadio ha jugado tradicionalmente el América como local?",
+    options: ["Estadio Jalisco", "Estadio Azul", "Estadio Azteca", "Estadio Nemesio Diez"],
+    correctIndex: 2,
+    explanation: "El Estadio Azteca es su casa histórica."
+  },
+  {
+    id: 7,
+    category: "Jugadores",
+    question: "¿Qué delantero chileno fue conocido como 'Bam-Bam'?",
+    options: ["Carlos Hermosillo", "Nicolás Castillo", "Iván Zamorano", "Héctor Mancilla"],
+    correctIndex: 2,
+    explanation: "Iván Zamorano fue figura clave del América."
+  },
+  {
+    id: 8,
+    category: "Historia",
+    question: "¿Qué jugador está más asociado con la camiseta 10 del americanismo?",
+    options: ["Cuauhtémoc Blanco", "Joaquín del Olmo", "Ramón Ramírez", "Luis García"],
+    correctIndex: 0,
+    explanation: "Cuauhtémoc Blanco es el 10 más emblemático."
+  },
+  {
+    id: 9,
+    category: "Rivalidades",
+    question: "¿Cómo se conoce América vs Guadalajara?",
+    options: ["Clásico Capitalino", "Clásico del Norte", "Clásico Joven", "Clásico Nacional"],
+    correctIndex: 3,
+    explanation: "Es el Clásico Nacional."
+  },
+  {
+    id: 10,
+    category: "Rivalidades",
+    question: "¿Cómo se conoce América vs Cruz Azul?",
+    options: ["Clásico Nacional", "Clásico Joven", "Clásico del Bajío", "Clásico del Siglo"],
+    correctIndex: 1,
+    explanation: "Se conoce como Clásico Joven."
+  },
+  {
+    id: 11,
+    category: "Capitanes",
+    question: "¿Qué defensor fue líder del América en los 70s y 80s?",
+    options: ["Rafael Márquez", "Alfredo Tena", "Claudio Suárez", "Diego Reyes"],
+    correctIndex: 1,
+    explanation: "Alfredo Tena es uno de los grandes capitanes."
+  },
+  {
+    id: 12,
+    category: "Porteros",
+    question: "¿Qué arquero del América jugó en Europa?",
+    options: ["Guillermo Ochoa", "Moisés Muñoz", "Héctor Zelada", "Oscar Pérez"],
+    correctIndex: 0,
+    explanation: "Ochoa tuvo una larga carrera en Europa."
+  },
+  {
+    id: 13,
+    category: "Uniforme",
+    question: "¿Qué colores identifican al América?",
+    options: ["Rojo y blanco", "Azul y crema", "Negro y naranja", "Verde y blanco"],
+    correctIndex: 1,
+    explanation: "Azul y crema son los colores tradicionales."
+  },
+  {
+    id: 14,
+    category: "Torneos",
+    question: "¿Cuál es el principal torneo internacional del América hoy?",
+    options: ["Libertadores", "Europa League", "Concacaf Champions Cup", "Sudamericana"],
+    correctIndex: 2,
+    explanation: "La Concacaf Champions Cup es el torneo clave."
+  },
 
+  // 🔥 NUEVAS (más difíciles)
+
+  {
+    id: 15,
+    category: "Entrenadores",
+    question: "¿Cuál de los siguientes NO fue campeón con el América?",
+    options: ["Zurdo López", "Jorge Vieira", "André Jardine", "Leo Beenhakker"],
+    correctIndex: 3,
+    explanation: "Beenhakker dirigió al club, pero no fue campeón."
+  },
+  {
+    id: 16,
+    category: "Internacional",
+    question: "¿Contra qué equipo ganó América la Copa Interamericana de 1978?",
+    options: ["River Plate", "Boca Juniors", "Peñarol", "Nacional"],
+    correctIndex: 1,
+    explanation: "América venció a Boca Juniors en la Interamericana."
+  },
+  {
+    id: 17,
+    category: "Jugadores de culto",
+    question: "¿Qué jugador era conocido por revolucionar partidos desde la banca?",
+    options: ["Fanny Munguía", "Abuelo Cruz", "Jamaicón Villegas", "Armando Manzo"],
+    correctIndex: 0,
+    explanation: "El 'Fanny' Munguía tenía ese perfil de revulsivo."
+  },
+  {
+    id: 18,
+    category: "Finales",
+    question: "¿Quién fue expulsado en la final América-Chivas de los 80?",
+    options: ["Armando Manzo", "Alfredo Tena", "Cristóbal Ortega", "Eduardo Bacas"],
+    correctIndex: 0,
+    explanation: "Manzo fue expulsado en esa final histórica."
+  },
+  {
+    id: 19,
+    category: "Historia",
+    question: "¿Qué jugador del América fue campeón del mundo?",
+    options: ["Zelada", "Ochoa", "Blanco", "Pardo"],
+    correctIndex: 0,
+    explanation: "Zelada ganó el Mundial 86 con Argentina."
+  },
+  {
+    id: 20,
+    category: "Fundación",
+    question: "¿Quién es el fundador del América?",
+    options: ["Rafael Garza Gutiérrez", "Azcárraga", "Cañedo", "Cuchiaroni"],
+    correctIndex: 0,
+    explanation: "'Récord' Garza Gutiérrez fundó el club."
+  },
+  {
+    id: 21,
+    category: "Finales",
+    question: "¿A qué jugador de Chivas le atajó Zelada un penal en la final?",
+    options: ["Quirarte", "Galindo", "Cisneros", "Madero"],
+    correctIndex: 2,
+    explanation: "Zelada le atajó el penal a Cisneros."
+  },
+  {
+    id: 22,
+    category: "Goleadores",
+    question: "¿Quién es el máximo goleador histórico del América?",
+    options: ["Cuauhtémoc", "Hermosillo", "Borja", "Zaguinho"],
+    correctIndex: 3,
+    explanation: "Zaguinho es el máximo goleador histórico."
+  },
+  {
+    id: 23,
+    category: "Finales",
+    question: "¿Cuántas finales América vs Pumas se han jugado?",
+    options: ["2", "3", "4", "5"],
+    correctIndex: 1,
+    explanation: "Han sido 3 finales."
+  },
+  {
+    id: 24,
+    category: "Finales",
+    question: "¿Cuántas finales América vs Cruz Azul se han jugado?",
+    options: ["2", "3", "4", "5"],
+    correctIndex: 1,
+    explanation: "Han sido 3 finales."
+  }
+];
     const QUESTIONS_PER_GAME = 5;
 
     let gameQuestions = [];
