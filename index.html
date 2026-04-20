@@ -226,7 +226,7 @@ body{
   color:var(--accent);
 }
 
-/* ── Tabla de posiciones recortada ── */
+/* ── Tabla de posiciones con slider ── */
 .standings-box{
   margin-top:18px;
   padding:16px 18px;
@@ -251,6 +251,47 @@ body{
   color:rgba(255,255,255,.55);
   margin-left:8px;
 }
+.standings-controls{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+.standings-window-label{
+  font-size:.84rem;
+  color:rgba(255,255,255,.7);
+}
+.standings-nav{
+  display:flex;
+  gap:8px;
+}
+.standings-nav button{
+  border:none;
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  font-size:1rem;
+  font-weight:800;
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,.12);
+  transition:transform .12s ease, background .12s ease, opacity .12s ease;
+}
+.standings-nav button:hover{
+  transform:translateY(-1px);
+  background:rgba(255,255,255,.16);
+}
+.standings-nav button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
+}
+.standings-table-wrap{
+  overflow:hidden;
+  border-radius:14px;
+}
 .standings-table{
   width:100%;
   border-collapse:collapse;
@@ -268,7 +309,7 @@ body{
 .standings-table td{
   font-size:.95rem;
   color:rgba(255,255,255,.88);
-  padding:6px 6px;
+  padding:7px 6px;
   border-top:1px solid rgba(255,255,255,.06);
 }
 .standings-table td.num{ text-align:center; }
@@ -280,13 +321,6 @@ body{
   color:#93c5fd;
   font-weight:700;
 }
-.standings-gap td{
-  text-align:center;
-  color:rgba(255,255,255,.25);
-  font-size:.8rem;
-  padding:2px 0;
-  border-top:none;
-}
 .standings-meta{
   margin-top:12px;
   font-size:.82rem;
@@ -297,6 +331,14 @@ body{
   width:24px;
   text-align:center;
 }
+.standings-legend{
+  margin-top:10px;
+  font-size:.82rem;
+  color:rgba(255,255,255,.65);
+  line-height:1.45;
+}
+.legend-america{ color:var(--accent); font-weight:700; }
+.legend-rival{ color:#93c5fd; font-weight:700; }
 
 .market-box,
 .confidential-box{
@@ -396,6 +438,10 @@ body{
   .standings-box{ width:100%; }
   .bg-tapestry::before,
   .bg-tapestry::after{ width:210%; left:-52%; }
+  .standings-controls{
+    flex-direction:column;
+    align-items:stretch;
+  }
 }
 </style>
 </head>
@@ -454,6 +500,7 @@ const TZ = "America/Mexico_City";
 
 const FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH = true;
 const LAST_SPECIAL_MATCH_LABEL = "América vs Nashville SC";
+const STANDINGS_VISIBLE_COUNT = 6;
 
 // ─────────────────────────────────────────────
 // CANALES POR TORNEO (México)
@@ -583,7 +630,8 @@ function hideAllImages(){
     "imgCruzAzulProx",
     "imgCruzAzulHoy",
     "imgNashvilleCoco",
-    "imgAmeTolucaSraAnti"
+    "imgAmeTolucaSraAnti",
+    "imgBatallaToluca"
   ].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.classList.remove("visible");
@@ -634,17 +682,98 @@ function renderBroadcastInfo(event){
 }
 
 // ─────────────────────────────────────────────
-// TABLA DE POSICIONES
+// TABLA DE POSICIONES CON SLIDER
 // ─────────────────────────────────────────────
+let standingsSliderState = null;
+
 async function loadStandings(){
   const res=await fetch(STANDINGS_URL);
   if(!res.ok) throw new Error("No se pudo cargar standings.json");
   return res.json();
 }
 
-function renderStandings(event,standingsData){
+function getInitialStandingsStart(americaIdx, rivalIdx, total, visibleCount){
+  const minIdx = Math.min(americaIdx, rivalIdx);
+  const maxIdx = Math.max(americaIdx, rivalIdx);
+
+  let start = Math.max(0, Math.floor((minIdx + maxIdx) / 2) - Math.floor(visibleCount / 2));
+
+  if (maxIdx >= start + visibleCount) {
+    start = maxIdx - visibleCount + 1;
+  }
+
+  if (start + visibleCount > total) {
+    start = Math.max(0, total - visibleCount);
+  }
+
+  return start;
+}
+
+function buildStandingsRows(table, start, visibleCount, americaIdx, rivalIdx){
+  const slice = table.slice(start, start + visibleCount);
+
+  return slice.map((t, localIdx) => {
+    const absoluteIdx = start + localIdx;
+    const isAmerica = absoluteIdx === americaIdx;
+    const isRival = absoluteIdx === rivalIdx;
+    const cls = isAmerica ? "highlight-america" : isRival ? "highlight-rival" : "";
+    const label = isAmerica ? " 🦅" : isRival ? " ⚽" : "";
+
+    return `
+      <tr class="${cls}">
+        <td class="num pos-badge">${t.position}</td>
+        <td>${t.team}${label}</td>
+        <td class="num">${t.points} pts</td>
+      </tr>`;
+  }).join("");
+}
+
+function refreshStandingsSlider(){
+  if(!standingsSliderState) return;
+
+  const { table, americaIdx, rivalIdx, visibleCount } = standingsSliderState;
+  const total = table.length;
+  const start = standingsSliderState.start;
+  const end = Math.min(total, start + visibleCount);
+
+  const tbody = document.getElementById("standingsSliderBody");
+  const label = document.getElementById("standingsWindowLabel");
+  const btnUp = document.getElementById("standingsPrevBtn");
+  const btnDown = document.getElementById("standingsNextBtn");
+
+  if (tbody) {
+    tbody.innerHTML = buildStandingsRows(table, start, visibleCount, americaIdx, rivalIdx);
+  }
+  if (label) {
+    label.textContent = `Mostrando posiciones ${start + 1}–${end} de ${total}`;
+  }
+  if (btnUp) {
+    btnUp.disabled = start <= 0;
+  }
+  if (btnDown) {
+    btnDown.disabled = end >= total;
+  }
+}
+
+function moveStandings(delta){
+  if(!standingsSliderState) return;
+
+  const total = standingsSliderState.table.length;
+  const maxStart = Math.max(0, total - standingsSliderState.visibleCount);
+
+  standingsSliderState.start = Math.max(
+    0,
+    Math.min(maxStart, standingsSliderState.start + delta)
+  );
+
+  refreshStandingsSlider();
+}
+
+function renderStandings(event, standingsData){
   const box=document.getElementById("standingsInfo");
   box.innerHTML="";
+  standingsSliderState = null;
+
   if(!standingsData||!Array.isArray(standingsData.standings)) return;
   if(!isLigaMX(event)) return;
 
@@ -654,42 +783,28 @@ function renderStandings(event,standingsData){
 
   const americaIdx=table.findIndex(t=>t.team_id==="club-america");
   const rivalIdx=table.findIndex(t=>
-    t.team_id===rivalId||
+    t.team_id===rivalId ||
     normalizeTeamName(t.team)===normalizeTeamName(rivalRaw)
   );
-  if(americaIdx===-1||rivalIdx===-1) return;
 
-  const WINDOW=2;
-  const len=table.length;
-  function range(idx){
-    return{from:Math.max(0,idx-WINDOW),to:Math.min(len-1,idx+WINDOW)};
-  }
-  const rA=range(americaIdx);
-  const rR=range(rivalIdx);
-  const indices=new Set();
-  for(let i=rA.from;i<=rA.to;i++) indices.add(i);
-  for(let i=rR.from;i<=rR.to;i++) indices.add(i);
-  const sorted=[...indices].sort((a,b)=>a-b);
+  if(americaIdx===-1) return;
 
-  let rows="";
-  let prev=null;
-  for(const i of sorted){
-    if(prev!==null&&i>prev+1){
-      rows+=`<tr class="standings-gap"><td colspan="3">· · ·</td></tr>`;
-    }
-    const t=table[i];
-    const isAmerica=i===americaIdx;
-    const isRival=i===rivalIdx;
-    const cls=isAmerica?"highlight-america":isRival?"highlight-rival":"";
-    const label=isAmerica?" 🦅":isRival?" ⚽":"";
-    rows+=`
-      <tr class="${cls}">
-        <td class="num pos-badge">${t.position}</td>
-        <td>${t.team}${label}</td>
-        <td class="num">${t.points} pts</td>
-      </tr>`;
-    prev=i;
-  }
+  const safeRivalIdx = rivalIdx === -1 ? americaIdx : rivalIdx;
+  const visibleCount = Math.min(STANDINGS_VISIBLE_COUNT, table.length);
+  const initialStart = getInitialStandingsStart(
+    americaIdx,
+    safeRivalIdx,
+    table.length,
+    visibleCount
+  );
+
+  standingsSliderState = {
+    table,
+    americaIdx,
+    rivalIdx: safeRivalIdx,
+    visibleCount,
+    start: initialStart
+  };
 
   box.innerHTML=`
     <div class="standings-box">
@@ -697,18 +812,40 @@ function renderStandings(event,standingsData){
         Tabla de posiciones
         <span class="standings-season">${standingsData.season||""}</span>
       </div>
-      <table class="standings-table">
-        <thead>
-          <tr>
-            <th class="num">#</th>
-            <th>Equipo</th>
-            <th class="num">Pts</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
+
+      <div class="standings-controls">
+        <div id="standingsWindowLabel" class="standings-window-label"></div>
+        <div class="standings-nav">
+          <button id="standingsPrevBtn" type="button" aria-label="Ver posiciones anteriores">↑</button>
+          <button id="standingsNextBtn" type="button" aria-label="Ver posiciones siguientes">↓</button>
+        </div>
+      </div>
+
+      <div class="standings-table-wrap">
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th class="num">#</th>
+              <th>Equipo</th>
+              <th class="num">Pts</th>
+            </tr>
+          </thead>
+          <tbody id="standingsSliderBody"></tbody>
+        </table>
+      </div>
+
+      <div class="standings-legend">
+        <span class="legend-america">🦅 América</span> ·
+        <span class="legend-rival">⚽ Rival</span>
+      </div>
+
       <div class="standings-meta">Actualizado: ${standingsData.updated_at||"sin fecha"}</div>
     </div>`;
+
+  document.getElementById("standingsPrevBtn").addEventListener("click", () => moveStandings(-1));
+  document.getElementById("standingsNextBtn").addEventListener("click", () => moveStandings(1));
+
+  refreshStandingsSlider();
 }
 
 // ─────────────────────────────────────────────
@@ -817,19 +954,6 @@ function renderFunFact(event){
   }
 }
 
-document.addEventListener("DOMContentLoaded", async function () {
-  var el = document.getElementById("visits");
-  if (!el) return;
-
-  try {
-    var res = await fetch("https://api.countapi.xyz/hit/jsainzs/america_hoy");
-    var data = await res.json();
-    el.textContent = (typeof data.value !== "undefined") ? data.value : "—";
-  } catch (e) {
-    console.error("Error contador:", e);
-    el.textContent = "—";
-  }
-});
 // ─────────────────────────────────────────────
 // FUNCIÓN PRINCIPAL
 // ─────────────────────────────────────────────
@@ -859,6 +983,7 @@ async function loadMatch(){
 
     const data=await matchRes.json();
     console.log("Respuesta API:", JSON.stringify(data));
+
     if(!data.events||data.events.length===0){
       status.textContent=FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH?"Todavía duele":"Sin datos";
       status.className="status no";
@@ -876,7 +1001,8 @@ async function loadMatch(){
     }
 
     const event=data.events[0];
-    console.log("Liga:", event.strLeague, "| Rival:", event.strHomeTeam, "vs", event.strAwayTeam);    
+    console.log("Liga:", event.strLeague, "| Rival:", event.strHomeTeam, "vs", event.strAwayTeam);
+
     const date=parseDate(event);
 
     if(!date){
@@ -899,7 +1025,7 @@ async function loadMatch(){
     if(eventDate>today){
       status.textContent="No juega hoy";
       status.className="status no";
-      showImage(cruzAzulMatch?"caz-prox":"general-no");
+      showImage(cruzAzulMatch ? "caz-prox" : "general-no");
       details.innerHTML=`
         <div><b>Próximo partido</b></div>
         <div class="meta-line">${matchText}</div>`;
@@ -910,57 +1036,58 @@ async function loadMatch(){
       renderFunFact(event);
 
     } else if(eventDate===today){
-     if(finished){
-  status.textContent = nashvilleMatch ? "Todavía duele" : "Ya jugó hoy";
-  status.className = "status no";
+      if(finished){
+        status.textContent = nashvilleMatch ? "Todavía duele" : "Ya jugó hoy";
+        status.className = "status no";
 
-  showImage(
-    nashvilleMatch ? "nashville-coco" :
-    tolucaMatch    ? "toluca-pasado" :
-                     "general-no"
-  );
+        showImage(
+          nashvilleMatch ? "nashville-coco" :
+          tolucaMatch    ? "toluca-pasado" :
+                           "general-no"
+        );
 
-  details.innerHTML = `<div><b>${matchText}</b></div>`;
-  setReferenceTime(dateText);
-  renderStandings(event,standingsData);
-  renderMarketValueInfo(event,marketData);
-  renderFunFact(event);
+        details.innerHTML = `<div><b>${matchText}</b></div>`;
+        setReferenceTime(dateText);
+        renderStandings(event,standingsData);
+        renderMarketValueInfo(event,marketData);
+        renderFunFact(event);
 
-} else {
-  status.textContent="Hoy juega";
-  status.className="status yes";
-  showImage(
-    cruzAzulMatch ? "caz-hoy" :
-    tolucaMatch   ? "toluca-hoy" :
-                    "general-yes"
-  );
-  details.innerHTML=`
-    <div><b>${matchText}</b></div>
-    <div class="meta-line" style="margin-top:12px;">Partido programado para hoy</div>`;
-  setReferenceTime(dateText);
-  renderBroadcastInfo(event);
-  renderStandings(event,standingsData);
-  renderMarketValueInfo(event,marketData);
-  renderFunFact(event);
-}
-   } else {
-  status.textContent = nashvilleMatch ? "Todavía duele" : "No juega hoy";
-  status.className = "status no";
+      } else {
+        status.textContent="Hoy juega";
+        status.className="status yes";
+        showImage(
+          cruzAzulMatch ? "caz-hoy" :
+          tolucaMatch   ? "toluca-hoy" :
+                          "general-yes"
+        );
+        details.innerHTML=`
+          <div><b>${matchText}</b></div>
+          <div class="meta-line" style="margin-top:12px;">Partido programado para hoy</div>`;
+        setReferenceTime(dateText);
+        renderBroadcastInfo(event);
+        renderStandings(event,standingsData);
+        renderMarketValueInfo(event,marketData);
+        renderFunFact(event);
+      }
 
-  showImage(
-    nashvilleMatch ? "nashville-coco" :
-    tolucaMatch    ? "toluca-pasado" :
-                     "general-no"
-  );
+    } else {
+      status.textContent = nashvilleMatch ? "Todavía duele" : "No juega hoy";
+      status.className = "status no";
 
-  details.innerHTML=`
-    <div><b>Último partido registrado</b></div>
-    <div class="meta-line">${matchText}</div>`;
-  setReferenceTime(dateText);
-  renderStandings(event,standingsData);
-  renderMarketValueInfo(event,marketData);
-  renderFunFact(event);
-}
+      showImage(
+        nashvilleMatch ? "nashville-coco" :
+        tolucaMatch    ? "toluca-pasado" :
+                         "general-no"
+      );
+
+      details.innerHTML=`
+        <div><b>Último partido registrado</b></div>
+        <div class="meta-line">${matchText}</div>`;
+      setReferenceTime(dateText);
+      renderStandings(event,standingsData);
+      renderMarketValueInfo(event,marketData);
+      renderFunFact(event);
+    }
 
   } catch(err){
     status.textContent="Error al cargar";
