@@ -506,7 +506,7 @@ const STANDINGS_VISIBLE_COUNT = 6;
 // CANALES POR TORNEO (México)
 // ─────────────────────────────────────────────
 const BROADCAST_BY_LEAGUE = {
-  "Liga MX":                   "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
+  "Liga MX": "Depende del club local",
   "Liga BBVA MX":              "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
   "Apertura":                  "Canal 5 · TUDN · VIX Premium",
   "Clausura":                  "Canal 5 · TUDN · VIX Premium",
@@ -517,6 +517,10 @@ const BROADCAST_BY_LEAGUE = {
   "Leagues Cup":               "Apple TV+",
   "Mexican Primera League":    "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
   "Friendly":                  "VIX (confirmar)",
+};
+const BROADCAST_BY_HOME_TEAM = {
+  "club leon": "FOX One · FOX+",
+  "leon": "FOX One · FOX+"
 };
 const BROADCAST_FALLBACK = "VIX (confirmar canal)";
 
@@ -667,20 +671,30 @@ function setReferenceTime(dateText){
 // DÓNDE VER EL PARTIDO
 // ─────────────────────────────────────────────
 function renderBroadcastInfo(event){
-  const box=document.getElementById("broadcastInfo");
-  box.innerHTML="";
-  const apiChannel=(event.strTVStation||"").trim();
-  const league=(event.strLeague||"").trim();
-  const tableChannel=BROADCAST_BY_LEAGUE[league]||null;
-  const channels=apiChannel||tableChannel||BROADCAST_FALLBACK;
-  box.innerHTML=`
+  const box = document.getElementById("broadcastInfo");
+  box.innerHTML = "";
+
+  const apiChannel = (event.strTVStation || "").trim();
+  const league = (event.strLeague || "").trim();
+  const homeTeam = normalizeTeamName(event.strHomeTeam);
+
+  const homeTeamChannel = BROADCAST_BY_HOME_TEAM[homeTeam] || null;
+  const leagueChannel = BROADCAST_BY_LEAGUE[league] || null;
+
+  // Prioridad:
+  // 1. Canal específico por club local
+  // 2. Canal reportado por la API
+  // 3. Canal genérico por torneo
+  // 4. Fallback
+  const channels = homeTeamChannel || apiChannel || leagueChannel || BROADCAST_FALLBACK;
+
+  box.innerHTML = `
     <div class="broadcast-box">
       <span class="tv-icon">📺</span>
       <span class="tv-label">Dónde verlo:</span>
       <span class="tv-channels">${channels}</span>
     </div>`;
 }
-
 // ─────────────────────────────────────────────
 // TABLA DE POSICIONES CON SLIDER
 // ─────────────────────────────────────────────
