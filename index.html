@@ -13,9 +13,12 @@
   --accent:#facc15;
   --green:#22c55e;
   --red:#ef4444;
+  --blue-soft:#93c5fd;
   --bg-blue:#0a1f44;
   --bg-blue-2:#16386e;
   --bg-cream:#f3cf18;
+  --card:rgba(0,0,0,.18);
+  --card-border:rgba(255,255,255,.12);
   --shadow:0 14px 38px rgba(0,0,0,0.28);
 }
 *{box-sizing:border-box;}
@@ -34,6 +37,7 @@ body{
   overflow-x:hidden;
   overflow-y:auto;
 }
+
 .bg-tapestry{
   position:fixed;
   inset:0;
@@ -78,29 +82,15 @@ body{
   left:-8%;
   text-align:justify;
 }
+
 .shell{
   position:relative;
   z-index:1;
   width:100%;
-  max-width:1200px;
+  max-width:1320px;
   margin:0 auto;
   padding:28px 24px 110px;
 }
-
-.memorama-link {
-  display: inline-block;
-  margin-top: 16px;
-  padding: 10px 18px;
-  background: #facc15;
-  color: #0a1f44;
-  text-decoration: none;
-  font-weight: bold;
-  border-radius: 10px;
-}
-.memorama-link:hover {
-  opacity: 0.9;
-}
-
 .title{
   margin:0 0 14px;
   text-align:center;
@@ -109,7 +99,6 @@ body{
   font-weight:800;
   text-shadow:0 4px 20px rgba(0,0,0,.35);
 }
-
 .visit-counter{
   display:block;
   width:max-content;
@@ -129,22 +118,97 @@ body{
   color:var(--accent);
 }
 
+.page-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 260px;
+  gap:24px;
+  align-items:start;
+}
+
+.side-menu{
+  position:sticky;
+  top:20px;
+}
+.side-card{
+  background:rgba(0,0,0,.18);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.18);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+.side-card h3{
+  margin:0 0 12px;
+  font-size:1rem;
+  font-weight:800;
+  color:#fff;
+}
+.side-card p{
+  margin:0 0 12px;
+  font-size:.92rem;
+  line-height:1.45;
+  color:rgba(255,255,255,.82);
+}
+.side-links{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.side-link{
+  display:block;
+  text-decoration:none;
+  font-weight:700;
+  padding:12px 14px;
+  border-radius:12px;
+  transition:transform .12s ease, opacity .12s ease, background .12s ease;
+}
+.side-link:hover{
+  transform:translateY(-1px);
+  opacity:.95;
+}
+.side-link.primary{
+  background:var(--accent);
+  color:#0a1f44;
+}
+.side-link.secondary{
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.main-stack{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
 .layout{
   display:grid;
   grid-template-columns:minmax(280px,430px) 1fr;
   gap:34px;
-  align-items:center;
+  align-items:start;
 }
+
 .media-wrap{
   display:flex;
   justify-content:center;
   align-items:flex-start;
 }
+.hero-frame{
+  width:100%;
+  max-width:420px;
+  min-height:320px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:10px;
+}
 .hero{
   display:none;
   width:100%;
   max-width:400px;
-  max-height:620px;
+  max-height:min(68vh,620px);
   object-fit:contain;
   border-radius:18px;
   box-shadow:var(--shadow);
@@ -153,10 +217,11 @@ body{
 .hero.visible{
   display:block;
 }
+
 .content{
   display:flex;
   flex-direction:column;
-  justify-content:center;
+  justify-content:flex-start;
   min-height:100%;
   padding:8px 0;
 }
@@ -169,6 +234,7 @@ body{
 }
 .yes{color:var(--green);}
 .no{color:var(--red);}
+
 .details{
   font-size:clamp(1.05rem,1.45vw,1.35rem);
   line-height:1.45;
@@ -198,7 +264,35 @@ body{
   color:rgba(255,255,255,.8);
 }
 
-/* ── Cajita de dónde ver el partido ── */
+.result-strip{
+  margin-top:16px;
+  padding:14px 16px;
+  border-radius:16px;
+  background:rgba(250,204,21,.14);
+  border:1px solid rgba(250,204,21,.30);
+  color:#fff;
+  box-shadow:0 10px 24px rgba(0,0,0,.16);
+}
+.result-strip-title{
+  font-size:.84rem;
+  text-transform:uppercase;
+  letter-spacing:.7px;
+  color:rgba(255,255,255,.78);
+  margin-bottom:6px;
+  font-weight:700;
+}
+.result-strip-main{
+  font-size:1.05rem;
+  font-weight:800;
+  color:#fff;
+}
+.result-strip-sub{
+  margin-top:4px;
+  font-size:.9rem;
+  color:rgba(255,255,255,.82);
+}
+
+/* Dónde verlo */
 .broadcast-box{
   display:inline-flex;
   align-items:center;
@@ -226,7 +320,7 @@ body{
   color:var(--accent);
 }
 
-/* ── Tabla de posiciones con slider ── */
+/* Tabla de posiciones */
 .standings-box{
   margin-top:18px;
   padding:16px 18px;
@@ -427,11 +521,29 @@ body{
   height:auto;
 }
 
+@media (max-width:1080px){
+  .page-grid{
+    grid-template-columns:1fr;
+  }
+  .side-menu{
+    position:static;
+    order:-1;
+  }
+}
+
 @media (max-width:860px){
   .shell{ padding:18px 16px 90px; }
-  .layout{ grid-template-columns:1fr; gap:22px; }
+  .layout{ grid-template-columns:1fr; gap:20px; }
   .content{ text-align:center; align-items:center; }
-  .hero{ max-width:300px; max-height:460px; }
+  .hero-frame{
+    max-width:100%;
+    min-height:unset;
+    padding:0;
+  }
+  .hero{
+    max-width:min(100%, 330px);
+    max-height:50vh;
+  }
   .market-label{ text-align:left; width:100%; }
   .market-box,
   .confidential-box,
@@ -441,6 +553,25 @@ body{
   .standings-controls{
     flex-direction:column;
     align-items:stretch;
+  }
+  .result-strip{
+    width:100%;
+  }
+}
+
+@media (max-width:540px){
+  .title{
+    font-size:clamp(1.9rem,8vw,2.5rem);
+  }
+  .status{
+    font-size:clamp(1.8rem,8vw,2.4rem);
+  }
+  .details{
+    font-size:1rem;
+  }
+  .hero{
+    max-width:min(100%, 290px);
+    max-height:44vh;
   }
 }
 </style>
@@ -455,51 +586,57 @@ body{
     👀 Visitas: <span id="busuanzi_value_site_pv">...</span>
   </div>
 
-  <div class="layout">
-    <div class="media-wrap">
-      <img id="imgSi" class="hero" src="hoy_juega_america.png" alt="Hoy juega el América">
-      <img id="imgNo" class="hero" src="no_juega_america.png" alt="No juega el América">
-      <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg" alt="Próximo partido contra Cruz Azul">
-      <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg" alt="Hoy juega contra Cruz Azul">
-      <img id="imgNashvilleCoco" class="hero" src="nashville_coco.png" alt="Nashville Coco">
-      <img id="imgAmeTolucaSraAnti" class="hero" src="ame-toluca-sra_anti.png" alt="América vs Toluca">
-      <img id="imgBatallaToluca" class="hero" src="toluca_campal.png" alt="Batalla América vs Toluca">
-    </div>
+  <div class="page-grid">
+    <section class="main-stack">
+      <div class="layout">
+        <div class="media-wrap">
+          <div class="hero-frame">
+            <img id="imgSi" class="hero" src="hoy_juega_america.png" alt="Hoy juega el América">
+            <img id="imgNo" class="hero" src="no_juega_america.png" alt="No juega el América">
+            <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg" alt="Próximo partido contra Cruz Azul">
+            <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg" alt="Hoy juega contra Cruz Azul">
+            <img id="imgNashvilleCoco" class="hero" src="nashville_coco.png" alt="Nashville Coco">
+            <img id="imgAmeTolucaSraAnti" class="hero" src="ame-toluca-sra_anti.png" alt="América vs Toluca">
+            <img id="imgBatallaToluca" class="hero" src="toluca_campal.png" alt="Batalla América vs Toluca">
+          </div>
+        </div>
 
-    <div class="content">
-      <div id="status" class="status">Consultando...</div>
-      <div id="details" class="details"></div>
-      <div id="broadcastInfo"></div>
-      <div id="standingsInfo"></div>
-      <div id="marketValueInfo"></div>
-      <div id="funFact"></div>
+        <div class="content">
+          <div id="status" class="status">Consultando...</div>
+          <div id="details" class="details"></div>
+          <div id="lastResultInfo"></div>
+          <div id="broadcastInfo"></div>
+          <div id="standingsInfo"></div>
+          <div id="marketValueInfo"></div>
+          <div id="funFact"></div>
 
-      <div style="margin-top:18px;">
-        <a href="trivia.html" class="meta-line" style="text-decoration:none;font-weight:700;">
-          Jugar trivia americanista
-        </a>
+          <div class="footer-copy">
+            <img src="chanfle.png" alt="El Chanfle" class="chanfle-img">
+          </div>
+        </div>
       </div>
+    </section>
 
-      <a href="https://jsainzs.github.io/memory-game-udacity/" class="memorama-link">
-        Ejercita tu memoria, papá
-      </a>
-
-      <div class="footer-copy">
-        <img src="chanfle.png" alt="El Chanfle" class="chanfle-img">
+    <aside class="side-menu">
+      <div class="side-card">
+        <h3>Zona americanista</h3>
+        <p>Mientras revisas si juega el América, aquí tienes dos extras para entretenerte un rato.</p>
+        <div class="side-links">
+          <a href="trivia.html" class="side-link primary">Jugar trivia americanista</a>
+          <a href="https://jsainzs.github.io/memory-game-udacity/" class="side-link secondary">Ejercita tu memoria, papá</a>
+        </div>
       </div>
-    </div>
+    </aside>
   </div>
 </main>
 
 <script>
 const TEAM_ID   = "134193";
-const API_URL   = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
+const NEXT_API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
+const LAST_API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventslast.php?id=${TEAM_ID}`;
 const MARKET_VALUES_URL = "./market_values.json";
 const STANDINGS_URL     = "./standings.json";
 const TZ = "America/Mexico_City";
-
-const FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH = true;
-const LAST_SPECIAL_MATCH_LABEL = "América vs Nashville SC";
 const STANDINGS_VISIBLE_COUNT = 6;
 
 // ─────────────────────────────────────────────
@@ -507,16 +644,16 @@ const STANDINGS_VISIBLE_COUNT = 6;
 // ─────────────────────────────────────────────
 const BROADCAST_BY_LEAGUE = {
   "Liga MX": "Depende del club local",
-  "Liga BBVA MX":              "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
-  "Apertura":                  "Canal 5 · TUDN · VIX Premium",
-  "Clausura":                  "Canal 5 · TUDN · VIX Premium",
-  "CONCACAF Champions Cup":    "Fox Sports · VIX",
+  "Liga BBVA MX": "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
+  "Apertura": "Canal 5 · TUDN · VIX Premium",
+  "Clausura": "Canal 5 · TUDN · VIX Premium",
+  "CONCACAF Champions Cup": "Fox Sports · VIX",
   "CONCACAF Champions League": "Fox Sports · VIX",
-  "Copa MX":                   "VIX",
-  "FIFA Club World Cup":       "DAZN · Azteca 7",
-  "Leagues Cup":               "Apple TV+",
-  "Mexican Primera League":    "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
-  "Friendly":                  "VIX (confirmar)",
+  "Copa MX": "VIX",
+  "FIFA Club World Cup": "DAZN · Azteca 7",
+  "Leagues Cup": "Apple TV+",
+  "Mexican Primera League": "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
+  "Friendly": "VIX (confirmar)"
 };
 const BROADCAST_BY_HOME_TEAM = {
   "club leon": "FOX One · FOX+",
@@ -529,8 +666,7 @@ const BROADCAST_FALLBACK = "VIX (confirmar canal)";
 // ─────────────────────────────────────────────
 const LIGA_MX_KEYWORDS = [
   "liga mx", "liga bbva mx", "apertura", "clausura",
-  "liga mx apertura", "liga mx clausura",
-  "mexican primera league"
+  "liga mx apertura", "liga mx clausura", "mexican primera league"
 ];
 
 const MARKET_VALUE_TEAM_ALIASES = {
@@ -559,69 +695,100 @@ const MARKET_VALUE_TEAM_ALIASES = {
 // UTILIDADES
 // ─────────────────────────────────────────────
 function normalizeTeamName(name){
-  return (name||"")
+  return (name || "")
     .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
     .toLowerCase().replace(/\./g,"").replace(/\s+/g," ").trim();
 }
+function cleanTeamName(name){
+  const n = normalizeTeamName(name);
+  if(n === "cf america" || n === "club america" || n === "america") return "América";
+  if(n === "guadalajara" || n === "club guadalajara") return "Chivas";
+  if(n === "pumas unam") return "Pumas";
+  return name || "";
+}
 function isVsCruzAzul(event){
-  const h=normalizeTeamName(event.strHomeTeam);
-  const a=normalizeTeamName(event.strAwayTeam);
-  return h.includes("cruz azul")||a.includes("cruz azul");
+  const h=normalizeTeamName(event?.strHomeTeam);
+  const a=normalizeTeamName(event?.strAwayTeam);
+  return h.includes("cruz azul") || a.includes("cruz azul");
 }
 function isVsToluca(event){
-  const h = normalizeTeamName(event.strHomeTeam);
-  const a = normalizeTeamName(event.strAwayTeam);
+  const h=normalizeTeamName(event?.strHomeTeam);
+  const a=normalizeTeamName(event?.strAwayTeam);
   return h.includes("toluca") || a.includes("toluca");
 }
 function isVsNashville(event){
-  const h=normalizeTeamName(event.strHomeTeam);
-  const a=normalizeTeamName(event.strAwayTeam);
-  return h.includes("nashville")||a.includes("nashville");
+  const h=normalizeTeamName(event?.strHomeTeam);
+  const a=normalizeTeamName(event?.strAwayTeam);
+  return h.includes("nashville") || a.includes("nashville");
 }
 function isAmericaName(name){
   const n=normalizeTeamName(name);
-  return n==="america"||n==="cf america"||n==="club america"||n.includes("america");
+  return n==="america" || n==="cf america" || n==="club america" || n.includes("america");
 }
 function getOpponentName(event){
+  if(!event) return "";
   if(isAmericaName(event.strHomeTeam)) return event.strAwayTeam;
   if(isAmericaName(event.strAwayTeam)) return event.strHomeTeam;
-  return event.strAwayTeam;
+  return event.strAwayTeam || "";
 }
 function getMarketTeamId(rawName){
   const n=normalizeTeamName(rawName);
   if(MARKET_VALUE_TEAM_ALIASES[n]) return MARKET_VALUE_TEAM_ALIASES[n];
   for(const key of Object.keys(MARKET_VALUE_TEAM_ALIASES)){
-    if(n.includes(key)||key.includes(n)) return MARKET_VALUE_TEAM_ALIASES[key];
+    if(n.includes(key) || key.includes(n)) return MARKET_VALUE_TEAM_ALIASES[key];
   }
   return null;
 }
 function isLigaMX(event){
-  const league=(event.strLeague||"").toLowerCase().trim();
-  return LIGA_MX_KEYWORDS.some(l=>league.includes(l));
+  const league=(event?.strLeague || "").toLowerCase().trim();
+  return LIGA_MX_KEYWORDS.some(l => league.includes(l));
 }
 function getMexicoDate(date){
   return new Intl.DateTimeFormat("en-CA",{
-    timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit"
+    timeZone:TZ, year:"numeric", month:"2-digit", day:"2-digit"
   }).format(date);
 }
 function formatMexicoDateTime(date){
   return new Intl.DateTimeFormat("es-MX",{
-    timeZone:TZ,weekday:"long",day:"numeric",month:"long",
-    hour:"2-digit",minute:"2-digit"
+    timeZone:TZ,
+    weekday:"long",
+    day:"numeric",
+    month:"long",
+    hour:"2-digit",
+    minute:"2-digit"
   }).format(date);
 }
 function parseDate(event){
-  let raw=event.strTimestamp||`${event.dateEvent}T${event.strTime}`;
+  if(!event) return null;
+  let raw = event.strTimestamp || (event.dateEvent && event.strTime ? `${event.dateEvent}T${event.strTime}` : null) || event.dateEvent;
   if(!raw) return null;
-  if(!raw.endsWith("Z")) raw+="Z";
-  const d=new Date(raw);
-  return isNaN(d)?null:d;
+  if(raw.length === 10) raw += "T12:00:00Z";
+  else if(!raw.endsWith("Z")) raw += "Z";
+  const d = new Date(raw);
+  return isNaN(d) ? null : d;
 }
 function formatEurCompact(value){
   return new Intl.NumberFormat("es-MX",{
-    style:"currency",currency:"EUR",
-    notation:"compact",compactDisplay:"short",maximumFractionDigits:1
+    style:"currency",
+    currency:"EUR",
+    notation:"compact",
+    compactDisplay:"short",
+    maximumFractionDigits:1
   }).format(value);
+}
+function setReferenceTime(dateText){
+  document.getElementById("details").innerHTML +=
+    `<div class="reference-time">Hora de referencia: ${dateText} (Ciudad de México)</div>`;
+}
+function getMatchLabel(event){
+  return `${cleanTeamName(event.strHomeTeam)} vs ${cleanTeamName(event.strAwayTeam)}`;
+}
+function getResultLabel(event){
+  const home = cleanTeamName(event.strHomeTeam);
+  const away = cleanTeamName(event.strAwayTeam);
+  const hs = event.intHomeScore ?? "-";
+  const as = event.intAwayScore ?? "-";
+  return `${home} ${hs} - ${as} ${away}`;
 }
 
 // ─────────────────────────────────────────────
@@ -638,10 +805,9 @@ function hideAllImages(){
     "imgBatallaToluca"
   ].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.classList.remove("visible");
+    if(el) el.classList.remove("visible");
   });
 }
-
 function showImage(mode){
   hideAllImages();
   const map = {
@@ -653,18 +819,49 @@ function showImage(mode){
     "toluca-hoy": "imgAmeTolucaSraAnti",
     "toluca-pasado": "imgBatallaToluca"
   };
-  if (map[mode]) {
+  if(map[mode]){
     const el = document.getElementById(map[mode]);
-    if (el) el.classList.add("visible");
+    if(el) el.classList.add("visible");
   }
+}
+function chooseImageModeForUpcoming(event){
+  if(isVsCruzAzul(event)) return "caz-prox";
+  return "general-no";
+}
+function chooseImageModeForToday(event){
+  if(isVsCruzAzul(event)) return "caz-hoy";
+  if(isVsToluca(event)) return "toluca-hoy";
+  return "general-yes";
+}
+function chooseImageModeForPast(event){
+  if(isVsNashville(event)) return "nashville-coco";
+  if(isVsToluca(event)) return "toluca-pasado";
+  return "general-no";
 }
 
 // ─────────────────────────────────────────────
-// HORA DE REFERENCIA
+// ÚLTIMO RESULTADO
 // ─────────────────────────────────────────────
-function setReferenceTime(dateText){
-  document.getElementById("details").innerHTML +=
-    `<div class="reference-time">Hora de referencia: ${dateText} (Ciudad de México)</div>`;
+function renderLastResult(lastEvent){
+  const box = document.getElementById("lastResultInfo");
+  box.innerHTML = "";
+
+  if(!lastEvent) return;
+
+  const title = "Último resultado";
+  const main = getResultLabel(lastEvent);
+  const date = parseDate(lastEvent);
+  const sub = date
+    ? `Partido jugado el ${new Intl.DateTimeFormat("es-MX",{ timeZone:TZ, day:"numeric", month:"long", year:"numeric" }).format(date)}`
+    : "";
+
+  box.innerHTML = `
+    <div class="result-strip">
+      <div class="result-strip-title">${title}</div>
+      <div class="result-strip-main">${main}</div>
+      <div class="result-strip-sub">${sub}</div>
+    </div>
+  `;
 }
 
 // ─────────────────────────────────────────────
@@ -673,19 +870,14 @@ function setReferenceTime(dateText){
 function renderBroadcastInfo(event){
   const box = document.getElementById("broadcastInfo");
   box.innerHTML = "";
+  if(!event) return;
 
   const apiChannel = (event.strTVStation || "").trim();
   const league = (event.strLeague || "").trim();
   const homeTeam = normalizeTeamName(event.strHomeTeam);
-
   const homeTeamChannel = BROADCAST_BY_HOME_TEAM[homeTeam] || null;
   const leagueChannel = BROADCAST_BY_LEAGUE[league] || null;
 
-  // Prioridad:
-  // 1. Canal específico por club local
-  // 2. Canal reportado por la API
-  // 3. Canal genérico por torneo
-  // 4. Fallback
   const channels = homeTeamChannel || apiChannel || leagueChannel || BROADCAST_FALLBACK;
 
   box.innerHTML = `
@@ -695,44 +887,33 @@ function renderBroadcastInfo(event){
       <span class="tv-channels">${channels}</span>
     </div>`;
 }
+
 // ─────────────────────────────────────────────
 // TABLA DE POSICIONES CON SLIDER
 // ─────────────────────────────────────────────
 let standingsSliderState = null;
 
 async function loadStandings(){
-  const res=await fetch(STANDINGS_URL);
+  const res = await fetch(STANDINGS_URL);
   if(!res.ok) throw new Error("No se pudo cargar standings.json");
   return res.json();
 }
-
 function getInitialStandingsStart(americaIdx, rivalIdx, total, visibleCount){
   const minIdx = Math.min(americaIdx, rivalIdx);
   const maxIdx = Math.max(americaIdx, rivalIdx);
-
   let start = Math.max(0, Math.floor((minIdx + maxIdx) / 2) - Math.floor(visibleCount / 2));
-
-  if (maxIdx >= start + visibleCount) {
-    start = maxIdx - visibleCount + 1;
-  }
-
-  if (start + visibleCount > total) {
-    start = Math.max(0, total - visibleCount);
-  }
-
+  if(maxIdx >= start + visibleCount) start = maxIdx - visibleCount + 1;
+  if(start + visibleCount > total) start = Math.max(0, total - visibleCount);
   return start;
 }
-
 function buildStandingsRows(table, start, visibleCount, americaIdx, rivalIdx){
   const slice = table.slice(start, start + visibleCount);
-
   return slice.map((t, localIdx) => {
     const absoluteIdx = start + localIdx;
     const isAmerica = absoluteIdx === americaIdx;
     const isRival = absoluteIdx === rivalIdx;
     const cls = isAmerica ? "highlight-america" : isRival ? "highlight-rival" : "";
     const label = isAmerica ? " 🦅" : isRival ? " ⚽" : "";
-
     return `
       <tr class="${cls}">
         <td class="num pos-badge">${t.position}</td>
@@ -741,10 +922,8 @@ function buildStandingsRows(table, start, visibleCount, americaIdx, rivalIdx){
       </tr>`;
   }).join("");
 }
-
 function refreshStandingsSlider(){
   if(!standingsSliderState) return;
-
   const { table, americaIdx, rivalIdx, visibleCount } = standingsSliderState;
   const total = table.length;
   const start = standingsSliderState.start;
@@ -755,53 +934,39 @@ function refreshStandingsSlider(){
   const btnUp = document.getElementById("standingsPrevBtn");
   const btnDown = document.getElementById("standingsNextBtn");
 
-  if (tbody) {
-    tbody.innerHTML = buildStandingsRows(table, start, visibleCount, americaIdx, rivalIdx);
-  }
-  if (label) {
-    label.textContent = `Mostrando posiciones ${start + 1}–${end} de ${total}`;
-  }
-  if (btnUp) {
-    btnUp.disabled = start <= 0;
-  }
-  if (btnDown) {
-    btnDown.disabled = end >= total;
-  }
+  if(tbody) tbody.innerHTML = buildStandingsRows(table, start, visibleCount, americaIdx, rivalIdx);
+  if(label) label.textContent = `Mostrando posiciones ${start + 1}–${end} de ${total}`;
+  if(btnUp) btnUp.disabled = start <= 0;
+  if(btnDown) btnDown.disabled = end >= total;
 }
-
 function moveStandings(delta){
   if(!standingsSliderState) return;
-
   const total = standingsSliderState.table.length;
   const maxStart = Math.max(0, total - standingsSliderState.visibleCount);
-
   standingsSliderState.start = Math.max(
     0,
     Math.min(maxStart, standingsSliderState.start + delta)
   );
-
   refreshStandingsSlider();
 }
-
 function renderStandings(event, standingsData){
-  const box=document.getElementById("standingsInfo");
-  box.innerHTML="";
+  const box = document.getElementById("standingsInfo");
+  box.innerHTML = "";
   standingsSliderState = null;
 
-  if(!standingsData||!Array.isArray(standingsData.standings)) return;
+  if(!event || !standingsData || !Array.isArray(standingsData.standings)) return;
   if(!isLigaMX(event)) return;
 
-  const table=standingsData.standings;
-  const rivalRaw=getOpponentName(event);
-  const rivalId=getMarketTeamId(rivalRaw);
+  const table = standingsData.standings;
+  const rivalRaw = getOpponentName(event);
+  const rivalId = getMarketTeamId(rivalRaw);
 
-  const americaIdx=table.findIndex(t=>t.team_id==="club-america");
-  const rivalIdx=table.findIndex(t=>
-    t.team_id===rivalId ||
-    normalizeTeamName(t.team)===normalizeTeamName(rivalRaw)
+  const americaIdx = table.findIndex(t => t.team_id === "club-america");
+  const rivalIdx = table.findIndex(t =>
+    t.team_id === rivalId || normalizeTeamName(t.team) === normalizeTeamName(rivalRaw)
   );
 
-  if(americaIdx===-1) return;
+  if(americaIdx === -1) return;
 
   const safeRivalIdx = rivalIdx === -1 ? americaIdx : rivalIdx;
   const visibleCount = Math.min(STANDINGS_VISIBLE_COUNT, table.length);
@@ -820,11 +985,11 @@ function renderStandings(event, standingsData){
     start: initialStart
   };
 
-  box.innerHTML=`
+  box.innerHTML = `
     <div class="standings-box">
       <div class="standings-heading">
         Tabla de posiciones
-        <span class="standings-season">${standingsData.season||""}</span>
+        <span class="standings-season">${standingsData.season || ""}</span>
       </div>
 
       <div class="standings-controls">
@@ -853,57 +1018,58 @@ function renderStandings(event, standingsData){
         <span class="legend-rival">⚽ Rival</span>
       </div>
 
-      <div class="standings-meta">Actualizado: ${standingsData.updated_at||"sin fecha"}</div>
+      <div class="standings-meta">Actualizado: ${standingsData.updated_at || "sin fecha"}</div>
     </div>`;
 
   document.getElementById("standingsPrevBtn").addEventListener("click", () => moveStandings(-1));
   document.getElementById("standingsNextBtn").addEventListener("click", () => moveStandings(1));
-
   refreshStandingsSlider();
 }
 
 // ─────────────────────────────────────────────
-// BILLETÓMETRO (TRANSFERMARKT)
+// BILLETÓMETRO
 // ─────────────────────────────────────────────
 async function loadMarketValues(){
-  const res=await fetch(MARKET_VALUES_URL);
+  const res = await fetch(MARKET_VALUES_URL);
   if(!res.ok) throw new Error("No se pudo cargar market_values.json");
   return res.json();
 }
-function buildMarketVerdict(america,rival){
-  if(!america||!rival) return "";
-  const ratio=america.squad_value_eur/rival.squad_value_eur;
-  const ratioText=ratio>=1?`${ratio.toFixed(2)}x`:`${(1/ratio).toFixed(2)}x`;
-  if(america.squad_value_eur>rival.squad_value_eur)
+function buildMarketVerdict(america, rival){
+  if(!america || !rival) return "";
+  const ratio = america.squad_value_eur / rival.squad_value_eur;
+  const ratioText = ratio >= 1 ? `${ratio.toFixed(2)}x` : `${(1 / ratio).toFixed(2)}x`;
+  if(america.squad_value_eur > rival.squad_value_eur)
     return `América vale <strong>${ratioText}</strong> lo que ${rival.team_name}.`;
-  if(america.squad_value_eur<rival.squad_value_eur)
+  if(america.squad_value_eur < rival.squad_value_eur)
     return `${rival.team_name} vale <strong>${ratioText}</strong> lo que América.`;
   return `América y ${rival.team_name} llegan con el mismo valor de plantilla.`;
 }
-function renderMarketValueInfo(event,marketData){
-  const box=document.getElementById("marketValueInfo");
-  box.innerHTML="";
-  if(!marketData||!Array.isArray(marketData.teams)) return;
+function renderMarketValueInfo(event, marketData){
+  const box = document.getElementById("marketValueInfo");
+  box.innerHTML = "";
+  if(!event || !marketData || !Array.isArray(marketData.teams)) return;
 
-  const rivalRaw=getOpponentName(event);
-  const rivalId=getMarketTeamId(rivalRaw);
-  const america=marketData.teams.find(t=>t.team_id==="club-america");
-  let rival=marketData.teams.find(t=>t.team_id===rivalId);
+  const rivalRaw = getOpponentName(event);
+  const rivalId = getMarketTeamId(rivalRaw);
+  const america = marketData.teams.find(t => t.team_id === "club-america");
+  let rival = marketData.teams.find(t => t.team_id === rivalId);
+
   if(!rival){
-    const nr=normalizeTeamName(rivalRaw);
-    rival=marketData.teams.find(t=>{
-      const nt=normalizeTeamName(t.team_name);
-      return nt===nr||nt.includes(nr)||nr.includes(nt);
+    const nr = normalizeTeamName(rivalRaw);
+    rival = marketData.teams.find(t => {
+      const nt = normalizeTeamName(t.team_name);
+      return nt === nr || nt.includes(nr) || nr.includes(nt);
     });
   }
-  if(!america||!rival) return;
 
-  const maxValue=Math.max(america.squad_value_eur,rival.squad_value_eur);
-  const americaWidth=(america.squad_value_eur/maxValue)*100;
-  const rivalWidth=(rival.squad_value_eur/maxValue)*100;
-  const verdict=buildMarketVerdict(america,rival);
+  if(!america || !rival) return;
 
-  box.innerHTML=`
+  const maxValue = Math.max(america.squad_value_eur, rival.squad_value_eur);
+  const americaWidth = (america.squad_value_eur / maxValue) * 100;
+  const rivalWidth = (rival.squad_value_eur / maxValue) * 100;
+  const verdict = buildMarketVerdict(america, rival);
+
+  box.innerHTML = `
     <div class="market-box">
       <div class="market-heading">Billetómetro (Transfermarkt)</div>
       <div class="market-row">
@@ -925,7 +1091,7 @@ function renderMarketValueInfo(event,marketData){
       <div class="market-verdict">${verdict}</div>
       <div class="market-meta">
         Ranking en su liga: América #${america.rank_in_league} · ${rival.team_name} #${rival.rank_in_league}<br>
-        Corte de datos: ${marketData.updated_at||"sin fecha"} · Fuente: ${marketData.source||"Transfermarkt"}
+        Corte de datos: ${marketData.updated_at || "sin fecha"} · Fuente: ${marketData.source || "Transfermarkt"}
       </div>
     </div>`;
 }
@@ -934,10 +1100,12 @@ function renderMarketValueInfo(event,marketData){
 // ANÉCDOTAS
 // ─────────────────────────────────────────────
 function renderFunFact(event){
-  const box=document.getElementById("funFact");
-  box.innerHTML="";
+  const box = document.getElementById("funFact");
+  box.innerHTML = "";
+  if(!event) return;
+
   if(isVsCruzAzul(event)){
-    box.innerHTML=`
+    box.innerHTML = `
       <div class="confidential-box">
         <div class="confidential-title">Expediente íntimo del americanismo</div>
         <div class="confidential-text">
@@ -950,8 +1118,9 @@ function renderFunFact(event){
       </div>`;
     return;
   }
+
   if(isVsNashville(event)){
-    box.innerHTML=`
+    box.innerHTML = `
       <div class="confidential-box">
         <div class="confidential-title">Expediente íntimo del americanismo</div>
         <div class="confidential-text">
@@ -969,145 +1138,167 @@ function renderFunFact(event){
 }
 
 // ─────────────────────────────────────────────
+// CARGAS AUXILIARES API
+// ─────────────────────────────────────────────
+async function loadNextMatch(){
+  const res = await fetch(NEXT_API_URL);
+  if(!res.ok) throw new Error("No se pudo cargar eventsnext");
+  return res.json();
+}
+async function loadLastMatch(){
+  const res = await fetch(LAST_API_URL);
+  if(!res.ok) throw new Error("No se pudo cargar eventslast");
+  return res.json();
+}
+
+// ─────────────────────────────────────────────
 // FUNCIÓN PRINCIPAL
 // ─────────────────────────────────────────────
 async function loadMatch(){
-  const status        = document.getElementById("status");
-  const details       = document.getElementById("details");
+  const status = document.getElementById("status");
+  const details = document.getElementById("details");
   const broadcastInfo = document.getElementById("broadcastInfo");
   const standingsInfo = document.getElementById("standingsInfo");
-  const marketValueInfo=document.getElementById("marketValueInfo");
-  const funFact       = document.getElementById("funFact");
+  const marketValueInfo = document.getElementById("marketValueInfo");
+  const funFact = document.getElementById("funFact");
+  const lastResultInfo = document.getElementById("lastResultInfo");
 
-  status.textContent="Consultando...";
-  status.className="status";
-  details.innerHTML="";
-  broadcastInfo.innerHTML="";
-  standingsInfo.innerHTML="";
-  marketValueInfo.innerHTML="";
-  funFact.innerHTML="";
+  status.textContent = "Consultando...";
+  status.className = "status";
+  details.innerHTML = "";
+  broadcastInfo.innerHTML = "";
+  standingsInfo.innerHTML = "";
+  marketValueInfo.innerHTML = "";
+  funFact.innerHTML = "";
+  lastResultInfo.innerHTML = "";
   hideAllImages();
 
   try{
-    const [matchRes, marketData, standingsData]=await Promise.all([
-      fetch(API_URL),
-      loadMarketValues().catch(()=>null),
-      loadStandings().catch(()=>null)
+    const [nextData, lastData, marketData, standingsData] = await Promise.all([
+      loadNextMatch(),
+      loadLastMatch().catch(() => null),
+      loadMarketValues().catch(() => null),
+      loadStandings().catch(() => null)
     ]);
 
-    const data=await matchRes.json();
-    console.log("Respuesta API:", JSON.stringify(data));
+    console.log("eventsnext:", nextData);
+    console.log("eventslast:", lastData);
 
-    if(!data.events||data.events.length===0){
-      status.textContent=FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH?"Todavía duele":"Sin datos";
-      status.className="status no";
-      if(FORCE_NASHVILLE_COCO_WHEN_NO_NEXT_MATCH){
-        showImage("nashville-coco");
-        details.innerHTML=`
-          <div><b>Último partido registrado</b></div>
-          <div class="meta-line">${LAST_SPECIAL_MATCH_LABEL}</div>
-          <div class="reference-time">En lo que aparece el próximo partido, sigue vigente la herida de Nashville.</div>`;
-      } else {
-        showImage("general-no");
-        details.innerHTML=`No se encontró información del próximo partido.`;
-      }
-      return;
+    const nextEvent = nextData?.events?.[0] || null;
+    const lastEvent = lastData?.results?.[0] || null;
+
+    if(lastEvent){
+      renderLastResult(lastEvent);
     }
 
-    const event=data.events[0];
-    console.log("Liga:", event.strLeague, "| Rival:", event.strHomeTeam, "vs", event.strAwayTeam);
-
-    const date=parseDate(event);
-
-    if(!date){
-      status.textContent="Error en fecha";
-      status.className="status no";
-      showImage("general-no");
-      details.innerHTML=`No fue posible interpretar la fecha del partido.`;
-      return;
-    }
-
-    const today     =getMexicoDate(new Date());
-    const eventDate =getMexicoDate(date);
-    const finished  =(event.strStatus||"").includes("Finished");
-    const cruzAzulMatch=isVsCruzAzul(event);
-    const nashvilleMatch=isVsNashville(event);
-    const tolucaMatch=isVsToluca(event);
-    const matchText =`${event.strHomeTeam} vs ${event.strAwayTeam}`;
-    const dateText  =formatMexicoDateTime(date);
-
-    if(eventDate>today){
-      status.textContent="No juega hoy";
-      status.className="status no";
-      showImage(cruzAzulMatch ? "caz-prox" : "general-no");
-      details.innerHTML=`
-        <div><b>Próximo partido</b></div>
-        <div class="meta-line">${matchText}</div>`;
-      setReferenceTime(dateText);
-      renderBroadcastInfo(event);
-      renderStandings(event,standingsData);
-      renderMarketValueInfo(event,marketData);
-      renderFunFact(event);
-
-    } else if(eventDate===today){
-      if(finished){
-        status.textContent = nashvilleMatch ? "Todavía duele" : "Ya jugó hoy";
-        status.className = "status no";
-
-        showImage(
-          nashvilleMatch ? "nashville-coco" :
-          tolucaMatch    ? "toluca-pasado" :
-                           "general-no"
-        );
-
-        details.innerHTML = `<div><b>${matchText}</b></div>`;
-        setReferenceTime(dateText);
-        renderStandings(event,standingsData);
-        renderMarketValueInfo(event,marketData);
-        renderFunFact(event);
-
-      } else {
-        status.textContent="Hoy juega";
-        status.className="status yes";
-        showImage(
-          cruzAzulMatch ? "caz-hoy" :
-          tolucaMatch   ? "toluca-hoy" :
-                          "general-yes"
-        );
-        details.innerHTML=`
-          <div><b>${matchText}</b></div>
-          <div class="meta-line" style="margin-top:12px;">Partido programado para hoy</div>`;
-        setReferenceTime(dateText);
-        renderBroadcastInfo(event);
-        renderStandings(event,standingsData);
-        renderMarketValueInfo(event,marketData);
-        renderFunFact(event);
-      }
-
-    } else {
-      status.textContent = nashvilleMatch ? "Todavía duele" : "No juega hoy";
+    if(!nextEvent){
+      status.textContent = "No juega hoy";
       status.className = "status no";
+      showImage(lastEvent ? chooseImageModeForPast(lastEvent) : "general-no");
 
-      showImage(
-        nashvilleMatch ? "nashville-coco" :
-        tolucaMatch    ? "toluca-pasado" :
-                         "general-no"
-      );
-
-      details.innerHTML=`
-        <div><b>Último partido registrado</b></div>
-        <div class="meta-line">${matchText}</div>`;
-      setReferenceTime(dateText);
-      renderStandings(event,standingsData);
-      renderMarketValueInfo(event,marketData);
-      renderFunFact(event);
+      if(lastEvent){
+        details.innerHTML = `
+          <div><b>No aparece aún el próximo partido</b></div>
+          <div class="meta-line">Por ahora solo se muestra el último resultado disponible</div>
+        `;
+        const lastDate = parseDate(lastEvent);
+        if(lastDate) setReferenceTime(formatMexicoDateTime(lastDate));
+        renderStandings(lastEvent, standingsData);
+        renderMarketValueInfo(lastEvent, marketData);
+        renderFunFact(lastEvent);
+      } else {
+        details.innerHTML = `No fue posible encontrar información del próximo partido ni del último resultado.`;
+      }
+      return;
     }
+
+    const date = parseDate(nextEvent);
+    if(!date){
+      status.textContent = "Error en fecha";
+      status.className = "status no";
+      showImage("general-no");
+      details.innerHTML = `No fue posible interpretar la fecha del partido.`;
+      return;
+    }
+
+    const today = getMexicoDate(new Date());
+    const eventDate = getMexicoDate(date);
+    const matchText = getMatchLabel(nextEvent);
+    const dateText = formatMexicoDateTime(date);
+
+    if(eventDate > today){
+      status.textContent = "No juega hoy";
+      status.className = "status no";
+      showImage(chooseImageModeForUpcoming(nextEvent));
+      details.innerHTML = `
+        <div><b>Próximo partido</b></div>
+        <div class="meta-line">${matchText}</div>
+      `;
+      setReferenceTime(dateText);
+      renderBroadcastInfo(nextEvent);
+      renderStandings(nextEvent, standingsData);
+      renderMarketValueInfo(nextEvent, marketData);
+      renderFunFact(nextEvent);
+      return;
+    }
+
+    if(eventDate === today){
+      const rawStatus = (nextEvent.strStatus || "").toLowerCase();
+      const hasStartedOrFinished =
+        rawStatus.includes("match finished") ||
+        rawStatus.includes("finished") ||
+        rawStatus.includes("ft") ||
+        rawStatus.includes("live") ||
+        rawStatus.includes("in progress") ||
+        rawStatus.includes("halftime");
+
+      if(hasStartedOrFinished){
+        status.textContent = "Ya jugó hoy";
+        status.className = "status no";
+        showImage(chooseImageModeForPast(nextEvent));
+        details.innerHTML = `
+          <div><b>${matchText}</b></div>
+          <div class="meta-line">El partido de hoy ya se disputó</div>
+        `;
+        setReferenceTime(dateText);
+        renderStandings(nextEvent, standingsData);
+        renderMarketValueInfo(nextEvent, marketData);
+        renderFunFact(nextEvent);
+      } else {
+        status.textContent = "Hoy juega";
+        status.className = "status yes";
+        showImage(chooseImageModeForToday(nextEvent));
+        details.innerHTML = `
+          <div><b>${matchText}</b></div>
+          <div class="meta-line">Partido programado para hoy</div>
+        `;
+        setReferenceTime(dateText);
+        renderBroadcastInfo(nextEvent);
+        renderStandings(nextEvent, standingsData);
+        renderMarketValueInfo(nextEvent, marketData);
+        renderFunFact(nextEvent);
+      }
+      return;
+    }
+
+    status.textContent = "No juega hoy";
+    status.className = "status no";
+    showImage(lastEvent ? chooseImageModeForPast(lastEvent) : "general-no");
+
+    details.innerHTML = `
+      <div><b>No hay partido del América hoy</b></div>
+      <div class="meta-line">El siguiente partido disponible en la API ya quedó atrás o cambió de estatus</div>
+    `;
+    setReferenceTime(dateText);
+    renderStandings(nextEvent, standingsData);
+    renderMarketValueInfo(nextEvent, marketData);
+    renderFunFact(nextEvent);
 
   } catch(err){
-    status.textContent="Error al cargar";
-    status.className="status no";
+    status.textContent = "Error al cargar";
+    status.className = "status no";
     showImage("general-no");
-    details.innerHTML=`No fue posible cargar la información del partido.`;
+    document.getElementById("details").innerHTML = `No fue posible cargar la información del partido.`;
     console.error(err);
   }
 }
