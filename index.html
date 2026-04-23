@@ -276,7 +276,10 @@ body{
   font-size:.92rem;
 }
 
-#lastResultInfo{
+#lastResultInfo,
+#nextMatchInfo,
+#mangaAzulcrema,
+#factoDeAve{
   width:100%;
 }
 
@@ -458,7 +461,9 @@ body{
 .legend-rival{ color:#93c5fd; font-weight:700; }
 
 .market-box,
-.confidential-box{
+.confidential-box,
+.manga-box,
+.facto-box{
   margin-top:18px;
   padding:16px 18px;
   border-radius:18px;
@@ -471,7 +476,9 @@ body{
   box-shadow:0 10px 30px rgba(0,0,0,.18);
 }
 .market-heading,
-.confidential-title{
+.confidential-title,
+.manga-title,
+.facto-title{
   font-size:1rem;
   font-weight:800;
   margin-bottom:12px;
@@ -527,11 +534,31 @@ body{
   font-size:.86rem;
   color:rgba(255,255,255,.74);
 }
-.confidential-text{
+.confidential-text,
+.manga-text,
+.facto-text{
   font-size:1rem;
   line-height:1.55;
   color:rgba(255,255,255,.9);
 }
+.section-figure{
+  margin:0;
+}
+.section-figure img{
+  display:block;
+  width:100%;
+  max-width:520px;
+  height:auto;
+  border-radius:14px;
+  box-shadow:0 10px 26px rgba(0,0,0,.22);
+}
+.section-figure figcaption{
+  margin-top:10px;
+  font-size:.9rem;
+  color:rgba(255,255,255,.76);
+  line-height:1.45;
+}
+
 .footer-copy{
   margin-top:30px;
   text-align:center;
@@ -569,6 +596,8 @@ body{
   .market-label{ text-align:left; width:100%; }
   .market-box,
   .confidential-box,
+  .manga-box,
+  .facto-box,
   .standings-box{ width:100%; }
   .bg-tapestry::before,
   .bg-tapestry::after{ width:210%; left:-52%; }
@@ -631,6 +660,9 @@ body{
           <div id="matchExtraInfo" class="match-extra"></div>
           <div id="broadcastInfo"></div>
           <div id="lastResultInfo"></div>
+          <div id="mangaAzulcrema"></div>
+          <div id="factoDeAve"></div>
+          <div id="nextMatchInfo"></div>
           <div id="standingsInfo"></div>
           <div id="marketValueInfo"></div>
           <div id="funFact"></div>
@@ -640,8 +672,6 @@ body{
           </div>
         </div>
       </div>
-
-      
     </section>
 
     <aside class="side-menu">
@@ -745,6 +775,11 @@ function isVsNashville(event){
   const h = normalizeTeamName(event?.strHomeTeam);
   const a = normalizeTeamName(event?.strAwayTeam);
   return h.includes("nashville") || a.includes("nashville");
+}
+function isVsAtlas(event){
+  const h = normalizeTeamName(event?.strHomeTeam);
+  const a = normalizeTeamName(event?.strAwayTeam);
+  return h.includes("atlas") || a.includes("atlas");
 }
 function isAmericaName(name){
   const n = normalizeTeamName(name);
@@ -930,6 +965,78 @@ function renderLastResult(lastEvent){
       <div class="result-strip-main">${main}</div>
       <div class="result-strip-sub">${subParts.join(" ")}</div>
       ${videoLink ? `<a class="result-strip-link" href="${videoLink}" target="_blank" rel="noopener noreferrer">Ver resumen del partido</a>` : ""}
+    </div>
+  `;
+}
+
+function renderNextMatch(nextEvent){
+  const box = document.getElementById("nextMatchInfo");
+  box.innerHTML = "";
+  if(!nextEvent) return;
+
+  const date = parseDate(nextEvent);
+  const main = getMatchLabel(nextEvent);
+  const subParts = [];
+
+  if(date){
+    const formattedDate = new Intl.DateTimeFormat("es-MX",{
+      timeZone: TZ,
+      day:"numeric",
+      month:"long",
+      year:"numeric",
+      hour:"2-digit",
+      minute:"2-digit"
+    }).format(date);
+    subParts.push(`Programado para el ${formattedDate}`);
+  }
+
+  const venue = getVenueLabel(nextEvent);
+  if(venue){
+    subParts.push(`en ${venue}`);
+  }
+
+  const round = getRoundLabel(nextEvent);
+  if(round){
+    subParts.push(round);
+  }
+
+  box.innerHTML = `
+    <div class="result-strip">
+      <div class="result-strip-title">Próximo partido</div>
+      <div class="result-strip-main">${main}</div>
+      <div class="result-strip-sub">${subParts.join(" · ")}</div>
+    </div>
+  `;
+}
+
+function renderMangaAzulcrema(nextEvent, lastEvent){
+  const box = document.getElementById("mangaAzulcrema");
+  box.innerHTML = "";
+
+  if(!(isVsAtlas(nextEvent) && isVsAtlas(lastEvent))) return;
+
+  box.innerHTML = `
+    <div class="manga-box">
+      <div class="manga-title">Manga azulcrema</div>
+      <figure class="section-figure">
+        <img src="atlas_recuerdo_tena.jpg" alt="Manga azulcrema sobre Atlas">
+      </figure>
+    </div>
+  `;
+}
+
+function renderFactoDeAve(nextEvent, lastEvent){
+  const box = document.getElementById("factoDeAve");
+  box.innerHTML = "";
+
+  if(!(isVsAtlas(nextEvent) && isVsAtlas(lastEvent))) return;
+
+  box.innerHTML = `
+    <div class="facto-box">
+      <div class="facto-title">Facto de Ave</div>
+      <figure class="section-figure">
+        <img src="atlas_gol_tena.jpg" alt="Facto de Ave sobre Atlas">
+      </figure>
     </div>
   `;
 }
@@ -1260,6 +1367,9 @@ async function loadMatch(){
   const marketValueInfo = document.getElementById("marketValueInfo");
   const funFact = document.getElementById("funFact");
   const lastResultInfo = document.getElementById("lastResultInfo");
+  const nextMatchInfo = document.getElementById("nextMatchInfo");
+  const mangaAzulcrema = document.getElementById("mangaAzulcrema");
+  const factoDeAve = document.getElementById("factoDeAve");
   const matchExtraInfo = document.getElementById("matchExtraInfo");
 
   status.textContent = "Consultando...";
@@ -1270,6 +1380,9 @@ async function loadMatch(){
   marketValueInfo.innerHTML = "";
   funFact.innerHTML = "";
   lastResultInfo.innerHTML = "";
+  nextMatchInfo.innerHTML = "";
+  mangaAzulcrema.innerHTML = "";
+  factoDeAve.innerHTML = "";
   matchExtraInfo.innerHTML = "";
   hideAllImages();
 
@@ -1294,8 +1407,12 @@ async function loadMatch(){
     }
 
     if(nextEvent){
+      renderNextMatch(nextEvent);
       saveTrackedNextEvent(nextEvent);
     }
+
+    renderMangaAzulcrema(nextEvent, lastEvent);
+    renderFactoDeAve(nextEvent, lastEvent);
 
     if(!nextEvent){
       status.textContent = "No juega hoy";
