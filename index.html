@@ -1013,7 +1013,7 @@ function renderMangaAzulcrema(nextEvent, lastEvent){
   const box = document.getElementById("mangaAzulcrema");
   box.innerHTML = "";
 
-  if(!(isVsAtlas(nextEvent) && isVsAtlas(lastEvent))) return;
+  if(!(isVsAtlas(nextEvent) || isVsAtlas(lastEvent))) return;
 
   box.innerHTML = `
     <div class="manga-box">
