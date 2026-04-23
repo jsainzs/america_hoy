@@ -37,7 +37,6 @@ body{
   overflow-x:hidden;
   overflow-y:auto;
 }
-
 .bg-tapestry{
   position:fixed;
   inset:0;
@@ -124,7 +123,6 @@ body{
   gap:24px;
   align-items:start;
 }
-
 .side-menu{
   position:sticky;
   top:20px;
@@ -182,14 +180,12 @@ body{
   flex-direction:column;
   gap:18px;
 }
-
 .layout{
   display:grid;
   grid-template-columns:minmax(280px,430px) 1fr;
   gap:34px;
   align-items:start;
 }
-
 .media-wrap{
   display:flex;
   justify-content:center;
@@ -217,7 +213,6 @@ body{
 .hero.visible{
   display:block;
 }
-
 .content{
   display:flex;
   flex-direction:column;
@@ -234,7 +229,6 @@ body{
 }
 .yes{color:var(--green);}
 .no{color:var(--red);}
-
 .details{
   font-size:clamp(1.05rem,1.45vw,1.35rem);
   line-height:1.45;
@@ -264,6 +258,24 @@ body{
   color:rgba(255,255,255,.8);
 }
 
+.match-extra{
+  margin-top:12px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.info-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:9px 13px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+  color:#fff;
+  font-size:.92rem;
+}
+
 .result-strip{
   margin-top:16px;
   padding:14px 16px;
@@ -291,8 +303,15 @@ body{
   font-size:.9rem;
   color:rgba(255,255,255,.82);
 }
+.result-strip-link{
+  display:inline-block;
+  margin-top:10px;
+  color:#fff;
+  font-weight:700;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
 
-/* Dónde verlo */
 .broadcast-box{
   display:inline-flex;
   align-items:center;
@@ -320,7 +339,6 @@ body{
   color:var(--accent);
 }
 
-/* Tabla de posiciones */
 .standings-box{
   margin-top:18px;
   padding:16px 18px;
@@ -530,7 +548,6 @@ body{
     order:-1;
   }
 }
-
 @media (max-width:860px){
   .shell{ padding:18px 16px 90px; }
   .layout{ grid-template-columns:1fr; gap:20px; }
@@ -557,8 +574,10 @@ body{
   .result-strip{
     width:100%;
   }
+  .match-extra{
+    justify-content:center;
+  }
 }
-
 @media (max-width:540px){
   .title{
     font-size:clamp(1.9rem,8vw,2.5rem);
@@ -604,6 +623,7 @@ body{
         <div class="content">
           <div id="status" class="status">Consultando...</div>
           <div id="details" class="details"></div>
+          <div id="matchExtraInfo" class="match-extra"></div>
           <div id="lastResultInfo"></div>
           <div id="broadcastInfo"></div>
           <div id="standingsInfo"></div>
@@ -631,17 +651,15 @@ body{
 </main>
 
 <script>
-const TEAM_ID   = "134193";
+const TEAM_ID = "134193";
 const NEXT_API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventsnext.php?id=${TEAM_ID}`;
 const LAST_API_URL = `https://www.thesportsdb.com/api/v1/json/123/eventslast.php?id=${TEAM_ID}`;
+const API_BASE = "https://www.thesportsdb.com/api/v1/json/123";
 const MARKET_VALUES_URL = "./market_values.json";
-const STANDINGS_URL     = "./standings.json";
+const STANDINGS_URL = "./standings.json";
 const TZ = "America/Mexico_City";
 const STANDINGS_VISIBLE_COUNT = 6;
 
-// ─────────────────────────────────────────────
-// CANALES POR TORNEO (México)
-// ─────────────────────────────────────────────
 const BROADCAST_BY_LEAGUE = {
   "Liga MX": "Depende del club local",
   "Liga BBVA MX": "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
@@ -661,9 +679,6 @@ const BROADCAST_BY_HOME_TEAM = {
 };
 const BROADCAST_FALLBACK = "VIX (confirmar canal)";
 
-// ─────────────────────────────────────────────
-// LIGAS QUE CUENTAN COMO LIGA MX
-// ─────────────────────────────────────────────
 const LIGA_MX_KEYWORDS = [
   "liga mx", "liga bbva mx", "apertura", "clausura",
   "liga mx apertura", "liga mx clausura", "mexican primera league"
@@ -691,9 +706,6 @@ const MARKET_VALUE_TEAM_ALIASES = {
   "seattle sounders":"seattle","seattle sounders fc":"seattle"
 };
 
-// ─────────────────────────────────────────────
-// UTILIDADES
-// ─────────────────────────────────────────────
 function normalizeTeamName(name){
   return (name || "")
     .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
@@ -707,23 +719,23 @@ function cleanTeamName(name){
   return name || "";
 }
 function isVsCruzAzul(event){
-  const h=normalizeTeamName(event?.strHomeTeam);
-  const a=normalizeTeamName(event?.strAwayTeam);
+  const h = normalizeTeamName(event?.strHomeTeam);
+  const a = normalizeTeamName(event?.strAwayTeam);
   return h.includes("cruz azul") || a.includes("cruz azul");
 }
 function isVsToluca(event){
-  const h=normalizeTeamName(event?.strHomeTeam);
-  const a=normalizeTeamName(event?.strAwayTeam);
+  const h = normalizeTeamName(event?.strHomeTeam);
+  const a = normalizeTeamName(event?.strAwayTeam);
   return h.includes("toluca") || a.includes("toluca");
 }
 function isVsNashville(event){
-  const h=normalizeTeamName(event?.strHomeTeam);
-  const a=normalizeTeamName(event?.strAwayTeam);
+  const h = normalizeTeamName(event?.strHomeTeam);
+  const a = normalizeTeamName(event?.strAwayTeam);
   return h.includes("nashville") || a.includes("nashville");
 }
 function isAmericaName(name){
-  const n=normalizeTeamName(name);
-  return n==="america" || n==="cf america" || n==="club america" || n.includes("america");
+  const n = normalizeTeamName(name);
+  return n === "america" || n === "cf america" || n === "club america" || n.includes("america");
 }
 function getOpponentName(event){
   if(!event) return "";
@@ -732,7 +744,7 @@ function getOpponentName(event){
   return event.strAwayTeam || "";
 }
 function getMarketTeamId(rawName){
-  const n=normalizeTeamName(rawName);
+  const n = normalizeTeamName(rawName);
   if(MARKET_VALUE_TEAM_ALIASES[n]) return MARKET_VALUE_TEAM_ALIASES[n];
   for(const key of Object.keys(MARKET_VALUE_TEAM_ALIASES)){
     if(n.includes(key) || key.includes(n)) return MARKET_VALUE_TEAM_ALIASES[key];
@@ -740,17 +752,17 @@ function getMarketTeamId(rawName){
   return null;
 }
 function isLigaMX(event){
-  const league=(event?.strLeague || "").toLowerCase().trim();
+  const league = (event?.strLeague || "").toLowerCase().trim();
   return LIGA_MX_KEYWORDS.some(l => league.includes(l));
 }
 function getMexicoDate(date){
   return new Intl.DateTimeFormat("en-CA",{
-    timeZone:TZ, year:"numeric", month:"2-digit", day:"2-digit"
+    timeZone: TZ, year:"numeric", month:"2-digit", day:"2-digit"
   }).format(date);
 }
 function formatMexicoDateTime(date){
   return new Intl.DateTimeFormat("es-MX",{
-    timeZone:TZ,
+    timeZone: TZ,
     weekday:"long",
     day:"numeric",
     month:"long",
@@ -760,6 +772,13 @@ function formatMexicoDateTime(date){
 }
 function parseDate(event){
   if(!event) return null;
+
+  if(event.dateEventLocal && event.strTimeLocal){
+    const localRaw = `${event.dateEventLocal}T${event.strTimeLocal}`;
+    const localDate = new Date(localRaw);
+    if(!isNaN(localDate)) return localDate;
+  }
+
   let raw = event.strTimestamp || (event.dateEvent && event.strTime ? `${event.dateEvent}T${event.strTime}` : null) || event.dateEvent;
   if(!raw) return null;
   if(raw.length === 10) raw += "T12:00:00Z";
@@ -790,19 +809,19 @@ function getResultLabel(event){
   const as = event.intAwayScore ?? "-";
   return `${home} ${hs} - ${as} ${away}`;
 }
+function getRoundLabel(event){
+  if(!event?.intRound) return null;
+  return `Jornada ${event.intRound}`;
+}
+function getVenueLabel(event){
+  if(!event?.strVenue) return null;
+  return event.strVenue;
+}
 
-// ─────────────────────────────────────────────
-// IMÁGENES
-// ─────────────────────────────────────────────
 function hideAllImages(){
   [
-    "imgSi",
-    "imgNo",
-    "imgCruzAzulProx",
-    "imgCruzAzulHoy",
-    "imgNashvilleCoco",
-    "imgAmeTolucaSraAnti",
-    "imgBatallaToluca"
+    "imgSi","imgNo","imgCruzAzulProx","imgCruzAzulHoy",
+    "imgNashvilleCoco","imgAmeTolucaSraAnti","imgBatallaToluca"
   ].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.classList.remove("visible");
@@ -839,34 +858,64 @@ function chooseImageModeForPast(event){
   return "general-no";
 }
 
-// ─────────────────────────────────────────────
-// ÚLTIMO RESULTADO
-// ─────────────────────────────────────────────
+function renderMatchExtraInfo(event, mode){
+  const box = document.getElementById("matchExtraInfo");
+  box.innerHTML = "";
+  if(!event) return;
+
+  const items = [];
+  const round = getRoundLabel(event);
+  const venue = getVenueLabel(event);
+
+  if(round) items.push(`🏆 ${round}`);
+  if(venue) items.push(`📍 ${venue}`);
+
+  if(mode === "upcoming" || mode === "today"){
+    if(event.dateEventLocal && event.strTimeLocal){
+      items.push(`🕘 ${event.strTimeLocal.slice(0,5)} hora local`);
+    }
+  }
+
+  if(!items.length) return;
+
+  box.innerHTML = items.map(text => `<div class="info-pill">${text}</div>`).join("");
+}
+
 function renderLastResult(lastEvent){
   const box = document.getElementById("lastResultInfo");
   box.innerHTML = "";
-
   if(!lastEvent) return;
 
-  const title = "Último resultado";
-  const main = getResultLabel(lastEvent);
   const date = parseDate(lastEvent);
-  const sub = date
-    ? `Partido jugado el ${new Intl.DateTimeFormat("es-MX",{ timeZone:TZ, day:"numeric", month:"long", year:"numeric" }).format(date)}`
-    : "";
+  const main = getResultLabel(lastEvent);
+  const subParts = [];
+
+  if(date){
+    const formattedDate = new Intl.DateTimeFormat("es-MX",{
+      timeZone: TZ,
+      day:"numeric",
+      month:"long",
+      year:"numeric"
+    }).format(date);
+    subParts.push(`Partido jugado el ${formattedDate}`);
+  }
+
+  if(lastEvent.strVenue){
+    subParts.push(`en ${lastEvent.strVenue}`);
+  }
+
+  const videoLink = (lastEvent.strVideo || "").trim();
 
   box.innerHTML = `
     <div class="result-strip">
-      <div class="result-strip-title">${title}</div>
+      <div class="result-strip-title">Último resultado</div>
       <div class="result-strip-main">${main}</div>
-      <div class="result-strip-sub">${sub}</div>
+      <div class="result-strip-sub">${subParts.join(" ")}</div>
+      ${videoLink ? `<a class="result-strip-link" href="${videoLink}" target="_blank" rel="noopener noreferrer">Ver resumen del partido</a>` : ""}
     </div>
   `;
 }
 
-// ─────────────────────────────────────────────
-// DÓNDE VER EL PARTIDO
-// ─────────────────────────────────────────────
 function renderBroadcastInfo(event){
   const box = document.getElementById("broadcastInfo");
   box.innerHTML = "";
@@ -877,7 +926,6 @@ function renderBroadcastInfo(event){
   const homeTeam = normalizeTeamName(event.strHomeTeam);
   const homeTeamChannel = BROADCAST_BY_HOME_TEAM[homeTeam] || null;
   const leagueChannel = BROADCAST_BY_LEAGUE[league] || null;
-
   const channels = homeTeamChannel || apiChannel || leagueChannel || BROADCAST_FALLBACK;
 
   box.innerHTML = `
@@ -888,9 +936,6 @@ function renderBroadcastInfo(event){
     </div>`;
 }
 
-// ─────────────────────────────────────────────
-// TABLA DE POSICIONES CON SLIDER
-// ─────────────────────────────────────────────
 let standingsSliderState = null;
 
 async function loadStandings(){
@@ -943,10 +988,7 @@ function moveStandings(delta){
   if(!standingsSliderState) return;
   const total = standingsSliderState.table.length;
   const maxStart = Math.max(0, total - standingsSliderState.visibleCount);
-  standingsSliderState.start = Math.max(
-    0,
-    Math.min(maxStart, standingsSliderState.start + delta)
-  );
+  standingsSliderState.start = Math.max(0, Math.min(maxStart, standingsSliderState.start + delta));
   refreshStandingsSlider();
 }
 function renderStandings(event, standingsData){
@@ -965,17 +1007,11 @@ function renderStandings(event, standingsData){
   const rivalIdx = table.findIndex(t =>
     t.team_id === rivalId || normalizeTeamName(t.team) === normalizeTeamName(rivalRaw)
   );
-
   if(americaIdx === -1) return;
 
   const safeRivalIdx = rivalIdx === -1 ? americaIdx : rivalIdx;
   const visibleCount = Math.min(STANDINGS_VISIBLE_COUNT, table.length);
-  const initialStart = getInitialStandingsStart(
-    americaIdx,
-    safeRivalIdx,
-    table.length,
-    visibleCount
-  );
+  const initialStart = getInitialStandingsStart(americaIdx, safeRivalIdx, table.length, visibleCount);
 
   standingsSliderState = {
     table,
@@ -1026,9 +1062,6 @@ function renderStandings(event, standingsData){
   refreshStandingsSlider();
 }
 
-// ─────────────────────────────────────────────
-// BILLETÓMETRO
-// ─────────────────────────────────────────────
 async function loadMarketValues(){
   const res = await fetch(MARKET_VALUES_URL);
   if(!res.ok) throw new Error("No se pudo cargar market_values.json");
@@ -1038,10 +1071,8 @@ function buildMarketVerdict(america, rival){
   if(!america || !rival) return "";
   const ratio = america.squad_value_eur / rival.squad_value_eur;
   const ratioText = ratio >= 1 ? `${ratio.toFixed(2)}x` : `${(1 / ratio).toFixed(2)}x`;
-  if(america.squad_value_eur > rival.squad_value_eur)
-    return `América vale <strong>${ratioText}</strong> lo que ${rival.team_name}.`;
-  if(america.squad_value_eur < rival.squad_value_eur)
-    return `${rival.team_name} vale <strong>${ratioText}</strong> lo que América.`;
+  if(america.squad_value_eur > rival.squad_value_eur) return `América vale <strong>${ratioText}</strong> lo que ${rival.team_name}.`;
+  if(america.squad_value_eur < rival.squad_value_eur) return `${rival.team_name} vale <strong>${ratioText}</strong> lo que América.`;
   return `América y ${rival.team_name} llegan con el mismo valor de plantilla.`;
 }
 function renderMarketValueInfo(event, marketData){
@@ -1096,9 +1127,6 @@ function renderMarketValueInfo(event, marketData){
     </div>`;
 }
 
-// ─────────────────────────────────────────────
-// ANÉCDOTAS
-// ─────────────────────────────────────────────
 function renderFunFact(event){
   const box = document.getElementById("funFact");
   box.innerHTML = "";
@@ -1137,9 +1165,6 @@ function renderFunFact(event){
   }
 }
 
-// ─────────────────────────────────────────────
-// CARGAS AUXILIARES API
-// ─────────────────────────────────────────────
 async function loadNextMatch(){
   const res = await fetch(NEXT_API_URL);
   if(!res.ok) throw new Error("No se pudo cargar eventsnext");
@@ -1150,10 +1175,57 @@ async function loadLastMatch(){
   if(!res.ok) throw new Error("No se pudo cargar eventslast");
   return res.json();
 }
+async function fetchEventById(eventId){
+  if(!eventId) return null;
+  const res = await fetch(`${API_BASE}/lookupevent.php?id=${eventId}`);
+  if(!res.ok) return null;
+  const data = await res.json();
+  return data?.events?.[0] || null;
+}
 
-// ─────────────────────────────────────────────
-// FUNCIÓN PRINCIPAL
-// ─────────────────────────────────────────────
+function saveTrackedNextEvent(event){
+  if(!event?.idEvent) return;
+  localStorage.setItem("americaTrackedEventId", event.idEvent);
+  localStorage.setItem("americaTrackedEventLabel", event.strEvent || "");
+  localStorage.setItem("americaTrackedEventDate", event.dateEvent || "");
+}
+function getTrackedEventId(){
+  return localStorage.getItem("americaTrackedEventId");
+}
+function getStoredLastFinishedEventId(){
+  return localStorage.getItem("americaLastFinishedEventId");
+}
+function saveLastFinishedEventId(eventId){
+  if(eventId) localStorage.setItem("americaLastFinishedEventId", eventId);
+}
+function shouldUseEventAsFinished(event){
+  if(!event) return false;
+  const status = (event.strStatus || "").toLowerCase();
+  return status.includes("finished") && event.intHomeScore !== null && event.intAwayScore !== null;
+}
+
+async function resolveBestLastEvent(fallbackLastEvent){
+  let best = fallbackLastEvent || null;
+
+  const trackedEventId = getTrackedEventId();
+  const storedFinishedEventId = getStoredLastFinishedEventId();
+
+  const candidates = [];
+  if(trackedEventId) candidates.push(trackedEventId);
+  if(storedFinishedEventId && storedFinishedEventId !== trackedEventId) candidates.push(storedFinishedEventId);
+
+  for(const id of candidates){
+    const event = await fetchEventById(id).catch(() => null);
+    if(shouldUseEventAsFinished(event)){
+      best = event;
+      saveLastFinishedEventId(id);
+      break;
+    }
+  }
+
+  return best;
+}
+
 async function loadMatch(){
   const status = document.getElementById("status");
   const details = document.getElementById("details");
@@ -1162,6 +1234,7 @@ async function loadMatch(){
   const marketValueInfo = document.getElementById("marketValueInfo");
   const funFact = document.getElementById("funFact");
   const lastResultInfo = document.getElementById("lastResultInfo");
+  const matchExtraInfo = document.getElementById("matchExtraInfo");
 
   status.textContent = "Consultando...";
   status.className = "status";
@@ -1171,10 +1244,11 @@ async function loadMatch(){
   marketValueInfo.innerHTML = "";
   funFact.innerHTML = "";
   lastResultInfo.innerHTML = "";
+  matchExtraInfo.innerHTML = "";
   hideAllImages();
 
   try{
-    const [nextData, lastData, marketData, standingsData] = await Promise.all([
+    const [nextData, rawLastData, marketData, standingsData] = await Promise.all([
       loadNextMatch(),
       loadLastMatch().catch(() => null),
       loadMarketValues().catch(() => null),
@@ -1182,13 +1256,19 @@ async function loadMatch(){
     ]);
 
     console.log("eventsnext:", nextData);
-    console.log("eventslast:", lastData);
+    console.log("eventslast:", rawLastData);
 
     const nextEvent = nextData?.events?.[0] || null;
-    const lastEvent = lastData?.results?.[0] || null;
+    let lastEvent = rawLastData?.results?.[0] || null;
 
-    if(lastEvent){
+    lastEvent = await resolveBestLastEvent(lastEvent);
+
+    if(lastEvent && shouldUseEventAsFinished(lastEvent)){
       renderLastResult(lastEvent);
+    }
+
+    if(nextEvent){
+      saveTrackedNextEvent(nextEvent);
     }
 
     if(!nextEvent){
@@ -1199,10 +1279,11 @@ async function loadMatch(){
       if(lastEvent){
         details.innerHTML = `
           <div><b>No aparece aún el próximo partido</b></div>
-          <div class="meta-line">Por ahora solo se muestra el último resultado disponible</div>
+          <div class="meta-line">Por ahora se muestra el último resultado confirmado</div>
         `;
         const lastDate = parseDate(lastEvent);
         if(lastDate) setReferenceTime(formatMexicoDateTime(lastDate));
+        renderMatchExtraInfo(lastEvent, "past");
         renderStandings(lastEvent, standingsData);
         renderMarketValueInfo(lastEvent, marketData);
         renderFunFact(lastEvent);
@@ -1235,6 +1316,7 @@ async function loadMatch(){
         <div class="meta-line">${matchText}</div>
       `;
       setReferenceTime(dateText);
+      renderMatchExtraInfo(nextEvent, "upcoming");
       renderBroadcastInfo(nextEvent);
       renderStandings(nextEvent, standingsData);
       renderMarketValueInfo(nextEvent, marketData);
@@ -1261,6 +1343,7 @@ async function loadMatch(){
           <div class="meta-line">El partido de hoy ya se disputó</div>
         `;
         setReferenceTime(dateText);
+        renderMatchExtraInfo(nextEvent, "past");
         renderStandings(nextEvent, standingsData);
         renderMarketValueInfo(nextEvent, marketData);
         renderFunFact(nextEvent);
@@ -1273,6 +1356,7 @@ async function loadMatch(){
           <div class="meta-line">Partido programado para hoy</div>
         `;
         setReferenceTime(dateText);
+        renderMatchExtraInfo(nextEvent, "today");
         renderBroadcastInfo(nextEvent);
         renderStandings(nextEvent, standingsData);
         renderMarketValueInfo(nextEvent, marketData);
@@ -1284,12 +1368,13 @@ async function loadMatch(){
     status.textContent = "No juega hoy";
     status.className = "status no";
     showImage(lastEvent ? chooseImageModeForPast(lastEvent) : "general-no");
-
     details.innerHTML = `
       <div><b>No hay partido del América hoy</b></div>
-      <div class="meta-line">El siguiente partido disponible en la API ya quedó atrás o cambió de estatus</div>
+      <div class="meta-line">El siguiente partido registrado es ${matchText}</div>
     `;
     setReferenceTime(dateText);
+    renderMatchExtraInfo(nextEvent, "upcoming");
+    renderBroadcastInfo(nextEvent);
     renderStandings(nextEvent, standingsData);
     renderMarketValueInfo(nextEvent, marketData);
     renderFunFact(nextEvent);
