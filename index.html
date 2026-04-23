@@ -660,6 +660,12 @@ const STANDINGS_URL = "./standings.json";
 const TZ = "America/Mexico_City";
 const STANDINGS_VISIBLE_COUNT = 6;
 
+/* Fuerza manual del último partido correcto mientras la API agregada se rezaga */
+const MANUAL_LAST_FINISHED_EVENT_ID = "2396252";
+
+/* Cuando América sea local, mostrar este estadio en vez del dato dudoso de la API */
+const AMERICA_HOME_STADIUM = "Estadio Azteca";
+
 const BROADCAST_BY_LEAGUE = {
   "Liga MX": "Depende del club local",
   "Liga BBVA MX": "Canal 5 · TUDN · VIX Premium · Layvtime (YouTube)",
@@ -736,6 +742,9 @@ function isVsNashville(event){
 function isAmericaName(name){
   const n = normalizeTeamName(name);
   return n === "america" || n === "cf america" || n === "club america" || n.includes("america");
+}
+function isAmericaHome(event){
+  return isAmericaName(event?.strHomeTeam);
 }
 function getOpponentName(event){
   if(!event) return "";
@@ -814,8 +823,9 @@ function getRoundLabel(event){
   return `Jornada ${event.intRound}`;
 }
 function getVenueLabel(event){
-  if(!event?.strVenue) return null;
-  return event.strVenue;
+  if(!event) return null;
+  if(isAmericaHome(event)) return AMERICA_HOME_STADIUM;
+  return event.strVenue || null;
 }
 
 function hideAllImages(){
@@ -900,8 +910,9 @@ function renderLastResult(lastEvent){
     subParts.push(`Partido jugado el ${formattedDate}`);
   }
 
-  if(lastEvent.strVenue){
-    subParts.push(`en ${lastEvent.strVenue}`);
+  const venue = getVenueLabel(lastEvent);
+  if(venue){
+    subParts.push(`en ${venue}`);
   }
 
   const videoLink = (lastEvent.strVideo || "").trim();
@@ -1210,13 +1221,21 @@ async function resolveBestLastEvent(fallbackLastEvent){
   const trackedEventId = getTrackedEventId();
   const storedFinishedEventId = getStoredLastFinishedEventId();
 
-  const candidates = [];
-  if(trackedEventId) candidates.push(trackedEventId);
-  if(storedFinishedEventId && storedFinishedEventId !== trackedEventId) candidates.push(storedFinishedEventId);
+  const candidateIds = [];
 
-  for(const id of candidates){
+  if (MANUAL_LAST_FINISHED_EVENT_ID) {
+    candidateIds.push(MANUAL_LAST_FINISHED_EVENT_ID);
+  }
+  if (trackedEventId && !candidateIds.includes(trackedEventId)) {
+    candidateIds.push(trackedEventId);
+  }
+  if (storedFinishedEventId && !candidateIds.includes(storedFinishedEventId)) {
+    candidateIds.push(storedFinishedEventId);
+  }
+
+  for (const id of candidateIds) {
     const event = await fetchEventById(id).catch(() => null);
-    if(shouldUseEventAsFinished(event)){
+    if (shouldUseEventAsFinished(event)) {
       best = event;
       saveLastFinishedEventId(id);
       break;
