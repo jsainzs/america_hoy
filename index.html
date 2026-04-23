@@ -1019,7 +1019,7 @@ function renderMangaAzulcrema(nextEvent, lastEvent){
     <div class="manga-box">
       <div class="manga-title">Manga azulcrema</div>
       <figure class="section-figure">
-        <img src="atlas_recuerdo_tena.jpg" alt="Manga azulcrema sobre Atlas">
+        <img src="atlas_recuerdo_tena.jpeg" alt="Manga azulcrema sobre Atlas">
       </figure>
     </div>
   `;
@@ -1029,13 +1029,13 @@ function renderFactoDeAve(nextEvent, lastEvent){
   const box = document.getElementById("factoDeAve");
   box.innerHTML = "";
 
-  if(!(isVsAtlas(nextEvent) && isVsAtlas(lastEvent))) return;
+  if(!(isVsAtlas(nextEvent) || isVsAtlas(lastEvent))) return;
 
   box.innerHTML = `
     <div class="facto-box">
       <div class="facto-title">Facto de Ave</div>
       <figure class="section-figure">
-        <img src="atlas_gol_tena.jpg" alt="Facto de Ave sobre Atlas">
+        <img src="atlas_gol_tena.jpeg" alt="Facto de Ave sobre Atlas">
       </figure>
     </div>
   `;
