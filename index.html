@@ -276,14 +276,19 @@ body{
   font-size:.92rem;
 }
 
+#lastResultInfo{
+  width:100%;
+}
+
 .result-strip{
-  margin-top:16px;
+  margin-top:8px;
   padding:14px 16px;
   border-radius:16px;
   background:rgba(250,204,21,.14);
   border:1px solid rgba(250,204,21,.30);
   color:#fff;
   box-shadow:0 10px 24px rgba(0,0,0,.16);
+  max-width:100%;
 }
 .result-strip-title{
   font-size:.84rem;
@@ -624,7 +629,6 @@ body{
           <div id="status" class="status">Consultando...</div>
           <div id="details" class="details"></div>
           <div id="matchExtraInfo" class="match-extra"></div>
-          <div id="lastResultInfo"></div>
           <div id="broadcastInfo"></div>
           <div id="standingsInfo"></div>
           <div id="marketValueInfo"></div>
@@ -635,6 +639,8 @@ body{
           </div>
         </div>
       </div>
+
+      <div id="lastResultInfo"></div>
     </section>
 
     <aside class="side-menu">
