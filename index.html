@@ -824,18 +824,56 @@ function formatMexicoDateTime(date){
 function parseDate(event){
   if(!event) return null;
 
-  if(event.dateEventLocal && event.strTimeLocal){
-    const localRaw = `${event.dateEventLocal}T${event.strTimeLocal}`;
-    const localDate = new Date(localRaw);
-    if(!isNaN(localDate)) return localDate;
+  // 1. Preferir timestamp absoluto si existe.
+  // Este suele venir en UTC o con zona horaria explícita.
+  if(event.strTimestamp){
+    let raw = event.strTimestamp.trim();
+
+    // Si viene como "2026-04-25 23:00:00", lo hacemos ISO.
+    raw = raw.replace(" ", "T");
+
+    // Si no trae zona horaria explícita, asumimos UTC.
+    if(!/[zZ]$|[+-]\d{2}:\d{2}$/.test(raw)){
+      raw += "Z";
+    }
+
+    const d = new Date(raw);
+    if(!isNaN(d)) return d;
   }
 
-  let raw = event.strTimestamp || (event.dateEvent && event.strTime ? `${event.dateEvent}T${event.strTime}` : null) || event.dateEvent;
-  if(!raw) return null;
-  if(raw.length === 10) raw += "T12:00:00Z";
-  else if(!raw.endsWith("Z")) raw += "Z";
-  const d = new Date(raw);
-  return isNaN(d) ? null : d;
+  // 2. Fallback: dateEvent + strTime.
+  // En muchas APIs deportivas estos campos representan hora UTC.
+  if(event.dateEvent && event.strTime){
+    let raw = `${event.dateEvent}T${event.strTime}`;
+
+    if(!/[zZ]$|[+-]\d{2}:\d{2}$/.test(raw)){
+      raw += "Z";
+    }
+
+    const d = new Date(raw);
+    if(!isNaN(d)) return d;
+  }
+
+  // 3. Último recurso: fecha local.
+  // Aquí asumimos hora del centro de México, fija en UTC-6.
+  // México centro ya no cambia por horario de verano.
+  if(event.dateEventLocal && event.strTimeLocal){
+    const time = event.strTimeLocal.length === 5
+      ? `${event.strTimeLocal}:00`
+      : event.strTimeLocal;
+
+    const raw = `${event.dateEventLocal}T${time}-06:00`;
+    const d = new Date(raw);
+    if(!isNaN(d)) return d;
+  }
+
+  // 4. Si solo viene fecha, poner mediodía UTC para evitar desfases de día.
+  if(event.dateEvent){
+    const d = new Date(`${event.dateEvent}T12:00:00Z`);
+    if(!isNaN(d)) return d;
+  }
+
+  return null;
 }
 function formatEurCompact(value){
   return new Intl.NumberFormat("es-MX",{
