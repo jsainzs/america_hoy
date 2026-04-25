@@ -951,25 +951,38 @@ function chooseImageModeForPast(event){
 function renderMatchExtraInfo(event, mode){
   const box = document.getElementById("matchExtraInfo");
   box.innerHTML = "";
+
+  const items = [];
+
   if(mode === "upcoming" || mode === "today"){
-  const d = parseDate(event);
+    const d = parseDate(event);
 
-  if(d){
-    const horaMexico = new Intl.DateTimeFormat("es-MX",{
-      timeZone: TZ,
-      hour:"2-digit",
-      minute:"2-digit",
-      hour12:false
-    }).format(d);
+    if(d){
+      const horaMexico = new Intl.DateTimeFormat("es-MX",{
+        timeZone: TZ,
+        hour:"2-digit",
+        minute:"2-digit",
+        hour12:false
+      }).format(d);
 
-    items.push(`🕘 ${horaMexico} hora del centro de México`);
+      items.push(`🕘 ${horaMexico} hora del centro de México`);
+    }
   }
-}
+
+  const round = getRoundLabel(event);
+  if(round){
+    items.push(`🏟️ ${round}`);
+  }
+
+  const venue = getVenueLabel(event);
+  if(venue){
+    items.push(`📍 ${venue}`);
+  }
+
   if(!items.length) return;
 
   box.innerHTML = items.map(text => `<div class="info-pill">${text}</div>`).join("");
 }
-
 function renderLastResult(lastEvent){
   const box = document.getElementById("lastResultInfo");
   box.innerHTML = "";
