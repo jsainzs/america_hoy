@@ -1447,9 +1447,24 @@ async function loadMatch(){
     console.log("eventsnext:", nextData);
     console.log("eventslast:", rawLastData);
 
-    const nextEvent = nextData?.events?.[0] || null;
-    let lastEvent = rawLastData?.results?.[0] || null;
+    let nextEvent = nextData?.events?.[0] || null;
+let lastEvent = rawLastData?.results?.[0] || null;
 
+// Si la API todavía trae como "next" un partido que ya pasó,
+// no lo tratamos como próximo partido.
+if(nextEvent){
+  const nextDate = parseDate(nextEvent);
+  const now = new Date();
+
+  // Margen de 4 horas después del inicio para no borrar partidos en curso.
+  const fourHoursAfterKickoff = nextDate
+    ? new Date(nextDate.getTime() + 4 * 60 * 60 * 1000)
+    : null;
+
+  if(fourHoursAfterKickoff && fourHoursAfterKickoff < now){
+    nextEvent = null;
+  }
+}
     lastEvent = await resolveBestLastEvent(lastEvent);
 
     if(lastEvent && shouldUseEventAsFinished(lastEvent)){
