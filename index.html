@@ -1,3 +1,6 @@
+Aquí está el código completo corregido. El cambio principal es que añadí `liguillaInfo`, lo limpio al cargar, cambié `renderLiguillaHint()` para usar ese contenedor y lo llamo una sola vez después de resolver `nextEvent` / `displayedLastEvent`.
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
@@ -279,7 +282,8 @@ body{
 #lastResultInfo,
 #nextMatchInfo,
 #mangaAzulcrema,
-#factoDeAve{
+#factoDeAve,
+#liguillaInfo{
   width:100%;
 }
 
@@ -666,6 +670,7 @@ body{
           <div id="standingsInfo"></div>
           <div id="marketValueInfo"></div>
           <div id="funFact"></div>
+          <div id="liguillaInfo"></div>
 
           <div class="footer-copy">
             <img src="chanfle.png" alt="El Chanfle" class="chanfle-img">
@@ -824,15 +829,10 @@ function formatMexicoDateTime(date){
 function parseDate(event){
   if(!event) return null;
 
-  // 1. Preferir timestamp absoluto si existe.
-  // Este suele venir en UTC o con zona horaria explícita.
   if(event.strTimestamp){
     let raw = event.strTimestamp.trim();
-
-    // Si viene como "2026-04-25 23:00:00", lo hacemos ISO.
     raw = raw.replace(" ", "T");
 
-    // Si no trae zona horaria explícita, asumimos UTC.
     if(!/[zZ]$|[+-]\d{2}:\d{2}$/.test(raw)){
       raw += "Z";
     }
@@ -841,8 +841,6 @@ function parseDate(event){
     if(!isNaN(d)) return d;
   }
 
-  // 2. Fallback: dateEvent + strTime.
-  // En muchas APIs deportivas estos campos representan hora UTC.
   if(event.dateEvent && event.strTime){
     let raw = `${event.dateEvent}T${event.strTime}`;
 
@@ -854,9 +852,6 @@ function parseDate(event){
     if(!isNaN(d)) return d;
   }
 
-  // 3. Último recurso: fecha local.
-  // Aquí asumimos hora del centro de México, fija en UTC-6.
-  // México centro ya no cambia por horario de verano.
   if(event.dateEventLocal && event.strTimeLocal){
     const time = event.strTimeLocal.length === 5
       ? `${event.strTimeLocal}:00`
@@ -867,7 +862,6 @@ function parseDate(event){
     if(!isNaN(d)) return d;
   }
 
-  // 4. Si solo viene fecha, poner mediodía UTC para evitar desfases de día.
   if(event.dateEvent){
     const d = new Date(`${event.dateEvent}T12:00:00Z`);
     if(!isNaN(d)) return d;
@@ -983,6 +977,7 @@ function renderMatchExtraInfo(event, mode){
 
   box.innerHTML = items.map(text => `<div class="info-pill">${text}</div>`).join("");
 }
+
 function renderLastResult(lastEvent){
   const box = document.getElementById("lastResultInfo");
   box.innerHTML = "";
@@ -1360,14 +1355,14 @@ function renderFunFact(event){
 }
 
 function renderLiguillaHint(event){
-  const box = document.getElementById("funFact");
+  const box = document.getElementById("liguillaInfo");
   if(!box) return;
 
-  box.innerHTML += `
+  box.innerHTML = `
     <div class="confidential-box">
       <div class="confidential-title">Se viene la liguilla</div>
       <div class="confidential-text">
-        Se viene América vs Pumas en liguilla 🦅 — clásico de la capital
+        Se viene América vs Pumas en liguilla 🦅 — clásico de la capital.
       </div>
     </div>
   `;
@@ -1449,6 +1444,7 @@ async function loadMatch(){
   const standingsInfo = document.getElementById("standingsInfo");
   const marketValueInfo = document.getElementById("marketValueInfo");
   const funFact = document.getElementById("funFact");
+  const liguillaInfo = document.getElementById("liguillaInfo");
   const lastResultInfo = document.getElementById("lastResultInfo");
   const nextMatchInfo = document.getElementById("nextMatchInfo");
   const mangaAzulcrema = document.getElementById("mangaAzulcrema");
@@ -1462,6 +1458,7 @@ async function loadMatch(){
   standingsInfo.innerHTML = "";
   marketValueInfo.innerHTML = "";
   funFact.innerHTML = "";
+  liguillaInfo.innerHTML = "";
   lastResultInfo.innerHTML = "";
   nextMatchInfo.innerHTML = "";
   mangaAzulcrema.innerHTML = "";
@@ -1480,61 +1477,57 @@ async function loadMatch(){
     console.log("eventsnext:", nextData);
     console.log("eventslast:", rawLastData);
 
-let nextEvent = nextData?.events?.[0] || null;
-let recentPlayedEvent = null;
-let lastEvent = rawLastData?.results?.[0] || null;
+    let nextEvent = nextData?.events?.[0] || null;
+    let recentPlayedEvent = null;
+    let lastEvent = rawLastData?.results?.[0] || null;
 
-// Si la API todavía trae como "next" un partido que ya pasó,
-// no lo tratamos como próximo partido, pero lo conservamos como último partido conocido.
-if(nextEvent){
-  const nextDate = parseDate(nextEvent);
-  const now = new Date();
+    if(nextEvent){
+      const nextDate = parseDate(nextEvent);
+      const now = new Date();
 
-  // Margen de 4 horas después del inicio para no borrar partidos en curso.
-  const fourHoursAfterKickoff = nextDate
-    ? new Date(nextDate.getTime() + 4 * 60 * 60 * 1000)
-    : null;
+      const fourHoursAfterKickoff = nextDate
+        ? new Date(nextDate.getTime() + 4 * 60 * 60 * 1000)
+        : null;
 
-  if(fourHoursAfterKickoff && fourHoursAfterKickoff < now){
-    recentPlayedEvent = nextEvent;
-    nextEvent = null;
-  }
-}
-lastEvent = await resolveBestLastEvent(lastEvent);
+      if(fourHoursAfterKickoff && fourHoursAfterKickoff < now){
+        recentPlayedEvent = nextEvent;
+        nextEvent = null;
+      }
+    }
 
-// Si el supuesto "next" ya pasó, úsalo como último partido conocido.
-// Si ya tiene marcador, lo mostramos como último resultado.
-// Si no tiene marcador, lo mostramos como último partido.
-const displayedLastEvent = recentPlayedEvent || lastEvent;
+    lastEvent = await resolveBestLastEvent(lastEvent);
 
-if(displayedLastEvent){
-  renderLastResult(displayedLastEvent);
-}
+    const displayedLastEvent = recentPlayedEvent || lastEvent;
 
-if(nextEvent){
-  renderNextMatch(nextEvent);
-  saveTrackedNextEvent(nextEvent);
-}
-    renderMangaAzulcrema(nextEvent, lastEvent);
-    renderFactoDeAve(nextEvent, lastEvent);
+    if(displayedLastEvent){
+      renderLastResult(displayedLastEvent);
+    }
+
+    if(nextEvent){
+      renderNextMatch(nextEvent);
+      saveTrackedNextEvent(nextEvent);
+    }
+
+    renderMangaAzulcrema(nextEvent, displayedLastEvent);
+    renderFactoDeAve(nextEvent, displayedLastEvent);
+    renderLiguillaHint(nextEvent || displayedLastEvent);
 
     if(!nextEvent){
       status.textContent = "No juega hoy";
       status.className = "status no";
-      showImage(lastEvent ? chooseImageModeForPast(lastEvent) : "general-no");
+      showImage(displayedLastEvent ? chooseImageModeForPast(displayedLastEvent) : "general-no");
 
-      if(lastEvent){
+      if(displayedLastEvent){
         details.innerHTML = `
           <div><b>No aparece aún el próximo partido</b></div>
           <div class="meta-line">Por ahora se muestra el último resultado confirmado</div>
         `;
-        const lastDate = parseDate(lastEvent);
+        const lastDate = parseDate(displayedLastEvent);
         if(lastDate) setReferenceTime(formatMexicoDateTime(lastDate));
-        renderMatchExtraInfo(lastEvent, "past");
-        renderStandings(lastEvent, standingsData);
-        renderMarketValueInfo(lastEvent, marketData);
-        renderFunFact(lastEvent);
-        renderLiguillaHint(lastEvent);
+        renderMatchExtraInfo(displayedLastEvent, "past");
+        renderStandings(displayedLastEvent, standingsData);
+        renderMarketValueInfo(displayedLastEvent, marketData);
+        renderFunFact(displayedLastEvent);
       } else {
         details.innerHTML = `No fue posible encontrar información del próximo partido ni del último resultado.`;
       }
@@ -1569,7 +1562,6 @@ if(nextEvent){
       renderStandings(nextEvent, standingsData);
       renderMarketValueInfo(nextEvent, marketData);
       renderFunFact(nextEvent);
-      renderLiguillaHint(nextEvent);
       return;
     }
 
@@ -1596,7 +1588,6 @@ if(nextEvent){
         renderStandings(nextEvent, standingsData);
         renderMarketValueInfo(nextEvent, marketData);
         renderFunFact(nextEvent);
-        renderLiguillaHint(nextEvent);
       } else {
         status.textContent = "Hoy juega";
         status.className = "status yes";
@@ -1611,14 +1602,13 @@ if(nextEvent){
         renderStandings(nextEvent, standingsData);
         renderMarketValueInfo(nextEvent, marketData);
         renderFunFact(nextEvent);
-        renderLiguillaHint(nextEvent);
       }
       return;
     }
 
     status.textContent = "No juega hoy";
     status.className = "status no";
-    showImage(lastEvent ? chooseImageModeForPast(lastEvent) : "general-no");
+    showImage(displayedLastEvent ? chooseImageModeForPast(displayedLastEvent) : "general-no");
     details.innerHTML = `
       <div><b>No hay partido del América hoy</b></div>
       <div class="meta-line">El siguiente partido registrado es ${matchText}</div>
@@ -1629,7 +1619,6 @@ if(nextEvent){
     renderStandings(nextEvent, standingsData);
     renderMarketValueInfo(nextEvent, marketData);
     renderFunFact(nextEvent);
-    renderLiguillaHint(nextEvent);
 
   } catch(err){
     status.textContent = "Error al cargar";
@@ -1644,3 +1633,4 @@ loadMatch();
 </script>
 </body>
 </html>
+```
