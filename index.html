@@ -989,7 +989,18 @@ function renderLastResult(lastEvent){
   if(!lastEvent) return;
 
   const date = parseDate(lastEvent);
-  const main = getResultLabel(lastEvent);
+  const hasScore =
+    lastEvent.intHomeScore !== null &&
+    lastEvent.intHomeScore !== undefined &&
+    lastEvent.intAwayScore !== null &&
+    lastEvent.intAwayScore !== undefined;
+
+  const main = hasScore
+    ? getResultLabel(lastEvent)
+    : getMatchLabel(lastEvent);
+
+  const title = hasScore ? "Último resultado" : "Último partido";
+
   const subParts = [];
 
   if(date){
@@ -999,7 +1010,11 @@ function renderLastResult(lastEvent){
       month:"long",
       year:"numeric"
     }).format(date);
-    subParts.push(`Partido jugado el ${formattedDate}`);
+
+    subParts.push(hasScore
+      ? `Partido jugado el ${formattedDate}`
+      : `Partido programado para el ${formattedDate}`
+    );
   }
 
   const venue = getVenueLabel(lastEvent);
@@ -1007,18 +1022,22 @@ function renderLastResult(lastEvent){
     subParts.push(`en ${venue}`);
   }
 
+  if(!hasScore){
+    subParts.push("Marcador pendiente de confirmación");
+  }
+
   const videoLink = (lastEvent.strVideo || "").trim();
 
   box.innerHTML = `
     <div class="result-strip">
-      <div class="result-strip-title">Último resultado</div>
+      <div class="result-strip-title">${title}</div>
       <div class="result-strip-main">${main}</div>
-      <div class="result-strip-sub">${subParts.join(" ")}</div>
+      <div class="result-strip-sub">${subParts.join(" · ")}</div>
       ${videoLink ? `<a class="result-strip-link" href="${videoLink}" target="_blank" rel="noopener noreferrer">Ver resumen del partido</a>` : ""}
     </div>
   `;
 }
-
+  
 function renderNextMatch(nextEvent){
   const box = document.getElementById("nextMatchInfo");
   box.innerHTML = "";
@@ -1467,17 +1486,21 @@ if(nextEvent){
     nextEvent = null;
   }
 }
-    lastEvent = await resolveBestLastEvent(lastEvent);
+lastEvent = await resolveBestLastEvent(lastEvent);
 
-    if(lastEvent && shouldUseEventAsFinished(lastEvent)){
-      renderLastResult(lastEvent);
-    }
+// Si el supuesto "next" ya pasó, úsalo como último partido conocido.
+// Si ya tiene marcador, lo mostramos como último resultado.
+// Si no tiene marcador, lo mostramos como último partido.
+const displayedLastEvent = recentPlayedEvent || lastEvent;
 
-    if(nextEvent){
-      renderNextMatch(nextEvent);
-      saveTrackedNextEvent(nextEvent);
-    }
+if(displayedLastEvent){
+  renderLastResult(displayedLastEvent);
+}
 
+if(nextEvent){
+  renderNextMatch(nextEvent);
+  saveTrackedNextEvent(nextEvent);
+}
     renderMangaAzulcrema(nextEvent, lastEvent);
     renderFactoDeAve(nextEvent, lastEvent);
 
