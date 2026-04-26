@@ -1447,11 +1447,12 @@ async function loadMatch(){
     console.log("eventsnext:", nextData);
     console.log("eventslast:", rawLastData);
 
-    let nextEvent = nextData?.events?.[0] || null;
+let nextEvent = nextData?.events?.[0] || null;
+let recentPlayedEvent = null;
 let lastEvent = rawLastData?.results?.[0] || null;
 
 // Si la API todavía trae como "next" un partido que ya pasó,
-// no lo tratamos como próximo partido.
+// no lo tratamos como próximo partido, pero lo conservamos como último partido conocido.
 if(nextEvent){
   const nextDate = parseDate(nextEvent);
   const now = new Date();
@@ -1462,6 +1463,7 @@ if(nextEvent){
     : null;
 
   if(fourHoursAfterKickoff && fourHoursAfterKickoff < now){
+    recentPlayedEvent = nextEvent;
     nextEvent = null;
   }
 }
