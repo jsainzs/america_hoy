@@ -1512,28 +1512,27 @@ async function loadMatch(){
     renderFactoDeAve(nextEvent, displayedLastEvent);
     renderLiguillaHint(nextEvent || displayedLastEvent);
 
-  if(!nextEvent){
-    status.textContent = "Se viene la liguilla";
-    status.className = "status yes";
-    showImage("general-yes");
-  
-    details.innerHTML = `
-      <div><b>América vs Pumas</b></div>
-      <div class="meta-line">Próximo cruce de liguilla 🦅</div>
-    `;
-  
-    if(displayedLastEvent){
-      const lastDate = parseDate(displayedLastEvent);
-      if(lastDate) setReferenceTime(formatMexicoDateTime(lastDate));
-      renderMatchExtraInfo(displayedLastEvent, "past");
-      renderStandings(displayedLastEvent, standingsData);
-      renderMarketValueInfo(displayedLastEvent, marketData);
-      renderFunFact(displayedLastEvent);
-    }
-  
-    return;
-}
-    
+if(!nextEvent){
+  status.textContent = "No juega hoy";
+  status.className = "status no";
+  showImage(displayedLastEvent ? chooseImageModeForPast(displayedLastEvent) : "general-no");
+
+  details.innerHTML = `
+    <div><b>Pero ya se viene la liguilla</b></div>
+    <div class="meta-line">América vs Pumas 🦅 · Clásico de la capital</div>
+  `;
+
+  if(displayedLastEvent){
+    const lastDate = parseDate(displayedLastEvent);
+    if(lastDate) setReferenceTime(formatMexicoDateTime(lastDate));
+    renderMatchExtraInfo(displayedLastEvent, "past");
+    renderStandings(displayedLastEvent, standingsData);
+    renderMarketValueInfo(displayedLastEvent, marketData);
+    renderFunFact(displayedLastEvent);
+  }
+
+  return;
+}    
     const date = parseDate(nextEvent);
     if(!date){
       status.textContent = "Error en fecha";
