@@ -698,7 +698,7 @@ const TZ = "America/Mexico_City";
 const STANDINGS_VISIBLE_COUNT = 6;
 
 /* Fuerza manual del último partido correcto mientras la API agregada se rezaga */
-const MANUAL_LAST_FINISHED_EVENT_ID = "2396252";
+const MANUAL_LAST_FINISHED_EVENT_ID = "";
 
 /* Cuando América sea local, mostrar este estadio en vez del dato dudoso de la API */
 const AMERICA_HOME_STADIUM = "Estadio Azteca";
@@ -1359,6 +1359,20 @@ function renderFunFact(event){
   }
 }
 
+function renderLiguillaHint(event){
+  const box = document.getElementById("funFact");
+  if(!box) return;
+
+  box.innerHTML += `
+    <div class="confidential-box">
+      <div class="confidential-title">Se viene la liguilla</div>
+      <div class="confidential-text">
+        Se viene América vs Pumas en liguilla 🦅 — clásico de la capital
+      </div>
+    </div>
+  `;
+}
+  
 async function loadNextMatch(){
   const res = await fetch(NEXT_API_URL);
   if(!res.ok) throw new Error("No se pudo cargar eventsnext");
@@ -1520,6 +1534,7 @@ if(nextEvent){
         renderStandings(lastEvent, standingsData);
         renderMarketValueInfo(lastEvent, marketData);
         renderFunFact(lastEvent);
+        renderLiguillaHint(lastEvent);
       } else {
         details.innerHTML = `No fue posible encontrar información del próximo partido ni del último resultado.`;
       }
@@ -1554,6 +1569,7 @@ if(nextEvent){
       renderStandings(nextEvent, standingsData);
       renderMarketValueInfo(nextEvent, marketData);
       renderFunFact(nextEvent);
+      renderLiguillaHint(nextEvent);
       return;
     }
 
@@ -1580,6 +1596,7 @@ if(nextEvent){
         renderStandings(nextEvent, standingsData);
         renderMarketValueInfo(nextEvent, marketData);
         renderFunFact(nextEvent);
+        renderLiguillaHint(nextEvent);
       } else {
         status.textContent = "Hoy juega";
         status.className = "status yes";
@@ -1594,6 +1611,7 @@ if(nextEvent){
         renderStandings(nextEvent, standingsData);
         renderMarketValueInfo(nextEvent, marketData);
         renderFunFact(nextEvent);
+        renderLiguillaHint(nextEvent);
       }
       return;
     }
@@ -1611,6 +1629,7 @@ if(nextEvent){
     renderStandings(nextEvent, standingsData);
     renderMarketValueInfo(nextEvent, marketData);
     renderFunFact(nextEvent);
+    renderLiguillaHint(nextEvent);
 
   } catch(err){
     status.textContent = "Error al cargar";
