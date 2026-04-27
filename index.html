@@ -647,6 +647,7 @@ body{
           <div class="hero-frame">
             <img id="imgSi" class="hero" src="hoy_juega_america.png" alt="Hoy juega el América">
             <img id="imgNo" class="hero" src="no_juega_america.png" alt="No juega el América">
+            <img id="imgTucanazo" class="hero" src="tucanazo.jpeg" alt="Tucanazo pero empate">
             <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg" alt="Próximo partido contra Cruz Azul">
             <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg" alt="Hoy juega contra Cruz Azul">
             <img id="imgNashvilleCoco" class="hero" src="nashville_coco.png" alt="Nashville Coco">
@@ -783,6 +784,11 @@ function isVsAtlas(event){
   const a = normalizeTeamName(event?.strAwayTeam);
   return h.includes("atlas") || a.includes("atlas");
 }
+function isVsPumas(event){
+  const h = normalizeTeamName(event?.strHomeTeam);
+  const a = normalizeTeamName(event?.strAwayTeam);
+  return h.includes("pumas") || h.includes("unam") || a.includes("pumas") || a.includes("unam");
+}
 function isAmericaName(name){
   const n = normalizeTeamName(name);
   return n === "america" || n === "cf america" || n === "club america" || n.includes("america");
@@ -901,34 +907,42 @@ function getVenueLabel(event){
 
 function hideAllImages(){
   [
-    "imgSi","imgNo","imgCruzAzulProx","imgCruzAzulHoy",
+    "imgSi","imgNo","imgTucanazo","imgCruzAzulProx","imgCruzAzulHoy",
     "imgNashvilleCoco","imgAmeTolucaSraAnti","imgBatallaToluca"
   ].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.classList.remove("visible");
   });
 }
+
 function showImage(mode){
   hideAllImages();
-  const map = {
+
+  const images = {
     "general-yes": "imgSi",
     "general-no": "imgNo",
+    "pumas-liguilla": "imgTucanazo",
     "caz-prox": "imgCruzAzulProx",
     "caz-hoy": "imgCruzAzulHoy",
     "nashville-coco": "imgNashvilleCoco",
     "toluca-hoy": "imgAmeTolucaSraAnti",
     "toluca-pasado": "imgBatallaToluca"
   };
-  if(map[mode]){
-    const el = document.getElementById(map[mode]);
+
+  const id = images[mode];
+  if(id){
+    const el = document.getElementById(id);
     if(el) el.classList.add("visible");
   }
 }
+
 function chooseImageModeForUpcoming(event){
+  if(isVsPumas(event)) return "pumas-liguilla";
   if(isVsCruzAzul(event)) return "caz-prox";
   return "general-no";
 }
 function chooseImageModeForToday(event){
+  if(isVsPumas(event)) return "pumas-liguilla";
   if(isVsCruzAzul(event)) return "caz-hoy";
   if(isVsToluca(event)) return "toluca-hoy";
   return "general-yes";
