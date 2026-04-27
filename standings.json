@@ -1,29 +1,28 @@
 {
-  "updated_at": "2026-04-22",
+  "updated_at": "2026-04-26",
   "season": "Clausura 2026",
   "standings": [
-    { "position": 1,  "team": "Guadalajara",   "team_id": "guadalajara",   "points": 35 },
-    { "position": 2,  "team": "Pumas",         "team_id": "pumas",         "points": 33 },
-    { "position": 3,  "team": "Pachuca",       "team_id": "pachuca",       "points": 31 },
-    { "position": 4,  "team": "Cruz Azul",     "team_id": "cruz-azul",     "points": 30 },
-    { "position": 5,  "team": "Toluca",        "team_id": "toluca",        "points": 27 },
-    { "position": 6,  "team": "América",       "team_id": "club-america",  "points": 25 },
+    { "position": 1,  "team": "Pumas",         "team_id": "pumas",         "points": 36 },
+    { "position": 2,  "team": "Guadalajara",   "team_id": "guadalajara",   "points": 36 },
+    { "position": 3,  "team": "Cruz Azul",     "team_id": "cruz-azul",     "points": 33 },
+    { "position": 4,  "team": "Pachuca",       "team_id": "pachuca",       "points": 31 },
+    { "position": 5,  "team": "Toluca",        "team_id": "toluca",        "points": 30 },
+    { "position": 6,  "team": "Atlas",         "team_id": "atlas",         "points": 26 },
 
-    { "position": 7,  "team": "Atlas",         "team_id": "atlas",         "points": 23 },
-
-    { "position": 8,  "team": "Tigres",        "team_id": "tigres",        "points": 22 },
-    { "position": 9,  "team": "Tijuana",       "team_id": "tijuana",       "points": 22 },
+    { "position": 7,  "team": "Tigres",        "team_id": "tigres",        "points": 25 },
+    { "position": 8,  "team": "América",       "team_id": "club-america",  "points": 25 },
+    { "position": 9,  "team": "Tijuana",       "team_id": "tijuana",       "points": 23 },
     { "position": 10, "team": "León",          "team_id": "leon",          "points": 22 },
 
-    { "position": 11, "team": "Monterrey",     "team_id": "monterrey",     "points": 18 },
-    { "position": 12, "team": "Atl. San Luis", "team_id": "san-luis",      "points": 18 },
-    { "position": 13, "team": "Necaxa",        "team_id": "necaxa",        "points": 18 },
+    { "position": 11, "team": "Querétaro",     "team_id": "queretaro",     "points": 20 },
+    { "position": 12, "team": "Juárez",        "team_id": "juarez",        "points": 19 },
 
-    { "position": 14, "team": "Querétaro",     "team_id": "queretaro",     "points": 17 },
-    { "position": 15, "team": "Juárez",        "team_id": "juarez",        "points": 16 },
+    { "position": 13, "team": "Monterrey",     "team_id": "monterrey",     "points": 18 },
+    { "position": 14, "team": "Atl. San Luis", "team_id": "san-luis",      "points": 18 },
+    { "position": 15, "team": "Necaxa",        "team_id": "necaxa",        "points": 18 },
 
     { "position": 16, "team": "Mazatlán",      "team_id": "mazatlan",      "points": 15 },
     { "position": 17, "team": "Puebla",        "team_id": "puebla",        "points": 13 },
-    { "position": 18, "team": "Santos",        "team_id": "santos",        "points": 9 }
+    { "position": 18, "team": "Santos",        "team_id": "santos",        "points": 12 }
   ]
 }
