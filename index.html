@@ -22,10 +22,7 @@
   --shadow:0 14px 38px rgba(0,0,0,0.28);
 }
 *{box-sizing:border-box;}
-html,body{
-  margin:0;
-  min-height:100%;
-}
+html,body{ margin:0; min-height:100%; }
 body{
   font-family:Arial,Helvetica,sans-serif;
   background:
@@ -113,9 +110,7 @@ body{
   backdrop-filter:blur(4px);
   -webkit-backdrop-filter:blur(4px);
 }
-.visit-counter span{
-  color:var(--accent);
-}
+.visit-counter span{ color:var(--accent); }
 
 .page-grid{
   display:grid;
@@ -123,10 +118,7 @@ body{
   gap:24px;
   align-items:start;
 }
-.side-menu{
-  position:sticky;
-  top:20px;
-}
+.side-menu{ position:sticky; top:20px; }
 .side-card{
   background:rgba(0,0,0,.18);
   border:1px solid rgba(255,255,255,.12);
@@ -210,9 +202,8 @@ body{
   box-shadow:var(--shadow);
   background:transparent;
 }
-.hero.visible{
-  display:block;
-}
+.hero.visible{ display:block; }
+
 .content{
   display:flex;
   flex-direction:column;
@@ -280,9 +271,7 @@ body{
 #nextMatchInfo,
 #mangaAzulcrema,
 #factoDeAve,
-#liguillaInfo{
-  width:100%;
-}
+#liguillaInfo{ width:100%; }
 
 .result-strip{
   margin-top:8px;
@@ -335,18 +324,9 @@ body{
   backdrop-filter:blur(4px);
   -webkit-backdrop-filter:blur(4px);
 }
-.broadcast-box .tv-icon{
-  font-size:1.1rem;
-  flex-shrink:0;
-}
-.broadcast-box .tv-label{
-  color:rgba(255,255,255,.7);
-  margin-right:4px;
-}
-.broadcast-box .tv-channels{
-  font-weight:700;
-  color:var(--accent);
-}
+.broadcast-box .tv-icon{ font-size:1.1rem; flex-shrink:0; }
+.broadcast-box .tv-label{ color:rgba(255,255,255,.7); margin-right:4px; }
+.broadcast-box .tv-channels{ font-weight:700; color:var(--accent); }
 
 .standings-box{
   margin-top:18px;
@@ -486,12 +466,8 @@ body{
   color:#fff;
   letter-spacing:.3px;
 }
-.market-row{
-  margin-bottom:16px;
-}
-.market-row:last-child{
-  margin-bottom:0;
-}
+.market-row{ margin-bottom:16px; }
+.market-row:last-child{ margin-bottom:0; }
 .market-label{
   display:flex;
   justify-content:space-between;
@@ -501,9 +477,7 @@ body{
   font-size:.98rem;
   color:rgba(255,255,255,.96);
 }
-.market-label strong{
-  color:#fff;
-}
+.market-label strong{ color:#fff; }
 .market-track{
   position:relative;
   height:16px;
@@ -542,9 +516,7 @@ body{
   line-height:1.55;
   color:rgba(255,255,255,.9);
 }
-.section-figure{
-  margin:0;
-}
+.section-figure{ margin:0; }
 .section-figure img{
   display:block;
   width:100%;
@@ -573,13 +545,8 @@ body{
 }
 
 @media (max-width:1080px){
-  .page-grid{
-    grid-template-columns:1fr;
-  }
-  .side-menu{
-    position:static;
-    order:-1;
-  }
+  .page-grid{ grid-template-columns:1fr; }
+  .side-menu{ position:static; order:-1; }
 }
 @media (max-width:860px){
   .shell{ padding:18px 16px 90px; }
@@ -606,23 +573,13 @@ body{
     flex-direction:column;
     align-items:stretch;
   }
-  .result-strip{
-    width:100%;
-  }
-  .match-extra{
-    justify-content:center;
-  }
+  .result-strip{ width:100%; }
+  .match-extra{ justify-content:center; }
 }
 @media (max-width:540px){
-  .title{
-    font-size:clamp(1.9rem,8vw,2.5rem);
-  }
-  .status{
-    font-size:clamp(1.8rem,8vw,2.4rem);
-  }
-  .details{
-    font-size:1rem;
-  }
+  .title{ font-size:clamp(1.9rem,8vw,2.5rem); }
+  .status{ font-size:clamp(1.8rem,8vw,2.4rem); }
+  .details{ font-size:1rem; }
   .hero{
     max-width:min(100%, 290px);
     max-height:44vh;
@@ -647,7 +604,7 @@ body{
           <div class="hero-frame">
             <img id="imgSi" class="hero" src="hoy_juega_america.png" alt="Hoy juega el América">
             <img id="imgNo" class="hero" src="no_juega_america.png" alt="No juega el América">
-            <img id="imgTucanazo" class="hero" src="tucanazo.jpeg" alt="Tucanazo pero empate">
+            <img id="imgTucanazo" class="hero" src="tucanazo.jpeg" alt="Tucanazo contra Pumas">
             <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg" alt="Próximo partido contra Cruz Azul">
             <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg" alt="Hoy juega contra Cruz Azul">
             <img id="imgNashvilleCoco" class="hero" src="nashville_coco.png" alt="Nashville Coco">
@@ -700,11 +657,26 @@ const STANDINGS_URL = "./standings.json";
 const TZ = "America/Mexico_City";
 const STANDINGS_VISIBLE_COUNT = 6;
 
+/* Cambiar a false cuando termine la vuelta contra Pumas */
+const FORCE_PUMAS_LIGUILLA = true;
+
 /* Fuerza manual del último partido correcto mientras la API agregada se rezaga */
 const MANUAL_LAST_FINISHED_EVENT_ID = "";
 
 /* Cuando América sea local, mostrar este estadio en vez del dato dudoso de la API */
 const AMERICA_HOME_STADIUM = "Estadio Azteca";
+
+/* Evento manual mientras TheSportsDB no detecta la liguilla */
+const MANUAL_PUMAS_LIGUILLA_EVENT = {
+  strHomeTeam: "América",
+  strAwayTeam: "Pumas UNAM",
+  strLeague: "Liga BBVA MX",
+  strVenue: AMERICA_HOME_STADIUM,
+  intRound: null,
+  intHomeScore: null,
+  intAwayScore: null,
+  strStatus: "Not Started"
+};
 
 const BROADCAST_BY_LEAGUE = {
   "Liga MX": "Depende del club local",
@@ -975,14 +947,10 @@ function renderMatchExtraInfo(event, mode){
   }
 
   const round = getRoundLabel(event);
-  if(round){
-    items.push(`🏟️ ${round}`);
-  }
+  if(round) items.push(`🏟️ ${round}`);
 
   const venue = getVenueLabel(event);
-  if(venue){
-    items.push(`📍 ${venue}`);
-  }
+  if(venue) items.push(`📍 ${venue}`);
 
   if(!items.length) return;
 
@@ -1001,10 +969,7 @@ function renderLastResult(lastEvent){
     lastEvent.intAwayScore !== null &&
     lastEvent.intAwayScore !== undefined;
 
-  const main = hasScore
-    ? getResultLabel(lastEvent)
-    : getMatchLabel(lastEvent);
-
+  const main = hasScore ? getResultLabel(lastEvent) : getMatchLabel(lastEvent);
   const title = hasScore ? "Último resultado" : "Último partido";
 
   const subParts = [];
@@ -1024,13 +989,9 @@ function renderLastResult(lastEvent){
   }
 
   const venue = getVenueLabel(lastEvent);
-  if(venue){
-    subParts.push(`en ${venue}`);
-  }
+  if(venue) subParts.push(`en ${venue}`);
 
-  if(!hasScore){
-    subParts.push("Marcador pendiente de confirmación");
-  }
+  if(!hasScore) subParts.push("Marcador pendiente de confirmación");
 
   const videoLink = (lastEvent.strVideo || "").trim();
 
@@ -1066,20 +1027,27 @@ function renderNextMatch(nextEvent){
   }
 
   const venue = getVenueLabel(nextEvent);
-  if(venue){
-    subParts.push(`en ${venue}`);
-  }
+  if(venue) subParts.push(`en ${venue}`);
 
   const round = getRoundLabel(nextEvent);
-  if(round){
-    subParts.push(round);
-  }
+  if(round) subParts.push(round);
 
   box.innerHTML = `
     <div class="result-strip">
       <div class="result-strip-title">Próximo partido</div>
       <div class="result-strip-main">${main}</div>
       <div class="result-strip-sub">${subParts.join(" · ")}</div>
+    </div>
+  `;
+}
+
+function renderManualPumasNextMatch(){
+  const box = document.getElementById("nextMatchInfo");
+  box.innerHTML = `
+    <div class="result-strip">
+      <div class="result-strip-title">Próximo partido</div>
+      <div class="result-strip-main">América vs Pumas</div>
+      <div class="result-strip-sub">Liguilla · Clásico de la capital · Fecha y hora por confirmar en la API</div>
     </div>
   `;
 }
@@ -1369,6 +1337,11 @@ function renderLiguillaHint(event){
   const box = document.getElementById("liguillaInfo");
   if(!box) return;
 
+  if(!event || !isVsPumas(event)){
+    box.innerHTML = "";
+    return;
+  }
+
   box.innerHTML = `
     <div class="confidential-box">
       <div class="confidential-title">Se viene la liguilla</div>
@@ -1426,19 +1399,13 @@ async function resolveBestLastEvent(fallbackLastEvent){
 
   const candidateIds = [];
 
-  if (MANUAL_LAST_FINISHED_EVENT_ID) {
-    candidateIds.push(MANUAL_LAST_FINISHED_EVENT_ID);
-  }
-  if (trackedEventId && !candidateIds.includes(trackedEventId)) {
-    candidateIds.push(trackedEventId);
-  }
-  if (storedFinishedEventId && !candidateIds.includes(storedFinishedEventId)) {
-    candidateIds.push(storedFinishedEventId);
-  }
+  if(MANUAL_LAST_FINISHED_EVENT_ID) candidateIds.push(MANUAL_LAST_FINISHED_EVENT_ID);
+  if(trackedEventId && !candidateIds.includes(trackedEventId)) candidateIds.push(trackedEventId);
+  if(storedFinishedEventId && !candidateIds.includes(storedFinishedEventId)) candidateIds.push(storedFinishedEventId);
 
-  for (const id of candidateIds) {
+  for(const id of candidateIds){
     const event = await fetchEventById(id).catch(() => null);
-    if (shouldUseEventAsFinished(event)) {
+    if(shouldUseEventAsFinished(event)){
       best = event;
       saveLastFinishedEventId(id);
       break;
@@ -1507,7 +1474,6 @@ async function loadMatch(){
     }
 
     lastEvent = await resolveBestLastEvent(lastEvent);
-
     const displayedLastEvent = recentPlayedEvent || lastEvent;
 
     if(displayedLastEvent){
@@ -1519,31 +1485,51 @@ async function loadMatch(){
       saveTrackedNextEvent(nextEvent);
     }
 
-    renderMangaAzulcrema(nextEvent, displayedLastEvent);
-    renderFactoDeAve(nextEvent, displayedLastEvent);
-    renderLiguillaHint(nextEvent || displayedLastEvent);
+    const manualPumasMode = FORCE_PUMAS_LIGUILLA && !nextEvent;
+    const focusEvent = manualPumasMode ? MANUAL_PUMAS_LIGUILLA_EVENT : (nextEvent || displayedLastEvent);
 
-if(!nextEvent){
-  status.textContent = "No juega hoy";
-  status.className = "status no";
-  showImage(displayedLastEvent ? chooseImageModeForPast(displayedLastEvent) : "general-no");
+    renderMangaAzulcrema(manualPumasMode ? null : nextEvent, manualPumasMode ? null : displayedLastEvent);
+    renderFactoDeAve(manualPumasMode ? null : nextEvent, manualPumasMode ? null : displayedLastEvent);
+    renderLiguillaHint(focusEvent);
 
-  details.innerHTML = `
-    <div><b>Pero ya se viene la liguilla</b></div>
-    <div class="meta-line">América vs Pumas 🦅 · Clásico de la capital</div>
-  `;
+    if(!nextEvent){
+      status.textContent = "No juega hoy";
+      status.className = "status no";
 
-  if(displayedLastEvent){
-    const lastDate = parseDate(displayedLastEvent);
-    if(lastDate) setReferenceTime(formatMexicoDateTime(lastDate));
-    renderMatchExtraInfo(displayedLastEvent, "past");
-    renderStandings(displayedLastEvent, standingsData);
-    renderMarketValueInfo(displayedLastEvent, marketData);
-    renderFunFact(displayedLastEvent);
-  }
+      if(manualPumasMode){
+        showImage("pumas-liguilla");
 
-  return;
-}    
+        details.innerHTML = `
+          <div><b>Pero ya se viene la liguilla</b></div>
+          <div class="meta-line">América vs Pumas 🦅 · Clásico de la capital</div>
+        `;
+
+        renderManualPumasNextMatch();
+        renderBroadcastInfo(MANUAL_PUMAS_LIGUILLA_EVENT);
+        renderStandings(MANUAL_PUMAS_LIGUILLA_EVENT, standingsData);
+        renderMarketValueInfo(MANUAL_PUMAS_LIGUILLA_EVENT, marketData);
+        return;
+      }
+
+      showImage(displayedLastEvent ? chooseImageModeForPast(displayedLastEvent) : "general-no");
+
+      details.innerHTML = `
+        <div><b>No hay partido del América hoy</b></div>
+        <div class="meta-line">Esperando próximo partido registrado</div>
+      `;
+
+      if(displayedLastEvent){
+        const lastDate = parseDate(displayedLastEvent);
+        if(lastDate) setReferenceTime(formatMexicoDateTime(lastDate));
+        renderMatchExtraInfo(displayedLastEvent, "past");
+        renderStandings(displayedLastEvent, standingsData);
+        renderMarketValueInfo(displayedLastEvent, marketData);
+        renderFunFact(displayedLastEvent);
+      }
+
+      return;
+    }
+
     const date = parseDate(nextEvent);
     if(!date){
       status.textContent = "Error en fecha";
@@ -1643,4 +1629,3 @@ loadMatch();
 </script>
 </body>
 </html>
-```
