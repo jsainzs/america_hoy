@@ -9,26 +9,26 @@
 <style>
 :root{
   --text:#f8fafc;
-  --muted:rgba(255,255,255,0.9);
+  --muted:rgba(248,250,252,0.78);
   --accent:#facc15;
+  --accent-strong:#f59e0b;
   --green:#22c55e;
   --red:#ef4444;
   --blue-soft:#93c5fd;
-  --bg-blue:#0a1f44;
-  --bg-blue-2:#16386e;
-  --bg-cream:#f3cf18;
-  --card:rgba(0,0,0,.18);
-  --card-border:rgba(255,255,255,.12);
-  --shadow:0 14px 38px rgba(0,0,0,0.28);
+  --bg-blue:#071633;
+  --bg-blue-2:#102b5a;
+  --surface:rgba(7,22,51,.72);
+  --surface-strong:rgba(4,13,31,.84);
+  --surface-soft:rgba(255,255,255,.075);
+  --card-border:rgba(255,255,255,.14);
+  --shadow:0 18px 48px rgba(0,0,0,.30);
 }
 *{box-sizing:border-box;}
 html,body{ margin:0; min-height:100%; }
 body{
   font-family:Arial,Helvetica,sans-serif;
   background:
-    radial-gradient(circle at 25% 20%, rgba(255,255,255,0.08), transparent 24%),
-    radial-gradient(circle at 80% 30%, rgba(255,255,255,0.06), transparent 28%),
-    linear-gradient(135deg,var(--bg-blue) 0%,var(--bg-blue-2) 42%,var(--bg-cream) 100%);
+    linear-gradient(130deg,rgba(7,22,51,.96) 0%,rgba(16,43,90,.96) 58%,rgba(250,204,21,.88) 58%,rgba(245,158,11,.92) 100%);
   color:var(--text);
   position:relative;
   overflow-x:hidden;
@@ -40,7 +40,7 @@ body{
   z-index:0;
   pointer-events:none;
   overflow:hidden;
-  opacity:.22;
+  opacity:.12;
 }
 .bg-tapestry::before{
   content:
@@ -83,27 +83,34 @@ body{
   position:relative;
   z-index:1;
   width:100%;
-  max-width:1320px;
+  max-width:1440px;
   margin:0 auto;
-  padding:28px 24px 110px;
+  padding:34px 28px 110px;
+}
+.app-header{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  margin-bottom:28px;
 }
 .title{
-  margin:0 0 14px;
+  margin:0;
   text-align:center;
-  font-size:clamp(2.1rem,4vw,3.4rem);
+  font-size:clamp(2.15rem,4.2vw,4rem);
   line-height:1.05;
-  font-weight:800;
+  font-weight:900;
   text-shadow:0 4px 20px rgba(0,0,0,.35);
 }
 .visit-counter{
   display:block;
   width:max-content;
   max-width:100%;
-  margin:0 auto 26px;
-  padding:8px 14px;
+  margin:0 auto;
+  padding:8px 15px;
   border-radius:999px;
-  background:rgba(250,204,21,.16);
-  border:1px solid rgba(250,204,21,.30);
+  background:rgba(4,13,31,.42);
+  border:1px solid rgba(250,204,21,.36);
   color:#fff;
   font-size:.95rem;
   font-weight:700;
@@ -114,28 +121,49 @@ body{
 
 .page-grid{
   display:grid;
-  grid-template-columns:minmax(0,1fr) 260px;
-  gap:24px;
+  grid-template-columns:minmax(0,1fr) 292px;
+  gap:22px;
   align-items:start;
 }
 .side-menu{ position:sticky; top:20px; }
 .side-card{
-  background:rgba(0,0,0,.18);
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:18px;
-  padding:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,.18);
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
+  background:var(--surface);
+  border:1px solid var(--card-border);
+  border-radius:8px;
+  padding:14px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
 }
+.side-card summary{
+  list-style:none;
+  cursor:pointer;
+}
+.side-card summary::-webkit-details-marker{ display:none; }
 .side-card h3{
-  margin:0 0 12px;
+  margin:0;
   font-size:1rem;
   font-weight:800;
   color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.side-card h3::after{
+  content:"";
+  width:8px;
+  height:8px;
+  border-right:2px solid rgba(255,255,255,.72);
+  border-bottom:2px solid rgba(255,255,255,.72);
+  transform:rotate(45deg);
+  transition:transform .16s ease;
+}
+.side-card[open] h3::after{
+  transform:rotate(225deg);
 }
 .side-card p{
-  margin:0 0 12px;
+  margin:12px 0;
   font-size:.92rem;
   line-height:1.45;
   color:rgba(255,255,255,.82);
@@ -146,25 +174,54 @@ body{
   gap:10px;
 }
 .side-link{
-  display:block;
+  display:flex;
+  align-items:center;
+  gap:10px;
   text-decoration:none;
   font-weight:700;
-  padding:12px 14px;
-  border-radius:12px;
-  transition:transform .12s ease, opacity .12s ease, background .12s ease;
+  padding:12px;
+  border-radius:8px;
+  transition:transform .12s ease, opacity .12s ease, background .12s ease, border-color .12s ease;
+}
+.side-link-icon{
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  flex:0 0 auto;
+  border-radius:8px;
+  background:rgba(0,0,0,.16);
+}
+.side-link-text{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  min-width:0;
+}
+.side-link-title{
+  line-height:1.15;
+}
+.side-link-meta{
+  font-size:.78rem;
+  line-height:1.2;
+  opacity:.78;
 }
 .side-link:hover{
   transform:translateY(-1px);
   opacity:.95;
 }
 .side-link.primary{
-  background:var(--accent);
-  color:#0a1f44;
+  background:linear-gradient(135deg,var(--accent),var(--accent-strong));
+  color:#071633;
 }
 .side-link.secondary{
-  background:rgba(255,255,255,.10);
+  background:rgba(255,255,255,.08);
   color:#fff;
   border:1px solid rgba(255,255,255,.12);
+}
+.side-link.secondary:hover{
+  border-color:rgba(250,204,21,.38);
+  background:rgba(255,255,255,.12);
 }
 
 .main-stack{
@@ -174,9 +231,16 @@ body{
 }
 .layout{
   display:grid;
-  grid-template-columns:minmax(280px,430px) 1fr;
-  gap:34px;
+  grid-template-columns:minmax(180px,300px) minmax(0,1fr);
+  gap:24px;
   align-items:start;
+  padding:22px;
+  border:1px solid var(--card-border);
+  border-radius:8px;
+  background:linear-gradient(180deg,rgba(7,22,51,.78),rgba(4,13,31,.66));
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
 }
 .media-wrap{
   display:flex;
@@ -185,20 +249,23 @@ body{
 }
 .hero-frame{
   width:100%;
-  max-width:420px;
-  min-height:320px;
+  max-width:300px;
+  min-height:260px;
   display:flex;
   justify-content:center;
   align-items:center;
-  padding:10px;
+  padding:8px;
+  border-radius:8px;
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.08);
 }
 .hero{
   display:none;
   width:100%;
-  max-width:400px;
-  max-height:min(68vh,620px);
+  max-width:280px;
+  max-height:min(56vh,520px);
   object-fit:contain;
-  border-radius:18px;
+  border-radius:8px;
   box-shadow:var(--shadow);
   background:transparent;
 }
@@ -218,8 +285,8 @@ body{
   line-height:1;
   text-shadow:0 4px 16px rgba(0,0,0,.28);
 }
-.yes{color:var(--green);}
-.no{color:var(--red);}
+.yes{color:#4ade80;}
+.no{color:#fb7185;}
 .details{
   font-size:clamp(1.05rem,1.45vw,1.35rem);
   line-height:1.45;
@@ -235,8 +302,8 @@ body{
   display:inline-block;
   margin-top:10px;
   padding:8px 14px;
-  border-radius:999px;
-  background:rgba(0,0,0,.18);
+  border-radius:8px;
+  background:rgba(255,255,255,.07);
   border:1px solid rgba(255,255,255,.12);
   font-size:.95rem;
   color:rgba(255,255,255,.95);
@@ -260,8 +327,8 @@ body{
   align-items:center;
   gap:7px;
   padding:9px 13px;
-  border-radius:999px;
-  background:rgba(255,255,255,.08);
+  border-radius:8px;
+  background:rgba(255,255,255,.07);
   border:1px solid rgba(255,255,255,.12);
   color:#fff;
   font-size:.92rem;
@@ -276,9 +343,9 @@ body{
 .result-strip{
   margin-top:8px;
   padding:14px 16px;
-  border-radius:16px;
-  background:rgba(250,204,21,.14);
-  border:1px solid rgba(250,204,21,.30);
+  border-radius:8px;
+  background:rgba(250,204,21,.12);
+  border:1px solid rgba(250,204,21,.28);
   color:#fff;
   box-shadow:0 10px 24px rgba(0,0,0,.16);
   max-width:100%;
@@ -316,8 +383,8 @@ body{
   gap:8px;
   margin-top:14px;
   padding:9px 16px;
-  border-radius:999px;
-  background:rgba(250,204,21,.13);
+  border-radius:8px;
+  background:rgba(250,204,21,.12);
   border:1px solid rgba(250,204,21,.28);
   font-size:.95rem;
   color:#fff;
@@ -331,11 +398,11 @@ body{
 .standings-box{
   margin-top:18px;
   padding:16px 18px;
-  border-radius:18px;
-  background:rgba(0,0,0,.18);
-  border:1px solid rgba(255,255,255,.12);
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
+  border-radius:8px;
+  background:var(--surface);
+  border:1px solid var(--card-border);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
   max-width:720px;
   box-shadow:0 10px 30px rgba(0,0,0,.18);
 }
@@ -371,7 +438,7 @@ body{
   border:none;
   width:36px;
   height:36px;
-  border-radius:10px;
+  border-radius:8px;
   background:rgba(255,255,255,.10);
   color:#fff;
   font-size:1rem;
@@ -391,7 +458,7 @@ body{
 }
 .standings-table-wrap{
   overflow:hidden;
-  border-radius:14px;
+  border-radius:8px;
 }
 .standings-table{
   width:100%;
@@ -447,14 +514,19 @@ body{
 .facto-box{
   margin-top:18px;
   padding:16px 18px;
-  border-radius:18px;
-  background:rgba(0,0,0,.18);
-  border:1px solid rgba(255,255,255,.12);
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
+  border-radius:8px;
+  background:var(--surface);
+  border:1px solid var(--card-border);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
   max-width:720px;
   color:rgba(255,255,255,.94);
   box-shadow:0 10px 30px rgba(0,0,0,.18);
+}
+.manga-box{
+  max-width:none;
+  width:100%;
+  margin-top:0;
 }
 .market-heading,
 .confidential-title,
@@ -481,20 +553,20 @@ body{
 .market-track{
   position:relative;
   height:16px;
-  border-radius:999px;
+  border-radius:8px;
   background:rgba(255,255,255,.08);
   border:1px solid rgba(255,255,255,.10);
   overflow:hidden;
 }
 .market-fill-america{
   height:100%;
-  border-radius:999px;
+  border-radius:8px;
   background:linear-gradient(90deg,rgba(250,204,21,.72),rgba(250,204,21,.96));
   box-shadow:0 0 14px rgba(250,204,21,.24);
 }
 .market-fill-rival{
   height:100%;
-  border-radius:999px;
+  border-radius:8px;
   background:linear-gradient(90deg,rgba(255,255,255,.26),rgba(255,255,255,.58));
   box-shadow:0 0 12px rgba(255,255,255,.10);
 }
@@ -522,8 +594,17 @@ body{
   width:100%;
   max-width:520px;
   height:auto;
-  border-radius:14px;
+  border-radius:8px;
   box-shadow:0 10px 26px rgba(0,0,0,.22);
+}
+.manga-comic{
+  max-width:none;
+}
+.manga-box .section-figure img{
+  max-width:none;
+}
+.pumas-strip{
+  clip-path:inset(0 2.5% 0 0);
 }
 .section-figure figcaption{
   margin-top:10px;
@@ -542,6 +623,7 @@ body{
   max-width:220px;
   width:100%;
   height:auto;
+  opacity:.92;
 }
 
 @media (max-width:1080px){
@@ -550,6 +632,7 @@ body{
 }
 @media (max-width:860px){
   .shell{ padding:18px 16px 90px; }
+  .app-header{ margin-bottom:20px; }
   .layout{ grid-template-columns:1fr; gap:20px; }
   .content{ text-align:center; align-items:center; }
   .hero-frame{
@@ -592,10 +675,12 @@ body{
 <div class="bg-tapestry"></div>
 
 <main class="shell">
-  <h1 class="title">¿Hoy juega el América?</h1>
-  <div class="visit-counter">
-    👀 Visitas: <span id="busuanzi_value_site_pv">...</span>
-  </div>
+  <header class="app-header">
+    <h1 class="title">¿Hoy juega el América?</h1>
+    <div class="visit-counter">
+      👀 Visitas: <span id="busuanzi_value_site_pv">...</span>
+    </div>
+  </header>
 
   <div class="page-grid">
     <section class="main-stack">
@@ -604,7 +689,6 @@ body{
           <div class="hero-frame">
             <img id="imgSi" class="hero" src="hoy_juega_america.png" alt="Hoy juega el América">
             <img id="imgNo" class="hero" src="no_juega_america.png" alt="No juega el América">
-            <img id="imgTucanazo" class="hero" src="tucanazo.jpeg" alt="Tucanazo contra Pumas">
             <img id="imgCruzAzulProx" class="hero" src="CAZ_prox_2026.jpeg" alt="Próximo partido contra Cruz Azul">
             <img id="imgCruzAzulHoy" class="hero" src="CAZ_hoy_2026.jpeg" alt="Hoy juega contra Cruz Azul">
             <img id="imgNashvilleCoco" class="hero" src="nashville_coco.png" alt="Nashville Coco">
@@ -619,31 +703,45 @@ body{
           <div id="matchExtraInfo" class="match-extra"></div>
           <div id="broadcastInfo"></div>
           <div id="lastResultInfo"></div>
-          <div id="mangaAzulcrema"></div>
-          <div id="factoDeAve"></div>
           <div id="nextMatchInfo"></div>
           <div id="standingsInfo"></div>
           <div id="marketValueInfo"></div>
           <div id="funFact"></div>
           <div id="liguillaInfo"></div>
-
-          <div class="footer-copy">
-            <img src="chanfle.png" alt="El Chanfle" class="chanfle-img">
-          </div>
         </div>
       </div>
+      <div id="mangaAzulcrema"></div>
+      <div id="factoDeAve"></div>
     </section>
 
     <aside class="side-menu">
-      <div class="side-card">
-        <h3>Zona americanista</h3>
+      <details class="side-card" open>
+        <summary>
+          <h3>Zona americanista</h3>
+        </summary>
         <p>Mientras revisas si juega el América, aquí tienes dos extras para entretenerte un rato.</p>
         <div class="side-links">
-          <a href="trivia.html" class="side-link primary">Jugar trivia americanista</a>
-          <a href="https://jsainzs.github.io/memory-game-udacity/" class="side-link secondary">Ejercita tu memoria, papá</a>
+          <a href="trivia.html" class="side-link primary">
+            <span class="side-link-icon">?</span>
+            <span class="side-link-text">
+              <span class="side-link-title">Trivia americanista</span>
+              <span class="side-link-meta">Preguntas rápidas</span>
+            </span>
+          </a>
+          <a href="https://jsainzs.github.io/memory-game-udacity/" class="side-link secondary">
+            <span class="side-link-icon">▦</span>
+            <span class="side-link-text">
+              <span class="side-link-title">Memoria azulcrema</span>
+              <span class="side-link-meta">Juego de cartas</span>
+            </span>
+          </a>
         </div>
-      </div>
+      </details>
     </aside>
+  </div>
+
+  <div class="footer-copy">
+    <img src="chanfle.png" alt="El Chanfle" class="chanfle-img">
   </div>
 </main>
 
@@ -867,9 +965,37 @@ function getResultLabel(event){
   const as = event.intAwayScore ?? "-";
   return `${home} ${hs} - ${as} ${away}`;
 }
+function isLigaMxPlayoff(event){
+  const league = normalizeTeamName(event?.strLeague);
+  const group = normalizeTeamName(event?.strGroup);
+  const eventName = normalizeTeamName(event?.strEvent || event?.strFilename);
+
+  return (
+    LIGA_MX_KEYWORDS.some(l => league.includes(normalizeTeamName(l))) &&
+    (
+      group.includes("playoff") ||
+      group.includes("liguilla") ||
+      eventName.includes("playoff") ||
+      eventName.includes("liguilla") ||
+      Number(event?.intRound) >= 100
+    )
+  );
+}
 function getRoundLabel(event){
-  if(!event?.intRound) return null;
-  return `Jornada ${event.intRound}`;
+  const group = (event?.strGroup || "").trim();
+  if(group) return group;
+
+  const round = Number(event?.intRound);
+  if(!Number.isFinite(round) || round <= 0) return null;
+
+  if(isLigaMxPlayoff(event)){
+    if(round >= 120 && round < 130) return "Liguilla, cuartos de final";
+    if(round >= 130 && round < 140) return "Liguilla, semifinal";
+    if(round >= 140 && round < 150) return "Liguilla, final";
+    return "Liguilla";
+  }
+
+  return `Jornada ${round}`;
 }
 function getVenueLabel(event){
   if(!event) return null;
@@ -879,7 +1005,7 @@ function getVenueLabel(event){
 
 function hideAllImages(){
   [
-    "imgSi","imgNo","imgTucanazo","imgCruzAzulProx","imgCruzAzulHoy",
+    "imgSi","imgNo","imgCruzAzulProx","imgCruzAzulHoy",
     "imgNashvilleCoco","imgAmeTolucaSraAnti","imgBatallaToluca"
   ].forEach(id => {
     const el = document.getElementById(id);
@@ -893,7 +1019,6 @@ function showImage(mode){
   const images = {
     "general-yes": "imgSi",
     "general-no": "imgNo",
-    "pumas-liguilla": "imgTucanazo",
     "caz-prox": "imgCruzAzulProx",
     "caz-hoy": "imgCruzAzulHoy",
     "nashville-coco": "imgNashvilleCoco",
@@ -909,12 +1034,10 @@ function showImage(mode){
 }
 
 function chooseImageModeForUpcoming(event){
-  if(isVsPumas(event)) return "pumas-liguilla";
   if(isVsCruzAzul(event)) return "caz-prox";
   return "general-no";
 }
 function chooseImageModeForToday(event){
-  if(isVsPumas(event)) return "pumas-liguilla";
   if(isVsCruzAzul(event)) return "caz-hoy";
   if(isVsToluca(event)) return "toluca-hoy";
   return "general-yes";
@@ -1004,7 +1127,7 @@ function renderLastResult(lastEvent){
     </div>
   `;
 }
-  
+
 function renderNextMatch(nextEvent){
   const box = document.getElementById("nextMatchInfo");
   box.innerHTML = "";
@@ -1052,36 +1175,25 @@ function renderManualPumasNextMatch(){
   `;
 }
 
-function renderMangaAzulcrema(nextEvent, lastEvent){
+function renderMangaAzulcrema(event){
   const box = document.getElementById("mangaAzulcrema");
   box.innerHTML = "";
 
-  if(!(isVsAtlas(nextEvent) || isVsAtlas(lastEvent))) return;
+  if(!isVsPumas(event)) return;
 
   box.innerHTML = `
     <div class="manga-box">
       <div class="manga-title">Manga azulcrema</div>
       <figure class="section-figure">
-        <img src="recuerdo_tena_final.png" alt="Manga azulcrema sobre Atlas">
+        <img class="manga-comic pumas-strip" src="tucanazo.jpeg" alt="Tira cómica azulcrema para partido contra Pumas">
       </figure>
     </div>
   `;
 }
 
-function renderFactoDeAve(nextEvent, lastEvent){
+function renderFactoDeAve(){
   const box = document.getElementById("factoDeAve");
   box.innerHTML = "";
-
-  if(!(isVsAtlas(nextEvent) || isVsAtlas(lastEvent))) return;
-
-  box.innerHTML = `
-    <div class="facto-box">
-      <div class="facto-title">Facto de Ave</div>
-      <figure class="section-figure">
-        <img src="atlas_gol_tena.jpeg" alt="Facto de Ave sobre Atlas">
-      </figure>
-    </div>
-  `;
 }
 
 function renderBroadcastInfo(event){
@@ -1333,25 +1445,12 @@ function renderFunFact(event){
   }
 }
 
-function renderLiguillaHint(event){
+function renderLiguillaHint(){
   const box = document.getElementById("liguillaInfo");
   if(!box) return;
-
-  if(!event || !isVsPumas(event)){
-    box.innerHTML = "";
-    return;
-  }
-
-  box.innerHTML = `
-    <div class="confidential-box">
-      <div class="confidential-title">Se viene la liguilla</div>
-      <div class="confidential-text">
-        Se viene América vs Pumas en liguilla 🦅 — clásico de la capital.
-      </div>
-    </div>
-  `;
+  box.innerHTML = "";
 }
-  
+
 async function loadNextMatch(){
   const res = await fetch(NEXT_API_URL);
   if(!res.ok) throw new Error("No se pudo cargar eventsnext");
@@ -1488,19 +1587,19 @@ async function loadMatch(){
     const manualPumasMode = FORCE_PUMAS_LIGUILLA && !nextEvent;
     const focusEvent = manualPumasMode ? MANUAL_PUMAS_LIGUILLA_EVENT : (nextEvent || displayedLastEvent);
 
-    renderMangaAzulcrema(manualPumasMode ? null : nextEvent, manualPumasMode ? null : displayedLastEvent);
-    renderFactoDeAve(manualPumasMode ? null : nextEvent, manualPumasMode ? null : displayedLastEvent);
-    renderLiguillaHint(focusEvent);
+    renderMangaAzulcrema(focusEvent);
+    renderFactoDeAve(focusEvent);
+    renderLiguillaHint();
 
     if(!nextEvent){
       status.textContent = "No juega hoy";
       status.className = "status no";
 
       if(manualPumasMode){
-        showImage("pumas-liguilla");
+        showImage("general-no");
 
         details.innerHTML = `
-          <div><b>Pero ya se viene la liguilla</b></div>
+          <div><b>América está en liguilla</b></div>
           <div class="meta-line">América vs Pumas 🦅 · Clásico de la capital</div>
         `;
 
