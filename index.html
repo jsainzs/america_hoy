@@ -376,6 +376,37 @@ body{
   text-decoration:underline;
   text-underline-offset:3px;
 }
+.series-strip{
+  border-color:rgba(250,204,21,.42);
+  background:linear-gradient(135deg,rgba(250,204,21,.16),rgba(7,22,51,.58));
+}
+.series-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:12px;
+}
+.series-stat{
+  padding:10px;
+  border-radius:8px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+}
+.series-label{
+  display:block;
+  margin-bottom:4px;
+  font-size:.72rem;
+  text-transform:uppercase;
+  letter-spacing:.7px;
+  color:rgba(255,255,255,.62);
+  font-weight:800;
+}
+.series-value{
+  display:block;
+  color:#fff;
+  font-weight:900;
+  line-height:1.2;
+}
 
 .broadcast-box{
   display:inline-flex;
@@ -910,6 +941,16 @@ function formatMexicoDateTime(date){
 function parseDate(event){
   if(!event) return null;
 
+  if(event.dateEventLocal && event.strTimeLocal){
+    const time = event.strTimeLocal.length === 5
+      ? `${event.strTimeLocal}:00`
+      : event.strTimeLocal;
+
+    const raw = `${event.dateEventLocal}T${time}-06:00`;
+    const d = new Date(raw);
+    if(!isNaN(d)) return d;
+  }
+
   if(event.strTimestamp){
     let raw = event.strTimestamp.trim();
     raw = raw.replace(" ", "T");
@@ -929,16 +970,6 @@ function parseDate(event){
       raw += "Z";
     }
 
-    const d = new Date(raw);
-    if(!isNaN(d)) return d;
-  }
-
-  if(event.dateEventLocal && event.strTimeLocal){
-    const time = event.strTimeLocal.length === 5
-      ? `${event.strTimeLocal}:00`
-      : event.strTimeLocal;
-
-    const raw = `${event.dateEventLocal}T${time}-06:00`;
     const d = new Date(raw);
     if(!isNaN(d)) return d;
   }
@@ -1184,10 +1215,23 @@ function renderNextMatch(nextEvent){
 function renderManualPumasNextMatch(){
   const box = document.getElementById("nextMatchInfo");
   box.innerHTML = `
-    <div class="result-strip">
+    <div class="result-strip series-strip">
       <div class="result-strip-title">Serie de liguilla</div>
-      <div class="result-strip-main">América vs Pumas</div>
-      <div class="result-strip-sub">Cuartos de final · Ida: América 3 - 3 Pumas · Global: América 3 - 3 Pumas</div>
+      <div class="result-strip-main">Cuartos de final: América vs Pumas</div>
+      <div class="series-grid">
+        <div class="series-stat">
+          <span class="series-label">Ida</span>
+          <span class="series-value">América 3 - 3 Pumas</span>
+        </div>
+        <div class="series-stat">
+          <span class="series-label">Global</span>
+          <span class="series-value">América 3 - 3 Pumas</span>
+        </div>
+        <div class="series-stat">
+          <span class="series-label">Estado</span>
+          <span class="series-value">Serie abierta</span>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -1513,6 +1557,10 @@ function shouldUseManualPumasResult(){
     MANUAL_PUMAS_LIGUILLA_EVENT.intAwayScore !== null
   );
 }
+function wasEventPlayedToday(event){
+  const date = parseDate(event);
+  return Boolean(date && getMexicoDate(date) === getMexicoDate(new Date()));
+}
 
 async function resolveBestLastEvent(fallbackLastEvent){
   let best = fallbackLastEvent || null;
@@ -1682,6 +1730,26 @@ async function loadMatch(){
     const eventDate = getMexicoDate(date);
     const matchText = getMatchLabel(nextEvent);
     const dateText = formatMexicoDateTime(date);
+    const lastWasPlayedToday = shouldUseEventAsFinished(displayedLastEvent) && wasEventPlayedToday(displayedLastEvent);
+
+    if(lastWasPlayedToday){
+      status.textContent = "Hoy jugó";
+      status.className = "status no";
+      showImage("general-yes");
+      details.innerHTML = `
+        <div><b>${getResultLabel(displayedLastEvent)}</b></div>
+        <div class="meta-line">Cuartos de final · Ida · ${getAggregateLabel(displayedLastEvent) || "Marcador global pendiente"}</div>
+      `;
+      const lastDate = parseDate(displayedLastEvent);
+      if(lastDate) setReferenceTime(formatMexicoDateTime(lastDate));
+      renderMatchExtraInfo(displayedLastEvent, "past");
+      renderManualPumasNextMatch();
+      renderBroadcastInfo(displayedLastEvent);
+      renderStandings(displayedLastEvent, standingsData);
+      renderMarketValueInfo(displayedLastEvent, marketData);
+      renderFunFact(displayedLastEvent);
+      return;
+    }
 
     if(eventDate > today){
       status.textContent = "No juega hoy";
