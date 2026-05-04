@@ -766,14 +766,22 @@ const AMERICA_HOME_STADIUM = "Estadio Azteca";
 
 /* Evento manual mientras TheSportsDB no detecta la liguilla */
 const MANUAL_PUMAS_LIGUILLA_EVENT = {
+  idEvent: "2468902",
+  strTimestamp: "2026-05-03T23:00:00Z",
+  dateEvent: "2026-05-03",
+  dateEventLocal: "2026-05-03",
+  strTime: "23:00:00",
+  strTimeLocal: "18:00:00",
   strHomeTeam: "América",
   strAwayTeam: "Pumas UNAM",
   strLeague: "Liga BBVA MX",
   strVenue: AMERICA_HOME_STADIUM,
-  intRound: null,
-  intHomeScore: null,
-  intAwayScore: null,
-  strStatus: "Not Started"
+  intRound: "125",
+  intHomeScore: "3",
+  intAwayScore: "3",
+  strStatus: "Match Finished",
+  strSeriesStage: "Liguilla, cuartos de final - ida",
+  strAggregate: "Global: América 3 - 3 Pumas"
 };
 
 const BROADCAST_BY_LEAGUE = {
@@ -965,6 +973,10 @@ function getResultLabel(event){
   const as = event.intAwayScore ?? "-";
   return `${home} ${hs} - ${as} ${away}`;
 }
+function getAggregateLabel(event){
+  if(event?.strAggregate) return event.strAggregate;
+  return null;
+}
 function isLigaMxPlayoff(event){
   const league = normalizeTeamName(event?.strLeague);
   const group = normalizeTeamName(event?.strGroup);
@@ -982,6 +994,8 @@ function isLigaMxPlayoff(event){
   );
 }
 function getRoundLabel(event){
+  if(event?.strSeriesStage) return event.strSeriesStage;
+
   const group = (event?.strGroup || "").trim();
   if(group) return group;
 
@@ -1114,6 +1128,9 @@ function renderLastResult(lastEvent){
   const venue = getVenueLabel(lastEvent);
   if(venue) subParts.push(`en ${venue}`);
 
+  const aggregate = getAggregateLabel(lastEvent);
+  if(aggregate) subParts.push(aggregate);
+
   if(!hasScore) subParts.push("Marcador pendiente de confirmación");
 
   const videoLink = (lastEvent.strVideo || "").trim();
@@ -1168,9 +1185,9 @@ function renderManualPumasNextMatch(){
   const box = document.getElementById("nextMatchInfo");
   box.innerHTML = `
     <div class="result-strip">
-      <div class="result-strip-title">Próximo partido</div>
+      <div class="result-strip-title">Serie de liguilla</div>
       <div class="result-strip-main">América vs Pumas</div>
-      <div class="result-strip-sub">Liguilla · Clásico de la capital · Fecha y hora por confirmar en la API</div>
+      <div class="result-strip-sub">Cuartos de final · Ida: América 3 - 3 Pumas · Global: América 3 - 3 Pumas</div>
     </div>
   `;
 }
@@ -1596,13 +1613,21 @@ async function loadMatch(){
       status.className = "status no";
 
       if(manualPumasMode){
-        showImage("general-no");
+        const manualDate = parseDate(MANUAL_PUMAS_LIGUILLA_EVENT);
+        const manualWasToday = manualDate && getMexicoDate(manualDate) === getMexicoDate(new Date());
+
+        status.textContent = manualWasToday ? "Hoy jugó" : "No juega hoy";
+        status.className = "status no";
+        showImage(manualWasToday ? "general-yes" : "general-no");
 
         details.innerHTML = `
-          <div><b>América está en liguilla</b></div>
-          <div class="meta-line">América vs Pumas 🦅 · Clásico de la capital</div>
+          <div><b>${getResultLabel(MANUAL_PUMAS_LIGUILLA_EVENT)}</b></div>
+          <div class="meta-line">Cuartos de final · Ida · Global: América 3 - 3 Pumas</div>
         `;
 
+        if(manualDate) setReferenceTime(formatMexicoDateTime(manualDate));
+        renderLastResult(MANUAL_PUMAS_LIGUILLA_EVENT);
+        renderMatchExtraInfo(MANUAL_PUMAS_LIGUILLA_EVENT, "past");
         renderManualPumasNextMatch();
         renderBroadcastInfo(MANUAL_PUMAS_LIGUILLA_EVENT);
         renderStandings(MANUAL_PUMAS_LIGUILLA_EVENT, standingsData);
