@@ -1506,6 +1506,13 @@ function shouldUseEventAsFinished(event){
   const status = (event.strStatus || "").toLowerCase();
   return status.includes("finished") && event.intHomeScore !== null && event.intAwayScore !== null;
 }
+function shouldUseManualPumasResult(){
+  return (
+    FORCE_PUMAS_LIGUILLA &&
+    MANUAL_PUMAS_LIGUILLA_EVENT.intHomeScore !== null &&
+    MANUAL_PUMAS_LIGUILLA_EVENT.intAwayScore !== null
+  );
+}
 
 async function resolveBestLastEvent(fallbackLastEvent){
   let best = fallbackLastEvent || null;
@@ -1574,6 +1581,12 @@ async function loadMatch(){
     let nextEvent = nextData?.events?.[0] || null;
     let recentPlayedEvent = null;
     let lastEvent = rawLastData?.results?.[0] || null;
+    const useManualPumasResult = shouldUseManualPumasResult();
+
+    if(useManualPumasResult && nextEvent?.idEvent === MANUAL_PUMAS_LIGUILLA_EVENT.idEvent){
+      recentPlayedEvent = MANUAL_PUMAS_LIGUILLA_EVENT;
+      nextEvent = null;
+    }
 
     if(nextEvent){
       const nextDate = parseDate(nextEvent);
@@ -1590,7 +1603,9 @@ async function loadMatch(){
     }
 
     lastEvent = await resolveBestLastEvent(lastEvent);
-    const displayedLastEvent = recentPlayedEvent || lastEvent;
+    const displayedLastEvent = useManualPumasResult
+      ? MANUAL_PUMAS_LIGUILLA_EVENT
+      : (recentPlayedEvent || lastEvent);
 
     if(displayedLastEvent){
       renderLastResult(displayedLastEvent);
@@ -1601,7 +1616,7 @@ async function loadMatch(){
       saveTrackedNextEvent(nextEvent);
     }
 
-    const manualPumasMode = FORCE_PUMAS_LIGUILLA && !nextEvent;
+    const manualPumasMode = useManualPumasResult && !nextEvent;
     const focusEvent = manualPumasMode ? MANUAL_PUMAS_LIGUILLA_EVENT : (nextEvent || displayedLastEvent);
 
     renderMangaAzulcrema(focusEvent);
@@ -1616,7 +1631,7 @@ async function loadMatch(){
         const manualDate = parseDate(MANUAL_PUMAS_LIGUILLA_EVENT);
         const manualWasToday = manualDate && getMexicoDate(manualDate) === getMexicoDate(new Date());
 
-        status.textContent = manualWasToday ? "Hoy jugó" : "No juega hoy";
+        status.textContent = manualWasToday ? "Hoy jugó" : "Ya jugó";
         status.className = "status no";
         showImage(manualWasToday ? "general-yes" : "general-no");
 
