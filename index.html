@@ -120,108 +120,59 @@ body{
 .visit-counter span{ color:var(--accent); }
 
 .page-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 292px;
-  gap:22px;
-  align-items:start;
+  display:block;
 }
-.side-menu{ position:sticky; top:20px; }
-.side-card{
+.quick-nav{
+  margin:0 auto 22px;
+  padding:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:min(100%,920px);
   background:var(--surface);
   border:1px solid var(--card-border);
   border-radius:8px;
-  padding:14px;
-  box-shadow:var(--shadow);
+  box-shadow:0 12px 34px rgba(0,0,0,.22);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
 }
-.side-card summary{
-  list-style:none;
-  cursor:pointer;
-}
-.side-card summary::-webkit-details-marker{ display:none; }
-.side-card h3{
-  margin:0;
-  font-size:1rem;
-  font-weight:800;
-  color:#fff;
+.quick-link{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:10px;
-}
-.side-card h3::after{
-  content:"";
-  width:8px;
-  height:8px;
-  border-right:2px solid rgba(255,255,255,.72);
-  border-bottom:2px solid rgba(255,255,255,.72);
-  transform:rotate(45deg);
-  transition:transform .16s ease;
-}
-.side-card[open] h3::after{
-  transform:rotate(225deg);
-}
-.side-card p{
-  margin:12px 0;
-  font-size:.92rem;
-  line-height:1.45;
-  color:rgba(255,255,255,.82);
-}
-.side-links{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.side-link{
-  display:flex;
-  align-items:center;
-  gap:10px;
+  justify-content:center;
+  gap:8px;
+  min-height:42px;
+  padding:9px 13px;
+  border-radius:8px;
   text-decoration:none;
   font-weight:700;
-  padding:12px;
-  border-radius:8px;
+  color:#fff;
+  border:1px solid transparent;
   transition:transform .12s ease, opacity .12s ease, background .12s ease, border-color .12s ease;
 }
-.side-link-icon{
-  width:28px;
-  height:28px;
+.quick-link:hover{
+  transform:translateY(-1px);
+  opacity:.95;
+  background:rgba(255,255,255,.08);
+  border-color:rgba(255,255,255,.12);
+}
+.quick-link.accent{
+  color:#071633;
+  background:linear-gradient(135deg,var(--accent),var(--accent-strong));
+}
+.quick-link-icon{
+  width:24px;
+  height:24px;
   display:grid;
   place-items:center;
   flex:0 0 auto;
-  border-radius:8px;
-  background:rgba(0,0,0,.16);
+  border-radius:7px;
+  background:rgba(0,0,0,.14);
 }
-.side-link-text{
-  display:flex;
-  flex-direction:column;
-  gap:2px;
-  min-width:0;
-}
-.side-link-title{
-  line-height:1.15;
-}
-.side-link-meta{
-  font-size:.78rem;
-  line-height:1.2;
-  opacity:.78;
-}
-.side-link:hover{
-  transform:translateY(-1px);
-  opacity:.95;
-}
-.side-link.primary{
-  background:linear-gradient(135deg,var(--accent),var(--accent-strong));
-  color:#071633;
-}
-.side-link.secondary{
-  background:rgba(255,255,255,.08);
-  color:#fff;
-  border:1px solid rgba(255,255,255,.12);
-}
-.side-link.secondary:hover{
-  border-color:rgba(250,204,21,.38);
-  background:rgba(255,255,255,.12);
+.quick-link-text{
+  white-space:nowrap;
+  font-size:.92rem;
 }
 
 .main-stack{
@@ -351,6 +302,52 @@ body{
   backdrop-filter:blur(4px);
   -webkit-backdrop-filter:blur(4px);
 }
+.femenil-jump{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:min(100%,560px);
+  margin-top:14px;
+  padding:12px 14px;
+  border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-strong));
+  border:1px solid rgba(255,255,255,.30);
+  color:#071633;
+  font-size:.96rem;
+  font-weight:900;
+  text-decoration:none;
+  box-shadow:0 12px 26px rgba(0,0,0,.22);
+  text-shadow:none;
+}
+.femenil-jump:hover{
+  transform:translateY(-1px);
+}
+.femenil-jump-icon{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  flex:0 0 auto;
+  border-radius:8px;
+  background:rgba(7,22,51,.16);
+  font-size:1.12rem;
+}
+.femenil-jump-copy{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  min-width:0;
+}
+.femenil-jump-kicker{
+  font-size:.76rem;
+  line-height:1.15;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  color:rgba(7,22,51,.72);
+}
+.femenil-jump-title{
+  line-height:1.2;
+}
 .reference-time{
   margin-top:12px;
   font-size:.94rem;
@@ -377,9 +374,66 @@ body{
 
 #lastResultInfo,
 #nextMatchInfo,
+#femenilInfo,
 #mangaAzulcrema,
 #factoDeAve,
 #liguillaInfo{ width:100%; }
+
+.femenil-box{
+  margin-top:18px;
+  padding:16px 18px;
+  border-radius:8px;
+  background:linear-gradient(135deg,rgba(250,204,21,.14),rgba(11,32,71,.76));
+  border:1px solid rgba(250,204,21,.34);
+  color:rgba(255,255,255,.94);
+  box-shadow:0 10px 30px rgba(0,0,0,.18);
+}
+.femenil-kicker{
+  font-size:.78rem;
+  text-transform:uppercase;
+  letter-spacing:.7px;
+  color:rgba(255,255,255,.66);
+  font-weight:900;
+  margin-bottom:6px;
+}
+.femenil-title{
+  font-size:1.08rem;
+  color:#fff;
+  font-weight:900;
+  margin-bottom:10px;
+}
+.femenil-main{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin:12px 0;
+}
+.femenil-stat{
+  padding:10px;
+  border-radius:8px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+}
+.femenil-label{
+  display:block;
+  margin-bottom:4px;
+  font-size:.72rem;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  color:rgba(255,255,255,.62);
+  font-weight:800;
+}
+.femenil-value{
+  display:block;
+  color:#fff;
+  font-weight:900;
+  line-height:1.2;
+}
+.femenil-note{
+  font-size:.92rem;
+  line-height:1.45;
+  color:rgba(255,255,255,.82);
+}
 
 .result-strip{
   margin-top:8px;
@@ -707,15 +761,18 @@ body{
   opacity:.92;
 }
 
-@media (max-width:1080px){
-  .page-grid{ grid-template-columns:1fr; }
-  .side-menu{ position:static; order:-1; }
-}
 @media (max-width:860px){
   .shell{ padding:18px 16px 90px; }
   .app-header{ margin-bottom:20px; }
+  .quick-nav{
+    justify-content:flex-start;
+    overflow-x:auto;
+    margin-bottom:20px;
+  }
+  .quick-link{ flex:0 0 auto; }
   .layout{ grid-template-columns:1fr; gap:20px; }
   .content{ text-align:center; align-items:center; }
+  .femenil-jump{ text-align:left; }
   .hero-frame{
     max-width:100%;
     min-height:unset;
@@ -746,7 +803,8 @@ body{
   .status{ font-size:clamp(1.8rem,8vw,2.4rem); }
   .details{ font-size:1rem; }
   .series-grid,
-  .series-grid.complete{ grid-template-columns:1fr; }
+  .series-grid.complete,
+  .femenil-main{ grid-template-columns:1fr; }
   .hero{
     max-width:min(100%, 290px);
     max-height:44vh;
@@ -772,6 +830,25 @@ body{
       👀 Visitas: <span id="busuanzi_value_site_pv">...</span>
     </div>
   </header>
+
+  <nav class="quick-nav" aria-label="Secciones americanistas">
+    <a href="#femenilInfo" class="quick-link accent">
+      <span class="quick-link-icon">♀</span>
+      <span class="quick-link-text">Femenil</span>
+    </a>
+    <a href="#mangaAzulcrema" class="quick-link">
+      <span class="quick-link-icon">▣</span>
+      <span class="quick-link-text">Manga</span>
+    </a>
+    <a href="trivia.html" class="quick-link">
+      <span class="quick-link-icon">?</span>
+      <span class="quick-link-text">Trivia</span>
+    </a>
+    <a href="https://jsainzs.github.io/memory-game-udacity/" class="quick-link">
+      <span class="quick-link-icon">▦</span>
+      <span class="quick-link-text">Memoria</span>
+    </a>
+  </nav>
 
   <div class="page-grid">
     <section class="main-stack">
@@ -805,34 +882,10 @@ body{
           <div id="liguillaInfo"></div>
         </div>
       </div>
+      <div id="femenilInfo"></div>
       <div id="mangaAzulcrema"></div>
       <div id="factoDeAve"></div>
     </section>
-
-    <aside class="side-menu">
-      <details class="side-card" open>
-        <summary>
-          <h3>Zona americanista</h3>
-        </summary>
-        <p>Mientras revisas si juega el América, aquí tienes dos extras para entretenerte un rato.</p>
-        <div class="side-links">
-          <a href="trivia.html" class="side-link primary">
-            <span class="side-link-icon">?</span>
-            <span class="side-link-text">
-              <span class="side-link-title">Trivia americanista</span>
-              <span class="side-link-meta">Preguntas rápidas</span>
-            </span>
-          </a>
-          <a href="https://jsainzs.github.io/memory-game-udacity/" class="side-link secondary">
-            <span class="side-link-icon">▦</span>
-            <span class="side-link-text">
-              <span class="side-link-title">Memoria azulcrema</span>
-              <span class="side-link-meta">Juego de cartas</span>
-            </span>
-          </a>
-        </div>
-      </details>
-    </aside>
   </div>
 
   <div class="footer-copy">
@@ -853,6 +906,15 @@ const STANDINGS_VISIBLE_COUNT = 6;
 /* Mantener true mientras no haya próximo partido oficial registrado tras la eliminación */
 const FORCE_PUMAS_LIGUILLA = true;
 const AMERICA_SEASON_END_MESSAGE = "América quedó eliminado en cuartos de final. El torneo se acabó para el Ame y volveremos después del Mundial con un torneo nuevo.";
+const SHOW_FEMENIL_FINAL = true;
+const FEMENIL_FINAL = {
+  competition: "Liga MX Femenil",
+  stage: "Final",
+  matchup: "América Femenil vs Monterrey",
+  firstLeg: "Rayadas 1 - 0 América",
+  nextLeg: "Vuelta: domingo 17 de mayo, 12:00 h",
+  note: "El varonil ya cerró su torneo, pero el América Femenil todavía pelea el campeonato."
+};
 
 /* Fuerza manual del último partido correcto mientras la API agregada se rezaga */
 const MANUAL_LAST_FINISHED_EVENT_ID = "";
@@ -1308,6 +1370,35 @@ function renderManualPumasNextMatch(){
   `;
 }
 
+function renderFemenilFinalBox(){
+  const box = document.getElementById("femenilInfo");
+  if(!box) return;
+  box.innerHTML = "";
+  if(!SHOW_FEMENIL_FINAL) return;
+
+  box.innerHTML = `
+    <section class="femenil-box" aria-labelledby="femenilTitle">
+      <div class="femenil-kicker">Un momento... ¡juega el América Femenil!</div>
+      <div id="femenilTitle" class="femenil-title">${FEMENIL_FINAL.stage}: ${FEMENIL_FINAL.matchup}</div>
+      <div class="femenil-main">
+        <div class="femenil-stat">
+          <span class="femenil-label">Competencia</span>
+          <span class="femenil-value">${FEMENIL_FINAL.competition}</span>
+        </div>
+        <div class="femenil-stat">
+          <span class="femenil-label">Ida</span>
+          <span class="femenil-value">${FEMENIL_FINAL.firstLeg}</span>
+        </div>
+        <div class="femenil-stat">
+          <span class="femenil-label">Vuelta</span>
+          <span class="femenil-value">${FEMENIL_FINAL.nextLeg}</span>
+        </div>
+      </div>
+      <div class="femenil-note">${FEMENIL_FINAL.note}</div>
+    </section>
+  `;
+}
+
 function renderMangaAzulcrema(event){
   const box = document.getElementById("mangaAzulcrema");
   box.innerHTML = "";
@@ -1668,6 +1759,7 @@ async function loadMatch(){
   const liguillaInfo = document.getElementById("liguillaInfo");
   const lastResultInfo = document.getElementById("lastResultInfo");
   const nextMatchInfo = document.getElementById("nextMatchInfo");
+  const femenilInfo = document.getElementById("femenilInfo");
   const mangaAzulcrema = document.getElementById("mangaAzulcrema");
   const factoDeAve = document.getElementById("factoDeAve");
   const matchExtraInfo = document.getElementById("matchExtraInfo");
@@ -1682,6 +1774,7 @@ async function loadMatch(){
   liguillaInfo.innerHTML = "";
   lastResultInfo.innerHTML = "";
   nextMatchInfo.innerHTML = "";
+  femenilInfo.innerHTML = "";
   mangaAzulcrema.innerHTML = "";
   factoDeAve.innerHTML = "";
   matchExtraInfo.innerHTML = "";
@@ -1703,6 +1796,13 @@ async function loadMatch(){
       details.innerHTML = `
         <div><b>${AMERICA_SEASON_END_MESSAGE}</b></div>
         <div class="meta-line">Cuartos de final · Global 6-6 · Pumas avanzó por mejor posición en la tabla</div>
+        <a class="femenil-jump" href="#femenilInfo">
+          <span class="femenil-jump-icon">♀</span>
+          <span class="femenil-jump-copy">
+            <span class="femenil-jump-kicker">Un momento...</span>
+            <span class="femenil-jump-title">¡Juega el América Femenil!</span>
+          </span>
+        </a>
       `;
 
       renderLastResult(MANUAL_PUMAS_LIGUILLA_EVENT);
@@ -1713,6 +1813,7 @@ async function loadMatch(){
       renderMarketValueInfo(MANUAL_PUMAS_LIGUILLA_EVENT, marketData);
       renderMangaAzulcrema(MANUAL_PUMAS_LIGUILLA_EVENT);
       renderFactoDeAve(MANUAL_PUMAS_LIGUILLA_EVENT);
+      renderFemenilFinalBox();
       renderLiguillaHint();
       return;
     }
@@ -1778,6 +1879,13 @@ async function loadMatch(){
         details.innerHTML = `
           <div><b>${AMERICA_SEASON_END_MESSAGE}</b></div>
           <div class="meta-line">Cuartos de final · Global 6-6 · Pumas avanzó por mejor posición en la tabla</div>
+          <a class="femenil-jump" href="#femenilInfo">
+            <span class="femenil-jump-icon">♀</span>
+            <span class="femenil-jump-copy">
+              <span class="femenil-jump-kicker">Un momento...</span>
+              <span class="femenil-jump-title">¡Juega el América Femenil!</span>
+            </span>
+          </a>
         `;
 
         renderLastResult(MANUAL_PUMAS_LIGUILLA_EVENT);
@@ -1786,6 +1894,7 @@ async function loadMatch(){
         renderBroadcastInfo(MANUAL_PUMAS_LIGUILLA_EVENT);
         renderStandings(MANUAL_PUMAS_LIGUILLA_EVENT, standingsData);
         renderMarketValueInfo(MANUAL_PUMAS_LIGUILLA_EVENT, marketData);
+        renderFemenilFinalBox();
         return;
       }
 
