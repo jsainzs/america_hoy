@@ -270,6 +270,47 @@ body{
   background:transparent;
 }
 .hero.visible{ display:block; }
+.season-comic{
+  display:none;
+  position:relative;
+  width:100%;
+  max-width:280px;
+  border-radius:8px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.season-comic.visible{ display:block; }
+.season-comic img{
+  display:block;
+  width:100%;
+  height:auto;
+}
+.season-comic .speech{
+  position:absolute;
+  top:8px;
+  left:10px;
+  right:10px;
+  padding:7px 10px;
+  border-radius:8px;
+  background:rgba(255,255,255,.94);
+  color:#071633;
+  font-size:.72rem;
+  line-height:1.1;
+  font-weight:900;
+  text-align:center;
+  white-space:nowrap;
+  box-shadow:0 8px 20px rgba(0,0,0,.22);
+}
+.season-comic .speech::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-8px;
+  transform:translateX(-50%);
+  border-width:8px 6px 0 6px;
+  border-style:solid;
+  border-color:rgba(255,255,255,.94) transparent transparent transparent;
+}
 
 .content{
   display:flex;
@@ -386,6 +427,9 @@ body{
   gap:10px;
   margin-top:12px;
 }
+.series-grid.complete{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
 .series-stat{
   padding:10px;
   border-radius:8px;
@@ -406,6 +450,12 @@ body{
   color:#fff;
   font-weight:900;
   line-height:1.2;
+}
+.series-note{
+  margin-top:12px;
+  font-size:.9rem;
+  line-height:1.45;
+  color:rgba(255,255,255,.84);
 }
 
 .broadcast-box{
@@ -675,6 +725,7 @@ body{
     max-width:min(100%, 330px);
     max-height:50vh;
   }
+  .season-comic{ max-width:min(100%, 330px); }
   .market-label{ text-align:left; width:100%; }
   .market-box,
   .confidential-box,
@@ -694,9 +745,18 @@ body{
   .title{ font-size:clamp(1.9rem,8vw,2.5rem); }
   .status{ font-size:clamp(1.8rem,8vw,2.4rem); }
   .details{ font-size:1rem; }
+  .series-grid,
+  .series-grid.complete{ grid-template-columns:1fr; }
   .hero{
     max-width:min(100%, 290px);
     max-height:44vh;
+  }
+  .season-comic{ max-width:min(100%, 290px); }
+  .season-comic .speech{
+    top:7px;
+    left:8px;
+    right:8px;
+    font-size:.64rem;
   }
 }
 </style>
@@ -725,6 +785,10 @@ body{
             <img id="imgNashvilleCoco" class="hero" src="nashville_coco.png" alt="Nashville Coco">
             <img id="imgAmeTolucaSraAnti" class="hero" src="ame-toluca-sra_anti.png" alt="América vs Toluca">
             <img id="imgBatallaToluca" class="hero" src="toluca_campal.png" alt="Batalla América vs Toluca">
+            <div id="seasonOverComic" class="season-comic" role="img" aria-label="Americanistas mirando hacia el Mundial y el regreso del América">
+              <img src="mundial_americanistas_ochoa_comic.png" alt="">
+              <div class="speech">Ahora miramos al Mundial. Después volvemos con todo.</div>
+            </div>
           </div>
         </div>
 
@@ -786,8 +850,9 @@ const STANDINGS_URL = "./standings.json";
 const TZ = "America/Mexico_City";
 const STANDINGS_VISIBLE_COUNT = 6;
 
-/* Cambiar a false cuando termine la vuelta contra Pumas */
+/* Mantener true mientras no haya próximo partido oficial registrado tras la eliminación */
 const FORCE_PUMAS_LIGUILLA = true;
+const AMERICA_SEASON_END_MESSAGE = "América quedó eliminado en cuartos de final. El torneo se acabó para el Ame y volveremos después del Mundial con un torneo nuevo.";
 
 /* Fuerza manual del último partido correcto mientras la API agregada se rezaga */
 const MANUAL_LAST_FINISHED_EVENT_ID = "";
@@ -795,24 +860,20 @@ const MANUAL_LAST_FINISHED_EVENT_ID = "";
 /* Cuando América sea local, mostrar este estadio en vez del dato dudoso de la API */
 const AMERICA_HOME_STADIUM = "Estadio Azteca";
 
-/* Evento manual mientras TheSportsDB no detecta la liguilla */
+/* Resultado manual de liguilla mientras TheSportsDB se pone al corriente */
 const MANUAL_PUMAS_LIGUILLA_EVENT = {
-  idEvent: "2468902",
-  strTimestamp: "2026-05-03T23:00:00Z",
-  dateEvent: "2026-05-03",
-  dateEventLocal: "2026-05-03",
-  strTime: "23:00:00",
-  strTimeLocal: "18:00:00",
-  strHomeTeam: "América",
-  strAwayTeam: "Pumas UNAM",
+  idEvent: "pumas-quarterfinal-2026-manual",
+  strHomeTeam: "Pumas UNAM",
+  strAwayTeam: "América",
   strLeague: "Liga BBVA MX",
-  strVenue: AMERICA_HOME_STADIUM,
+  strVenue: "Estadio Olímpico Universitario",
   intRound: "125",
   intHomeScore: "3",
   intAwayScore: "3",
   strStatus: "Match Finished",
-  strSeriesStage: "Liguilla, cuartos de final - ida",
-  strAggregate: "Global: América 3 - 3 Pumas"
+  strSeriesStage: "Liguilla, cuartos de final - vuelta",
+  strAggregate: "Global: América 6 - 6 Pumas",
+  strSeriesOutcome: "Pumas avanzó por mejor posición en la tabla: Pumas #1, América #8."
 };
 
 const BROADCAST_BY_LEAGUE = {
@@ -1051,7 +1112,8 @@ function getVenueLabel(event){
 function hideAllImages(){
   [
     "imgSi","imgNo","imgCruzAzulProx","imgCruzAzulHoy",
-    "imgNashvilleCoco","imgAmeTolucaSraAnti","imgBatallaToluca"
+    "imgNashvilleCoco","imgAmeTolucaSraAnti","imgBatallaToluca",
+    "seasonOverComic"
   ].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.classList.remove("visible");
@@ -1068,7 +1130,8 @@ function showImage(mode){
     "caz-hoy": "imgCruzAzulHoy",
     "nashville-coco": "imgNashvilleCoco",
     "toluca-hoy": "imgAmeTolucaSraAnti",
-    "toluca-pasado": "imgBatallaToluca"
+    "toluca-pasado": "imgBatallaToluca",
+    "season-over": "seasonOverComic"
   };
 
   const id = images[mode];
@@ -1162,6 +1225,8 @@ function renderLastResult(lastEvent){
   const aggregate = getAggregateLabel(lastEvent);
   if(aggregate) subParts.push(aggregate);
 
+  if(lastEvent.strSeriesOutcome) subParts.push(lastEvent.strSeriesOutcome);
+
   if(!hasScore) subParts.push("Marcador pendiente de confirmación");
 
   const videoLink = (lastEvent.strVideo || "").trim();
@@ -1216,21 +1281,28 @@ function renderManualPumasNextMatch(){
   const box = document.getElementById("nextMatchInfo");
   box.innerHTML = `
     <div class="result-strip series-strip">
-      <div class="result-strip-title">Serie de liguilla</div>
+      <div class="result-strip-title">Serie de liguilla terminada</div>
       <div class="result-strip-main">Cuartos de final: América vs Pumas</div>
-      <div class="series-grid">
+      <div class="series-grid complete">
         <div class="series-stat">
           <span class="series-label">Ida</span>
           <span class="series-value">América 3 - 3 Pumas</span>
         </div>
         <div class="series-stat">
+          <span class="series-label">Vuelta</span>
+          <span class="series-value">Pumas 3 - 3 América</span>
+        </div>
+        <div class="series-stat">
           <span class="series-label">Global</span>
-          <span class="series-value">América 3 - 3 Pumas</span>
+          <span class="series-value">América 6 - 6 Pumas</span>
         </div>
         <div class="series-stat">
           <span class="series-label">Estado</span>
-          <span class="series-value">Serie abierta</span>
+          <span class="series-value">América eliminado</span>
         </div>
+      </div>
+      <div class="series-note">
+        Pumas avanzó por mejor posición en la tabla general. América cerró el Clausura 2026 y volverá después del Mundial con un torneo nuevo.
       </div>
     </div>
   `;
@@ -1244,9 +1316,9 @@ function renderMangaAzulcrema(event){
 
   box.innerHTML = `
     <div class="manga-box">
-      <div class="manga-title">Manga azulcrema</div>
+      <div class="manga-title">Manga azulcrema: y nos volvieron a ganar con empate</div>
       <figure class="section-figure">
-        <img class="manga-comic pumas-strip" src="tucanazo.jpeg" alt="Tira cómica azulcrema para partido contra Pumas">
+        <img class="manga-comic pumas-strip" src="borregos_ame.jpeg" alt="Manga azulcrema: y nos volvieron a ganar con empate">
       </figure>
     </div>
   `;
@@ -1616,6 +1688,35 @@ async function loadMatch(){
   hideAllImages();
 
   try{
+    const useManualPumasResult = shouldUseManualPumasResult();
+
+    if(useManualPumasResult){
+      const [marketData, standingsData] = await Promise.all([
+        loadMarketValues().catch(() => null),
+        loadStandings().catch(() => null)
+      ]);
+
+      status.textContent = "Torneo terminado";
+      status.className = "status no";
+      showImage("season-over");
+
+      details.innerHTML = `
+        <div><b>${AMERICA_SEASON_END_MESSAGE}</b></div>
+        <div class="meta-line">Cuartos de final · Global 6-6 · Pumas avanzó por mejor posición en la tabla</div>
+      `;
+
+      renderLastResult(MANUAL_PUMAS_LIGUILLA_EVENT);
+      renderMatchExtraInfo(MANUAL_PUMAS_LIGUILLA_EVENT, "past");
+      renderManualPumasNextMatch();
+      renderBroadcastInfo(MANUAL_PUMAS_LIGUILLA_EVENT);
+      renderStandings(MANUAL_PUMAS_LIGUILLA_EVENT, standingsData);
+      renderMarketValueInfo(MANUAL_PUMAS_LIGUILLA_EVENT, marketData);
+      renderMangaAzulcrema(MANUAL_PUMAS_LIGUILLA_EVENT);
+      renderFactoDeAve(MANUAL_PUMAS_LIGUILLA_EVENT);
+      renderLiguillaHint();
+      return;
+    }
+
     const [nextData, rawLastData, marketData, standingsData] = await Promise.all([
       loadNextMatch(),
       loadLastMatch().catch(() => null),
@@ -1629,12 +1730,6 @@ async function loadMatch(){
     let nextEvent = nextData?.events?.[0] || null;
     let recentPlayedEvent = null;
     let lastEvent = rawLastData?.results?.[0] || null;
-    const useManualPumasResult = shouldUseManualPumasResult();
-
-    if(useManualPumasResult && nextEvent?.idEvent === MANUAL_PUMAS_LIGUILLA_EVENT.idEvent){
-      recentPlayedEvent = MANUAL_PUMAS_LIGUILLA_EVENT;
-      nextEvent = null;
-    }
 
     if(nextEvent){
       const nextDate = parseDate(nextEvent);
@@ -1676,19 +1771,15 @@ async function loadMatch(){
       status.className = "status no";
 
       if(manualPumasMode){
-        const manualDate = parseDate(MANUAL_PUMAS_LIGUILLA_EVENT);
-        const manualWasToday = manualDate && getMexicoDate(manualDate) === getMexicoDate(new Date());
-
-        status.textContent = manualWasToday ? "Hoy jugó" : "Ya jugó";
+        status.textContent = "Torneo terminado";
         status.className = "status no";
-        showImage(manualWasToday ? "general-yes" : "general-no");
+        showImage("season-over");
 
         details.innerHTML = `
-          <div><b>${getResultLabel(MANUAL_PUMAS_LIGUILLA_EVENT)}</b></div>
-          <div class="meta-line">Cuartos de final · Ida · Global: América 3 - 3 Pumas</div>
+          <div><b>${AMERICA_SEASON_END_MESSAGE}</b></div>
+          <div class="meta-line">Cuartos de final · Global 6-6 · Pumas avanzó por mejor posición en la tabla</div>
         `;
 
-        if(manualDate) setReferenceTime(formatMexicoDateTime(manualDate));
         renderLastResult(MANUAL_PUMAS_LIGUILLA_EVENT);
         renderMatchExtraInfo(MANUAL_PUMAS_LIGUILLA_EVENT, "past");
         renderManualPumasNextMatch();
@@ -1738,7 +1829,7 @@ async function loadMatch(){
       showImage("general-yes");
       details.innerHTML = `
         <div><b>${getResultLabel(displayedLastEvent)}</b></div>
-        <div class="meta-line">Cuartos de final · Ida · ${getAggregateLabel(displayedLastEvent) || "Marcador global pendiente"}</div>
+        <div class="meta-line">Cuartos de final · ${getAggregateLabel(displayedLastEvent) || "Marcador global pendiente"}${displayedLastEvent.strSeriesOutcome ? ` · ${displayedLastEvent.strSeriesOutcome}` : ""}</div>
       `;
       const lastDate = parseDate(displayedLastEvent);
       if(lastDate) setReferenceTime(formatMexicoDateTime(lastDate));
