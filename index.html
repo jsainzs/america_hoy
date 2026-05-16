@@ -846,7 +846,7 @@ body{
     </a>
     <a href="https://jsainzs.github.io/memory-game-udacity/" class="quick-link">
       <span class="quick-link-icon">▦</span>
-      <span class="quick-link-text">Memoria</span>
+      <span class="quick-link-text">Memorama Azulcrema</span>
     </a>
   </nav>
 
@@ -913,6 +913,7 @@ const FEMENIL_FINAL = {
   matchup: "América Femenil vs Monterrey",
   firstLeg: "Rayadas 1 - 0 América",
   nextLeg: "Vuelta: domingo 17 de mayo, 12:00 h",
+  nextLegDate: "2026-05-17",
   note: "El varonil ya cerró su torneo, pero el América Femenil todavía pelea el campeonato."
 };
 
@@ -1060,6 +1061,17 @@ function formatMexicoDateTime(date){
     hour:"2-digit",
     minute:"2-digit"
   }).format(date);
+}
+function dateStringToMexicoNoon(dateString){
+  if(!dateString) return null;
+  const d = new Date(`${dateString}T12:00:00-06:00`);
+  return isNaN(d) ? null : d;
+}
+function getDateDiffInDays(targetDateString, baseDate = new Date()){
+  const target = dateStringToMexicoNoon(targetDateString);
+  const base = dateStringToMexicoNoon(getMexicoDate(baseDate));
+  if(!target || !base) return null;
+  return Math.round((target.getTime() - base.getTime()) / (24 * 60 * 60 * 1000));
 }
 function parseDate(event){
   if(!event) return null;
@@ -1370,15 +1382,63 @@ function renderManualPumasNextMatch(){
   `;
 }
 
+function getFemenilFinalCallout(){
+  const diff = getDateDiffInDays(FEMENIL_FINAL.nextLegDate);
+
+  if(diff === 0){
+    return {
+      kicker: "Un momento...",
+      title: "¡Hoy juega el América Femenil!",
+      icon: "♀"
+    };
+  }
+
+  if(diff === 1){
+    return {
+      kicker: "Ojo con mañana",
+      title: "América Femenil juega la vuelta de la final",
+      icon: "♀"
+    };
+  }
+
+  if(diff !== null && diff > 1){
+    return {
+      kicker: "Se viene final",
+      title: `América Femenil juega en ${diff} días`,
+      icon: "♀"
+    };
+  }
+
+  return {
+    kicker: "Final femenil",
+    title: "Revisa cómo cerró el América Femenil",
+    icon: "♀"
+  };
+}
+
+function renderFemenilJump(){
+  const callout = getFemenilFinalCallout();
+  return `
+    <a class="femenil-jump" href="#femenilInfo">
+      <span class="femenil-jump-icon">${callout.icon}</span>
+      <span class="femenil-jump-copy">
+        <span class="femenil-jump-kicker">${callout.kicker}</span>
+        <span class="femenil-jump-title">${callout.title}</span>
+      </span>
+    </a>
+  `;
+}
+
 function renderFemenilFinalBox(){
   const box = document.getElementById("femenilInfo");
   if(!box) return;
   box.innerHTML = "";
   if(!SHOW_FEMENIL_FINAL) return;
+  const callout = getFemenilFinalCallout();
 
   box.innerHTML = `
     <section class="femenil-box" aria-labelledby="femenilTitle">
-      <div class="femenil-kicker">Un momento... ¡juega el América Femenil!</div>
+      <div class="femenil-kicker">${callout.kicker}</div>
       <div id="femenilTitle" class="femenil-title">${FEMENIL_FINAL.stage}: ${FEMENIL_FINAL.matchup}</div>
       <div class="femenil-main">
         <div class="femenil-stat">
@@ -1796,13 +1856,7 @@ async function loadMatch(){
       details.innerHTML = `
         <div><b>${AMERICA_SEASON_END_MESSAGE}</b></div>
         <div class="meta-line">Cuartos de final · Global 6-6 · Pumas avanzó por mejor posición en la tabla</div>
-        <a class="femenil-jump" href="#femenilInfo">
-          <span class="femenil-jump-icon">♀</span>
-          <span class="femenil-jump-copy">
-            <span class="femenil-jump-kicker">Un momento...</span>
-            <span class="femenil-jump-title">¡Juega el América Femenil!</span>
-          </span>
-        </a>
+        ${renderFemenilJump()}
       `;
 
       renderLastResult(MANUAL_PUMAS_LIGUILLA_EVENT);
@@ -1879,13 +1933,7 @@ async function loadMatch(){
         details.innerHTML = `
           <div><b>${AMERICA_SEASON_END_MESSAGE}</b></div>
           <div class="meta-line">Cuartos de final · Global 6-6 · Pumas avanzó por mejor posición en la tabla</div>
-          <a class="femenil-jump" href="#femenilInfo">
-            <span class="femenil-jump-icon">♀</span>
-            <span class="femenil-jump-copy">
-              <span class="femenil-jump-kicker">Un momento...</span>
-              <span class="femenil-jump-title">¡Juega el América Femenil!</span>
-            </span>
-          </a>
+          ${renderFemenilJump()}
         `;
 
         renderLastResult(MANUAL_PUMAS_LIGUILLA_EVENT);
