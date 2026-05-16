@@ -180,6 +180,12 @@ body{
   flex-direction:column;
   gap:18px;
 }
+.featured-femenil{
+  margin-bottom:22px;
+}
+.featured-femenil:empty{
+  display:none;
+}
 .layout{
   display:grid;
   grid-template-columns:minmax(180px,300px) minmax(0,1fr);
@@ -380,39 +386,61 @@ body{
 #liguillaInfo{ width:100%; }
 
 .femenil-box{
-  margin-top:18px;
-  padding:16px 18px;
+  scroll-margin-top:22px;
+  margin-top:22px;
+  margin-bottom:10px;
+  padding:18px;
   border-radius:8px;
-  background:linear-gradient(135deg,rgba(250,204,21,.14),rgba(11,32,71,.76));
-  border:1px solid rgba(250,204,21,.34);
+  background:
+    linear-gradient(135deg,rgba(250,204,21,.20),rgba(11,32,71,.84)),
+    var(--surface);
+  border:2px solid rgba(250,204,21,.58);
   color:rgba(255,255,255,.94);
-  box-shadow:0 10px 30px rgba(0,0,0,.18);
+  box-shadow:0 16px 44px rgba(0,0,0,.28);
+}
+.femenil-hero{
+  display:block;
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  border-radius:8px;
+  margin-bottom:14px;
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 10px 28px rgba(0,0,0,.22);
 }
 .femenil-kicker{
-  font-size:.78rem;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:6px 9px;
+  border-radius:8px;
+  background:rgba(250,204,21,.18);
+  border:1px solid rgba(250,204,21,.30);
+  font-size:.76rem;
   text-transform:uppercase;
   letter-spacing:.7px;
-  color:rgba(255,255,255,.66);
-  font-weight:900;
-  margin-bottom:6px;
-}
-.femenil-title{
-  font-size:1.08rem;
-  color:#fff;
+  color:var(--accent);
   font-weight:900;
   margin-bottom:10px;
 }
+.femenil-title{
+  font-size:clamp(1.25rem,2.3vw,1.75rem);
+  color:#fff;
+  font-weight:900;
+  margin-bottom:10px;
+  line-height:1.1;
+}
 .femenil-main{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:10px;
   margin:12px 0;
 }
 .femenil-stat{
-  padding:10px;
+  padding:12px;
   border-radius:8px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.16);
 }
 .femenil-label{
   display:block;
@@ -429,10 +457,14 @@ body{
   font-weight:900;
   line-height:1.2;
 }
+.femenil-stat.wide{
+  grid-column:1/-1;
+}
 .femenil-note{
   font-size:.92rem;
   line-height:1.45;
   color:rgba(255,255,255,.82);
+  max-width:760px;
 }
 
 .result-strip{
@@ -832,7 +864,7 @@ body{
   </header>
 
   <nav class="quick-nav" aria-label="Secciones americanistas">
-    <a href="#femenilInfo" class="quick-link accent">
+    <a id="femenilNavLink" href="#femenilInfo" class="quick-link accent">
       <span class="quick-link-icon">♀</span>
       <span class="quick-link-text">Femenil</span>
     </a>
@@ -852,6 +884,7 @@ body{
 
   <div class="page-grid">
     <section class="main-stack">
+      <div id="featuredFemenilInfo" class="featured-femenil"></div>
       <div class="layout">
         <div class="media-wrap">
           <div class="hero-frame">
@@ -914,6 +947,11 @@ const FEMENIL_FINAL = {
   firstLeg: "Rayadas 1 - 0 América",
   nextLeg: "Vuelta: domingo 17 de mayo, 12:00 h",
   nextLegDate: "2026-05-17",
+  firstLegVenue: "Estadio BBVA",
+  nextLegVenue: "Estadio Azteca",
+  spotlightImage: "femenil_final_america_monterrey.png",
+  spotlightStartDate: "2026-05-16",
+  spotlightEndDate: "2026-05-18",
   note: "El varonil ya cerró su torneo, pero el América Femenil todavía pelea el campeonato."
 };
 
@@ -1072,6 +1110,16 @@ function getDateDiffInDays(targetDateString, baseDate = new Date()){
   const base = dateStringToMexicoNoon(getMexicoDate(baseDate));
   if(!target || !base) return null;
   return Math.round((target.getTime() - base.getTime()) / (24 * 60 * 60 * 1000));
+}
+function isMexicoDateInRange(startDateString, endDateString, baseDate = new Date()){
+  const current = getMexicoDate(baseDate);
+  return current >= startDateString && current <= endDateString;
+}
+function shouldFeatureFemenilFinal(){
+  return (
+    SHOW_FEMENIL_FINAL &&
+    isMexicoDateInRange(FEMENIL_FINAL.spotlightStartDate, FEMENIL_FINAL.spotlightEndDate)
+  );
 }
 function parseDate(event){
   if(!event) return null;
@@ -1418,8 +1466,9 @@ function getFemenilFinalCallout(){
 
 function renderFemenilJump(){
   const callout = getFemenilFinalCallout();
+  const target = shouldFeatureFemenilFinal() ? "featuredFemenilInfo" : "femenilInfo";
   return `
-    <a class="femenil-jump" href="#femenilInfo">
+    <a class="femenil-jump" href="#${target}">
       <span class="femenil-jump-icon">${callout.icon}</span>
       <span class="femenil-jump-copy">
         <span class="femenil-jump-kicker">${callout.kicker}</span>
@@ -1430,14 +1479,19 @@ function renderFemenilJump(){
 }
 
 function renderFemenilFinalBox(){
-  const box = document.getElementById("femenilInfo");
+  const isFeatured = shouldFeatureFemenilFinal();
+  const featuredBox = document.getElementById("featuredFemenilInfo");
+  const regularBox = document.getElementById("femenilInfo");
+  const box = isFeatured ? featuredBox : regularBox;
+  if(featuredBox) featuredBox.innerHTML = "";
+  if(regularBox) regularBox.innerHTML = "";
   if(!box) return;
-  box.innerHTML = "";
   if(!SHOW_FEMENIL_FINAL) return;
   const callout = getFemenilFinalCallout();
 
   box.innerHTML = `
     <section class="femenil-box" aria-labelledby="femenilTitle">
+      ${isFeatured ? `<img class="femenil-hero" src="${FEMENIL_FINAL.spotlightImage}" alt="América Femenil contra Monterrey en la final">` : ""}
       <div class="femenil-kicker">${callout.kicker}</div>
       <div id="femenilTitle" class="femenil-title">${FEMENIL_FINAL.stage}: ${FEMENIL_FINAL.matchup}</div>
       <div class="femenil-main">
@@ -1450,8 +1504,20 @@ function renderFemenilFinalBox(){
           <span class="femenil-value">${FEMENIL_FINAL.firstLeg}</span>
         </div>
         <div class="femenil-stat">
+          <span class="femenil-label">Sede ida</span>
+          <span class="femenil-value">${FEMENIL_FINAL.firstLegVenue}</span>
+        </div>
+        <div class="femenil-stat">
           <span class="femenil-label">Vuelta</span>
           <span class="femenil-value">${FEMENIL_FINAL.nextLeg}</span>
+        </div>
+        <div class="femenil-stat">
+          <span class="femenil-label">Sede vuelta</span>
+          <span class="femenil-value">${FEMENIL_FINAL.nextLegVenue}</span>
+        </div>
+        <div class="femenil-stat wide">
+          <span class="femenil-label">Contexto</span>
+          <span class="femenil-value">América necesita remontar el 1-0 de la ida.</span>
         </div>
       </div>
       <div class="femenil-note">${FEMENIL_FINAL.note}</div>
@@ -1819,6 +1885,7 @@ async function loadMatch(){
   const liguillaInfo = document.getElementById("liguillaInfo");
   const lastResultInfo = document.getElementById("lastResultInfo");
   const nextMatchInfo = document.getElementById("nextMatchInfo");
+  const featuredFemenilInfo = document.getElementById("featuredFemenilInfo");
   const femenilInfo = document.getElementById("femenilInfo");
   const mangaAzulcrema = document.getElementById("mangaAzulcrema");
   const factoDeAve = document.getElementById("factoDeAve");
@@ -1834,6 +1901,7 @@ async function loadMatch(){
   liguillaInfo.innerHTML = "";
   lastResultInfo.innerHTML = "";
   nextMatchInfo.innerHTML = "";
+  featuredFemenilInfo.innerHTML = "";
   femenilInfo.innerHTML = "";
   mangaAzulcrema.innerHTML = "";
   factoDeAve.innerHTML = "";
@@ -2081,6 +2149,13 @@ async function loadMatch(){
 }
 
 loadMatch();
+
+document.addEventListener("DOMContentLoaded", () => {
+  const femenilNav = document.getElementById("femenilNavLink");
+  if(femenilNav && shouldFeatureFemenilFinal()){
+    femenilNav.setAttribute("href", "#featuredFemenilInfo");
+  }
+});
 </script>
 </body>
 </html>
