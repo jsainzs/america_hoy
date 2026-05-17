@@ -398,15 +398,29 @@ body{
   color:rgba(255,255,255,.94);
   box-shadow:0 16px 44px rgba(0,0,0,.28);
 }
+.femenil-champion{
+  display:grid;
+  grid-template-columns:minmax(260px,420px) minmax(0,1fr);
+  gap:20px;
+  align-items:center;
+  padding:20px;
+  background:
+    linear-gradient(135deg,rgba(250,204,21,.32),rgba(239,68,68,.16) 38%,rgba(11,32,71,.90)),
+    var(--surface);
+  border-color:rgba(250,204,21,.78);
+}
 .femenil-hero{
   display:block;
   width:100%;
-  aspect-ratio:16/9;
-  object-fit:cover;
+  max-height:680px;
+  object-fit:contain;
   border-radius:8px;
-  margin-bottom:14px;
   border:1px solid rgba(255,255,255,.16);
   box-shadow:0 10px 28px rgba(0,0,0,.22);
+  background:rgba(4,13,31,.36);
+}
+.femenil-copy{
+  min-width:0;
 }
 .femenil-kicker{
   display:inline-flex;
@@ -424,11 +438,19 @@ body{
   margin-bottom:10px;
 }
 .femenil-title{
-  font-size:clamp(1.25rem,2.3vw,1.75rem);
+  font-size:clamp(1.65rem,3.4vw,3rem);
   color:#fff;
   font-weight:900;
-  margin-bottom:10px;
+  margin-bottom:12px;
   line-height:1.1;
+  text-shadow:0 4px 18px rgba(0,0,0,.28);
+}
+.femenil-celebration{
+  margin-bottom:12px;
+  color:rgba(255,255,255,.92);
+  font-size:clamp(1rem,1.45vw,1.22rem);
+  line-height:1.45;
+  max-width:760px;
 }
 .femenil-main{
   display:grid;
@@ -821,6 +843,7 @@ body{
   .manga-box,
   .facto-box,
   .standings-box{ width:100%; }
+  .femenil-champion{ grid-template-columns:1fr; }
   .bg-tapestry::before,
   .bg-tapestry::after{ width:210%; left:-52%; }
   .standings-controls{
@@ -942,17 +965,16 @@ const AMERICA_SEASON_END_MESSAGE = "América quedó eliminado en cuartos de fina
 const SHOW_FEMENIL_FINAL = true;
 const FEMENIL_FINAL = {
   competition: "Liga MX Femenil",
-  stage: "Final",
-  matchup: "América Femenil vs Monterrey",
-  firstLeg: "Rayadas 1 - 0 América",
-  nextLeg: "Vuelta: domingo 17 de mayo, 12:00 h",
-  nextLegDate: "2026-05-17",
-  firstLegVenue: "Estadio BBVA",
-  nextLegVenue: "Estadio Azteca",
-  spotlightImage: "femenil_final_america_monterrey.png",
+  stage: "Campeonas",
+  matchup: "América Femenil",
+  final: "Final contra Monterrey",
+  titleCount: "Tercer título",
+  titleYears: "2018 · 2023 · 2026",
+  venue: "Estadio Azteca",
+  spotlightImage: "ame_fem_campeon.png",
   spotlightStartDate: "2026-05-16",
-  spotlightEndDate: "2026-05-18",
-  note: "El varonil ya cerró su torneo, pero el América Femenil todavía pelea el campeonato."
+  spotlightEndDate: "2026-05-24",
+  note: "El América Femenil se acaba de coronar. Tres estrellas que resumen trabajo, corazón y una historia que sigue creciendo."
 };
 
 /* Fuerza manual del último partido correcto mientras la API agregada se rezaga */
@@ -1431,36 +1453,10 @@ function renderManualPumasNextMatch(){
 }
 
 function getFemenilFinalCallout(){
-  const diff = getDateDiffInDays(FEMENIL_FINAL.nextLegDate);
-
-  if(diff === 0){
-    return {
-      kicker: "Un momento...",
-      title: "¡Hoy juega el América Femenil!",
-      icon: "♀"
-    };
-  }
-
-  if(diff === 1){
-    return {
-      kicker: "Ojo con mañana",
-      title: "América Femenil juega la vuelta de la final",
-      icon: "♀"
-    };
-  }
-
-  if(diff !== null && diff > 1){
-    return {
-      kicker: "Se viene final",
-      title: `América Femenil juega en ${diff} días`,
-      icon: "♀"
-    };
-  }
-
   return {
-    kicker: "Final femenil",
-    title: "Revisa cómo cerró el América Femenil",
-    icon: "♀"
+    kicker: "Campeonas",
+    title: "¡América Femenil campeón!",
+    icon: "★"
   };
 }
 
@@ -1490,37 +1486,42 @@ function renderFemenilFinalBox(){
   const callout = getFemenilFinalCallout();
 
   box.innerHTML = `
-    <section class="femenil-box" aria-labelledby="femenilTitle">
-      ${isFeatured ? `<img class="femenil-hero" src="${FEMENIL_FINAL.spotlightImage}" alt="América Femenil contra Monterrey en la final">` : ""}
-      <div class="femenil-kicker">${callout.kicker}</div>
-      <div id="femenilTitle" class="femenil-title">${FEMENIL_FINAL.stage}: ${FEMENIL_FINAL.matchup}</div>
-      <div class="femenil-main">
-        <div class="femenil-stat">
-          <span class="femenil-label">Competencia</span>
-          <span class="femenil-value">${FEMENIL_FINAL.competition}</span>
+    <section class="femenil-box femenil-champion" aria-labelledby="femenilTitle">
+      ${isFeatured ? `<img class="femenil-hero" src="${FEMENIL_FINAL.spotlightImage}" alt="América Femenil campeón de Liga MX Femenil">` : ""}
+      <div class="femenil-copy">
+        <div class="femenil-kicker">${callout.kicker}</div>
+        <div id="femenilTitle" class="femenil-title">${FEMENIL_FINAL.stage}: ${FEMENIL_FINAL.matchup}</div>
+        <div class="femenil-celebration">
+          Se acaba de coronar el América Femenil. La página se pinta de fiesta porque esta estrella también es de Coapa.
         </div>
-        <div class="femenil-stat">
-          <span class="femenil-label">Ida</span>
-          <span class="femenil-value">${FEMENIL_FINAL.firstLeg}</span>
+        <div class="femenil-main">
+          <div class="femenil-stat">
+            <span class="femenil-label">Competencia</span>
+            <span class="femenil-value">${FEMENIL_FINAL.competition}</span>
+          </div>
+          <div class="femenil-stat">
+            <span class="femenil-label">Estado</span>
+            <span class="femenil-value">Campeonas</span>
+          </div>
+          <div class="femenil-stat">
+            <span class="femenil-label">Final</span>
+            <span class="femenil-value">${FEMENIL_FINAL.final}</span>
+          </div>
+          <div class="femenil-stat">
+            <span class="femenil-label">Sede</span>
+            <span class="femenil-value">${FEMENIL_FINAL.venue}</span>
+          </div>
+          <div class="femenil-stat">
+            <span class="femenil-label">Títulos</span>
+            <span class="femenil-value">${FEMENIL_FINAL.titleCount}</span>
+          </div>
+          <div class="femenil-stat">
+            <span class="femenil-label">Años</span>
+            <span class="femenil-value">${FEMENIL_FINAL.titleYears}</span>
+          </div>
         </div>
-        <div class="femenil-stat">
-          <span class="femenil-label">Sede ida</span>
-          <span class="femenil-value">${FEMENIL_FINAL.firstLegVenue}</span>
-        </div>
-        <div class="femenil-stat">
-          <span class="femenil-label">Vuelta</span>
-          <span class="femenil-value">${FEMENIL_FINAL.nextLeg}</span>
-        </div>
-        <div class="femenil-stat">
-          <span class="femenil-label">Sede vuelta</span>
-          <span class="femenil-value">${FEMENIL_FINAL.nextLegVenue}</span>
-        </div>
-        <div class="femenil-stat wide">
-          <span class="femenil-label">Contexto</span>
-          <span class="femenil-value">América necesita remontar el 1-0 de la ida.</span>
-        </div>
+        <div class="femenil-note">${FEMENIL_FINAL.note}</div>
       </div>
-      <div class="femenil-note">${FEMENIL_FINAL.note}</div>
     </section>
   `;
 }
