@@ -489,6 +489,43 @@ body{
   color:rgba(255,255,255,.82);
   max-width:760px;
 }
+.femenil-lineup{
+  margin-top:14px;
+  padding:13px;
+  border-radius:8px;
+  background:rgba(4,13,31,.46);
+  border:1px solid rgba(250,204,21,.30);
+}
+.femenil-lineup-title{
+  margin-bottom:9px;
+  color:var(--accent);
+  font-size:.78rem;
+  font-weight:900;
+  letter-spacing:.7px;
+  text-transform:uppercase;
+}
+.femenil-lineup-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
+.femenil-player{
+  display:inline-flex;
+  padding:6px 8px;
+  border-radius:8px;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.88);
+  font-size:.86rem;
+  font-weight:800;
+  line-height:1.15;
+}
+.femenil-player.figure{
+  background:linear-gradient(135deg,rgba(250,204,21,.92),rgba(245,158,11,.88));
+  border-color:rgba(255,255,255,.28);
+  color:#071633;
+  box-shadow:0 8px 18px rgba(0,0,0,.18);
+}
 
 .field-report-box{
   scroll-margin-top:22px;
@@ -502,31 +539,56 @@ body{
   color:rgba(255,255,255,.94);
   box-shadow:0 14px 36px rgba(0,0,0,.22);
 }
-.field-report-grid{
+.field-report-header{
+  margin-bottom:14px;
+}
+.field-report-bar{
   display:grid;
-  grid-template-columns:minmax(240px,360px) minmax(0,1fr);
-  gap:18px;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-auto-rows:360px;
+  gap:14px;
   align-items:stretch;
+}
+.field-report-card{
+  position:relative;
+  margin:0;
+  min-width:0;
+  overflow:hidden;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(4,13,31,.42);
+  box-shadow:0 10px 26px rgba(0,0,0,.22);
 }
 .field-report-photo,
 .field-report-video{
   display:block;
   width:100%;
   border-radius:8px;
-  border:1px solid rgba(255,255,255,.16);
   background:rgba(4,13,31,.42);
-  box-shadow:0 10px 26px rgba(0,0,0,.22);
 }
 .field-report-photo{
   height:100%;
-  min-height:320px;
+  min-height:0;
   object-fit:cover;
 }
-.field-report-content{
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  min-width:0;
+.field-report-card .field-report-video{
+  height:100%;
+  min-height:0;
+  max-height:none;
+}
+.field-report-caption{
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:12px;
+  padding:10px 12px;
+  border-radius:8px;
+  background:rgba(4,13,31,.78);
+  border:1px solid rgba(250,204,21,.28);
+  color:#fff;
+  font-weight:900;
+  line-height:1.25;
+  box-shadow:0 8px 20px rgba(0,0,0,.26);
 }
 .field-report-kicker{
   display:inline-flex;
@@ -573,6 +635,91 @@ body{
 .field-report-video{
   max-height:360px;
   object-fit:cover;
+}
+.field-report-feature{
+  margin:14px 0 0;
+  position:relative;
+  overflow:hidden;
+  border-radius:8px;
+  padding:8px;
+  border:1px solid rgba(250,204,21,.42);
+  background:
+    linear-gradient(135deg,rgba(255,251,235,.92),rgba(250,204,21,.18)),
+    rgba(4,13,31,.72);
+  box-shadow:0 12px 30px rgba(0,0,0,.22);
+}
+.field-report-feature img{
+  display:block;
+  width:100%;
+  border-radius:6px;
+  max-height:560px;
+  object-fit:cover;
+  filter:saturate(.86) contrast(1.08) brightness(1.08);
+  opacity:.92;
+}
+.field-report-feature::before,
+.field-report-feature::after{
+  content:"";
+  position:absolute;
+  pointer-events:none;
+}
+.field-report-feature::before{
+  inset:8px;
+  z-index:1;
+  border-radius:6px;
+  background:
+    radial-gradient(circle at 16% 22%,rgba(255,255,255,.28),transparent 24%),
+    radial-gradient(circle at 72% 18%,rgba(250,204,21,.18),transparent 28%),
+    radial-gradient(circle at 34% 76%,rgba(59,130,246,.12),transparent 30%);
+  mix-blend-mode:screen;
+}
+.field-report-feature::after{
+  inset:8px;
+  z-index:2;
+  border-radius:6px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.08),rgba(7,22,51,.42)),
+    repeating-linear-gradient(115deg,rgba(255,255,255,.10) 0 1px,transparent 1px 6px);
+  opacity:.78;
+}
+.field-report-feature figcaption{
+  position:absolute;
+  left:22px;
+  right:22px;
+  bottom:22px;
+  z-index:3;
+  color:#fff;
+  font-weight:900;
+  text-shadow:0 3px 14px rgba(0,0,0,.55);
+}
+.field-report-gallery{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.field-report-gallery-item{
+  margin:0;
+  min-width:0;
+}
+.field-report-gallery-item img,
+.field-report-gallery-item video{
+  display:block;
+  width:100%;
+  aspect-ratio:3/4;
+  object-fit:cover;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(4,13,31,.42);
+}
+.field-report-gallery-item video{
+  max-height:260px;
+}
+.field-report-gallery-item figcaption{
+  margin-top:6px;
+  color:rgba(255,255,255,.68);
+  font-size:.78rem;
+  line-height:1.25;
 }
 
 .result-strip{
@@ -938,12 +1085,6 @@ body{
   }
   .result-strip{ width:100%; }
   .match-extra{ justify-content:center; }
-  .field-report-grid{ grid-template-columns:1fr; }
-  .field-report-photo{
-    height:auto;
-    min-height:unset;
-    max-height:520px;
-  }
 }
 @media (max-width:540px){
   .title{ font-size:clamp(1.9rem,8vw,2.5rem); }
@@ -958,6 +1099,18 @@ body{
   }
   .field-report-box{ padding:14px; }
   .field-report-title{ font-size:1.45rem; }
+  .field-report-bar{
+    grid-template-columns:1fr;
+    grid-auto-rows:auto;
+  }
+  .field-report-photo{
+    height:auto;
+    min-height:unset;
+    max-height:520px;
+  }
+  .field-report-card .field-report-video{ min-height:280px; }
+  .field-report-gallery{ grid-template-columns:1fr; }
+  .field-report-feature img{ max-height:480px; }
   .season-comic{ max-width:min(100%, 290px); }
   .season-comic .speech{
     top:7px;
@@ -1007,21 +1160,44 @@ body{
     <section class="main-stack">
       <div id="featuredFemenilInfo" class="featured-femenil"></div>
       <section id="aguilaCancha" class="field-report-box" aria-labelledby="aguilaCanchaTitle">
-        <div class="field-report-grid">
-          <img class="field-report-photo" src="reporte_ommy/WhatsApp Image 2026-05-17 at 11.38.25 AM.jpeg" alt="Reporte americanista desde cancha">
-          <div class="field-report-content">
-            <div class="field-report-kicker">Reporte Ommy</div>
-            <h2 id="aguilaCanchaTitle" class="field-report-title">Águila en cancha</h2>
-            <p class="field-report-text">
-              La vuelta olímpica también se cuenta desde abajo: americanistas reportando el título femenil a ras de césped.
-            </p>
-            <p class="field-report-anecdote">
-              <strong>La predicción:</strong> Ommy, con gafas oscuras, le preguntó a Bruno su pronóstico. Bruno dijo “3-1” y clavó exactamente el global.
-            </p>
+        <div class="field-report-header">
+          <div class="field-report-kicker">Reporte Ommy</div>
+          <h2 id="aguilaCanchaTitle" class="field-report-title">Águila en cancha</h2>
+          <p class="field-report-text">
+            La vuelta olímpica también se cuenta desde abajo: americanistas reportando el título femenil a ras de césped.
+          </p>
+          <p class="field-report-anecdote">
+            <strong>La predicción:</strong> Ommy, con gafas oscuras, le preguntó a Bruno su pronóstico. Bruno dijo “3-1” y clavó exactamente el global.
+          </p>
+        </div>
+        <div class="field-report-bar">
+          <figure class="field-report-card">
+            <img class="field-report-photo" src="reporte_ommy/WhatsApp Image 2026-05-17 at 11.38.25 AM.jpeg" alt="Bruno y Ommy enviados especiales al Estadio Azulcrema">
+            <figcaption class="field-report-caption">Bruno y Ommy, enviados especiales al Estadio Azulcrema</figcaption>
+          </figure>
+          <div class="field-report-card">
             <video class="field-report-video" controls preload="metadata" playsinline poster="reporte_ommy/WhatsApp Image 2026-05-17 at 11.38.25 AM.jpeg">
               <source src="reporte_ommy/WhatsApp Video 2026-05-17 at 11.38.24 AM (2).mp4#t=0,24" type="video/mp4">
             </video>
           </div>
+        </div>
+        <figure class="field-report-feature">
+          <img src="reporte_ommy/WhatsApp Image 2026-05-17 at 12.53.01 PM.jpeg" alt="Postal estilizada del festejo americanista">
+          <figcaption>La postal del título, desde la mirada americanista.</figcaption>
+        </figure>
+        <div class="field-report-gallery" aria-label="Galería de reportes desde cancha">
+          <figure class="field-report-gallery-item">
+            <video controls preload="metadata" playsinline>
+              <source src="reporte_ommy/WhatsApp Video 2026-05-17 at 2.54.31 PM.mp4" type="video/mp4">
+            </video>
+            <figcaption>Desde cancha</figcaption>
+          </figure>
+          <figure class="field-report-gallery-item">
+            <video controls preload="metadata" playsinline>
+              <source src="reporte_ommy/WhatsApp Video 2026-05-17 at 1.40.43 PM.mp4" type="video/mp4">
+            </video>
+            <figcaption>Reporte americanista</figcaption>
+          </figure>
         </div>
       </section>
       <div class="layout">
@@ -1637,6 +1813,22 @@ function renderFemenilFinalBox(){
           </div>
         </div>
         <div class="femenil-note">${FEMENIL_FINAL.note}</div>
+        <div class="femenil-lineup" aria-label="Alineación del triunfo">
+          <div class="femenil-lineup-title">Alineación del triunfo</div>
+          <div class="femenil-lineup-list">
+            <span class="femenil-player">Sandra Paños</span>
+            <span class="femenil-player">Isa Haas</span>
+            <span class="femenil-player">Karina Rodríguez</span>
+            <span class="femenil-player">Kimberly Rodríguez</span>
+            <span class="femenil-player">Sofía Ramos</span>
+            <span class="femenil-player">Gabriela García</span>
+            <span class="femenil-player figure">Irene Guerrero</span>
+            <span class="femenil-player">Nancy Antonio</span>
+            <span class="femenil-player">Montserrat Saldívar</span>
+            <span class="femenil-player figure">Scarlett Camberos</span>
+            <span class="femenil-player figure">Geyse Ferreira</span>
+          </div>
+        </div>
       </div>
     </section>
   `;
