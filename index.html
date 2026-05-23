@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -103,21 +102,32 @@ body{
   text-shadow:0 4px 20px rgba(0,0,0,.35);
 }
 .visit-counter{
-  display:block;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
   width:max-content;
   max-width:100%;
   margin:0 auto;
-  padding:8px 15px;
-  border-radius:999px;
+  padding:9px 15px;
+  border-radius:8px;
   background:rgba(4,13,31,.42);
   border:1px solid rgba(250,204,21,.36);
   color:#fff;
-  font-size:.95rem;
   font-weight:700;
+  text-align:center;
   backdrop-filter:blur(4px);
   -webkit-backdrop-filter:blur(4px);
 }
-.visit-counter span{ color:var(--accent); }
+.visit-counter-main{
+  font-size:.95rem;
+}
+.visit-counter-main span{ color:var(--accent); }
+.visit-counter-note{
+  color:rgba(255,255,255,.72);
+  font-size:.72rem;
+  font-weight:600;
+}
 
 .page-grid{
   display:block;
@@ -1129,7 +1139,8 @@ body{
   <header class="app-header">
     <h1 class="title">¿Hoy juega el América?</h1>
     <div class="visit-counter">
-      👀 Visitas: <span id="busuanzi_value_site_pv">...</span>
+      <div class="visit-counter-main">Visitas contadas: <span id="smartVisitCount">...</span></div>
+      <div class="visit-counter-note" id="smartVisitNote">Preparando contador inteligente</div>
     </div>
   </header>
 
@@ -1250,6 +1261,8 @@ const MARKET_VALUES_URL = "./market_values.json";
 const STANDINGS_URL = "./standings.json";
 const TZ = "America/Mexico_City";
 const STANDINGS_VISIBLE_COUNT = 6;
+const VISIT_COUNTER_KEY = "americaHoySmartVisitCounter";
+const OWNER_QUERY_KEYS = ["owner", "dueno", "duenio"];
 
 /* Mantener true mientras no haya próximo partido oficial registrado tras la eliminación */
 const FORCE_PUMAS_LIGUILLA = true;
@@ -1268,6 +1281,82 @@ const FEMENIL_FINAL = {
   spotlightEndDate: "2026-05-24",
   note: "El América Femenil se acaba de coronar. Tres estrellas que resumen trabajo, corazón y una historia que sigue creciendo."
 };
+
+function todayKey(){
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date());
+}
+
+function readVisitCounterState(){
+  try {
+    return JSON.parse(localStorage.getItem(VISIT_COUNTER_KEY)) || {};
+  } catch(err) {
+    return {};
+  }
+}
+
+function writeVisitCounterState(state){
+  localStorage.setItem(VISIT_COUNTER_KEY, JSON.stringify(state));
+}
+
+function hasOwnerFlag(){
+  const params = new URLSearchParams(window.location.search);
+  return OWNER_QUERY_KEYS.some(key => {
+    const value = params.get(key);
+    return value === "1" || value === "true" || value === "si" || value === "sí";
+  });
+}
+
+function cleanOwnerFlagFromUrl(){
+  const url = new URL(window.location.href);
+  let changed = false;
+  OWNER_QUERY_KEYS.forEach(key => {
+    if(url.searchParams.has(key)){
+      url.searchParams.delete(key);
+      changed = true;
+    }
+  });
+  if(changed){
+    window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+  }
+}
+
+function renderSmartVisitCounter(){
+  const countEl = document.getElementById("smartVisitCount");
+  const noteEl = document.getElementById("smartVisitNote");
+  if(!countEl || !noteEl){
+    return;
+  }
+
+  const state = readVisitCounterState();
+  const ownerFlag = hasOwnerFlag();
+  const today = todayKey();
+
+  if(ownerFlag){
+    state.isOwner = true;
+    state.ownerSince = state.ownerSince || today;
+    cleanOwnerFlagFromUrl();
+  }
+
+  if(!state.isOwner && state.lastCountedDay !== today){
+    state.count = (Number(state.count) || 0) + 1;
+    state.lastCountedDay = today;
+  }
+
+  state.count = Number(state.count) || 0;
+  writeVisitCounterState(state);
+
+  countEl.textContent = state.count.toLocaleString("es-MX");
+  noteEl.textContent = state.isOwner
+    ? "Modo dueño activo: tus visitas no se cuentan"
+    : state.lastCountedDay === today
+      ? "Cuenta una vez al día por navegador"
+      : "Listo para contar tu próxima visita";
+}
 
 /* Fuerza manual del último partido correcto mientras la API agregada se rezaga */
 const MANUAL_LAST_FINISHED_EVENT_ID = "";
@@ -2460,6 +2549,8 @@ async function loadMatch(){
 loadMatch();
 
 document.addEventListener("DOMContentLoaded", () => {
+  renderSmartVisitCounter();
+
   const femenilNav = document.getElementById("femenilNavLink");
   if(femenilNav && shouldFeatureFemenilFinal()){
     femenilNav.setAttribute("href", "#featuredFemenilInfo");
