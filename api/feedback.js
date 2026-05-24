@@ -76,6 +76,14 @@ function isValidType(type){
   return type === "like" || type === "comment" || type === "error";
 }
 
+function cleanEmail(value){
+  const email = cleanText(value, 120).toLowerCase();
+  if(!email){
+    return "";
+  }
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : "";
+}
+
 module.exports = async function handler(req, res){
   res.setHeader("access-control-allow-methods", "GET,POST,OPTIONS");
   res.setHeader("access-control-allow-headers", "content-type");
@@ -107,6 +115,7 @@ module.exports = async function handler(req, res){
       const type = cleanText(body.type, 20);
       const name = cleanText(body.name, 42) || "Americanista";
       const message = cleanText(body.message, type === "error" ? 500 : 360);
+      const email = cleanEmail(body.email);
 
       if(!TARGET_PATTERN.test(target) || !isValidType(type)){
         json(res, 400, { error: "Invalid feedback payload." });
@@ -123,6 +132,7 @@ module.exports = async function handler(req, res){
         type,
         name,
         message,
+        email,
         createdAt: new Date().toISOString()
       };
 

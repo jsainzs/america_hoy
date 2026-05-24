@@ -136,6 +136,9 @@ body{
   border:1px solid rgba(250,204,21,.24);
   box-shadow:0 10px 28px rgba(0,0,0,.18);
 }
+.feedback-panel.compact{
+  margin-bottom:0;
+}
 .feedback-head{
   display:flex;
   align-items:flex-start;
@@ -158,12 +161,15 @@ body{
   display:flex;
   flex-wrap:wrap;
   gap:8px;
-  margin-bottom:12px;
+  margin-bottom:10px;
 }
 .feedback-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
   border:1px solid rgba(255,255,255,.14);
-  border-radius:8px;
-  padding:9px 11px;
+  border-radius:999px;
+  padding:8px 11px;
   background:rgba(255,255,255,.08);
   color:#fff;
   font-weight:800;
@@ -177,11 +183,10 @@ body{
 }
 .feedback-form{
   display:grid;
-  grid-template-columns:minmax(120px,180px) minmax(0,1fr) auto;
+  grid-template-columns:minmax(120px,180px) minmax(140px,220px) minmax(0,1fr) auto;
   gap:8px;
   margin-bottom:12px;
 }
-.feedback-form[hidden]{ display:none; }
 .feedback-input,
 .feedback-textarea{
   width:100%;
@@ -197,6 +202,13 @@ body{
 .feedback-textarea{
   min-height:42px;
   resize:vertical;
+}
+.feedback-help{
+  grid-column:1/-1;
+  margin-top:-2px;
+  color:rgba(255,255,255,.66);
+  font-size:.82rem;
+  line-height:1.35;
 }
 .feedback-submit{
   border:0;
@@ -1180,7 +1192,9 @@ body{
   border-radius:8px;
   background:rgba(250,204,21,.16);
   border:1px solid rgba(250,204,21,.26);
-  color:var(--accent);
+  color:var(--blue-soft);
+  background:rgba(147,197,253,.16);
+  border-color:rgba(147,197,253,.30);
   font-size:.76rem;
   font-weight:900;
   letter-spacing:.7px;
@@ -1195,7 +1209,7 @@ body{
 }
 .blurbs-grid{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-columns:repeat(6,minmax(0,1fr));
   gap:10px;
 }
 .blurb-card{
@@ -1205,12 +1219,34 @@ body{
   background:rgba(255,255,255,.08);
   border:1px solid rgba(255,255,255,.12);
 }
+.blurb-card.featured{
+  grid-column:span 3;
+  grid-row:span 2;
+  background:linear-gradient(135deg,rgba(250,204,21,.22),rgba(255,255,255,.09));
+  border-color:rgba(250,204,21,.34);
+}
+.blurb-card.medium{
+  grid-column:span 2;
+}
+.blurb-card.small{
+  grid-column:span 1;
+}
 .blurb-quote{
   margin:0 0 10px;
   color:#fff;
   font-size:1rem;
   line-height:1.36;
   font-weight:900;
+}
+.blurb-card.featured .blurb-quote{
+  font-size:clamp(1.45rem,3vw,2.45rem);
+  line-height:1.08;
+}
+.blurb-card.medium .blurb-quote{
+  font-size:1.12rem;
+}
+.blurb-card.small .blurb-quote{
+  font-size:.92rem;
 }
 .blurb-source{
   color:rgba(255,255,255,.72);
@@ -1266,6 +1302,9 @@ body{
   .feedback-form{ grid-template-columns:1fr; }
   .feedback-counts{ text-align:left; }
   .blurbs-grid{ grid-template-columns:1fr; }
+  .blurb-card.featured,
+  .blurb-card.medium,
+  .blurb-card.small{ grid-column:auto; }
 }
 @media (max-width:540px){
   .title{ font-size:clamp(1.9rem,8vw,2.5rem); }
@@ -1337,7 +1376,6 @@ body{
       <span class="quick-link-text">Memorama Azulcrema</span>
     </a>
   </nav>
-  <div id="siteFeedbackMount"></div>
 
   <div class="page-grid">
     <section class="main-stack">
@@ -1421,27 +1459,27 @@ body{
         <div class="blurbs-kicker">Crítica especializada</div>
         <h2 id="blurbsTitle" class="blurbs-title">Lo que dicen aficionados expertos sobre el nido del Ave</h2>
         <div class="blurbs-grid">
-          <article class="blurb-card">
+          <article class="blurb-card featured">
             <p class="blurb-quote">“Está mucho mejor que la página oficial del Ame!!!”</p>
             <div class="blurb-source">Elio, científico de datos</div>
           </article>
-          <article class="blurb-card">
+          <article class="blurb-card medium">
             <p class="blurb-quote">“Buen proyecto!”</p>
             <div class="blurb-source">César, experto elite de plataformas de plataformas de datos</div>
           </article>
-          <article class="blurb-card">
+          <article class="blurb-card medium">
             <p class="blurb-quote">“¿Incluye al equipo femenil?”</p>
             <div class="blurb-source">Fidel, académico y experto en equidad de género</div>
           </article>
-          <article class="blurb-card">
+          <article class="blurb-card small">
             <p class="blurb-quote">“100 refulgente.”</p>
             <div class="blurb-source">Marco, americanista histórico, impresor</div>
           </article>
-          <article class="blurb-card">
+          <article class="blurb-card small">
             <p class="blurb-quote">“JAJAJAJA.”</p>
             <div class="blurb-source">Académicos aficionados al otro equipo del Pedregal</div>
           </article>
-          <article class="blurb-card">
+          <article class="blurb-card small">
             <p class="blurb-quote">“Aplausos.”</p>
             <div class="blurb-source">Julio, catedrático y jurista</div>
           </article>
@@ -1469,19 +1507,16 @@ const OWNER_QUERY_KEYS = ["owner", "dueno", "duenio"];
 const FEEDBACK_ENDPOINT = "/api/feedback";
 const FEEDBACK_WIDGETS = [
   {
-    mountId: "siteFeedbackMount",
-    target: "page:home",
-    title: "Comentarios de la página"
-  },
-  {
     mountId: "canchaFeedbackMount",
     target: "section:aguila-cancha",
-    title: "Comenta el reporte en cancha"
+    title: "Reacciones al reporte en cancha",
+    prompt: "Comenta algo sobre esta sección o reporta algún error."
   },
   {
     mountId: "mangaFeedbackMount",
     target: "section:manga-azulcrema",
-    title: "Comenta el manga azulcrema"
+    title: "Reacciones al manga azulcrema",
+    prompt: "Comenta algo sobre el manga o reporta algún error."
   }
 ];
 
@@ -1593,9 +1628,6 @@ function feedbackTypeLabel(type){
   if(type === "like"){
     return "Me gusta";
   }
-  if(type === "error"){
-    return "Error";
-  }
   return "Comentario";
 }
 
@@ -1627,8 +1659,7 @@ function renderFeedbackItems(listEl, items){
 function updateFeedbackCounts(countsEl, items){
   const likes = items.filter(item => item.type === "like").length;
   const comments = items.filter(item => item.type === "comment").length;
-  const errors = items.filter(item => item.type === "error").length;
-  countsEl.textContent = `${likes} me gusta · ${comments} comentarios · ${errors} reportes`;
+  countsEl.textContent = `${likes} me gusta · ${comments} comentarios`;
 }
 
 async function loadFeedback(target, statusEl, listEl, countsEl){
@@ -1657,20 +1688,23 @@ function buildFeedbackWidget(config){
   mount.dataset.feedbackReady = "true";
 
   mount.innerHTML = `
-    <section class="feedback-panel" aria-label="${escapeHtml(config.title)}">
+    <section class="feedback-panel compact" aria-label="${escapeHtml(config.title)}">
       <div class="feedback-head">
         <div class="feedback-title">${escapeHtml(config.title)}</div>
         <div class="feedback-counts">Cargando...</div>
       </div>
       <div class="feedback-actions">
-        <button class="feedback-btn" type="button" data-feedback-type="like">Me gusta</button>
-        <button class="feedback-btn active" type="button" data-feedback-type="comment">Comentar</button>
-        <button class="feedback-btn" type="button" data-feedback-type="error">Reportar error</button>
+        <button class="feedback-btn" type="button" data-reaction="like">Me gusta</button>
+        <button class="feedback-btn" type="button" data-reaction="love">Me encanta</button>
+        <button class="feedback-btn" type="button" data-reaction="laugh">Jaja</button>
+        <button class="feedback-btn" type="button" data-reaction="wow">Wow</button>
       </div>
       <form class="feedback-form">
         <input class="feedback-input" name="name" autocomplete="name" maxlength="42" placeholder="Tu nombre">
-        <textarea class="feedback-textarea" name="message" maxlength="500" placeholder="Escribe tu comentario"></textarea>
+        <input class="feedback-input" name="email" autocomplete="email" maxlength="120" placeholder="Correo opcional">
+        <textarea class="feedback-textarea" name="message" maxlength="500" placeholder="${escapeHtml(config.prompt)}"></textarea>
         <button class="feedback-submit" type="submit">Enviar</button>
+        <div class="feedback-help">El correo es opcional, por si quieres recibir aviso cuando haya material nuevo.</div>
       </form>
       <div class="feedback-status" role="status"></div>
       <div class="feedback-list"></div>
@@ -1681,38 +1715,27 @@ function buildFeedbackWidget(config){
   const statusEl = mount.querySelector(".feedback-status");
   const listEl = mount.querySelector(".feedback-list");
   const countsEl = mount.querySelector(".feedback-counts");
-  const messageEl = mount.querySelector(".feedback-textarea");
   const buttons = Array.from(mount.querySelectorAll(".feedback-btn"));
-  let selectedType = "comment";
-
-  function setType(type){
-    selectedType = type;
-    buttons.forEach(button => {
-      button.classList.toggle("active", button.dataset.feedbackType === selectedType);
-    });
-    form.hidden = selectedType === "like";
-    messageEl.placeholder = selectedType === "error"
-      ? "Cuéntame qué está mal o qué no cargó"
-      : "Escribe tu comentario";
-  }
 
   buttons.forEach(button => {
     button.addEventListener("click", async () => {
-      setType(button.dataset.feedbackType);
-      if(selectedType !== "like"){
-        return;
-      }
+      const reaction = button.dataset.reaction || "like";
       statusEl.textContent = "Guardando me gusta...";
       try {
         const response = await fetch(FEEDBACK_ENDPOINT, {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ target: config.target, type: "like" })
+          body: JSON.stringify({
+            target: config.target,
+            type: "like",
+            message: reaction
+          })
         });
         const payload = await response.json();
         if(!response.ok){
           throw new Error(payload.error || "No se pudo guardar.");
         }
+        buttons.forEach(item => item.classList.toggle("active", item === button));
         statusEl.textContent = "Gracias por el me gusta.";
         await loadFeedback(config.target, statusEl, listEl, countsEl);
       } catch(err) {
@@ -1731,8 +1754,9 @@ function buildFeedbackWidget(config){
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           target: config.target,
-          type: selectedType,
+          type: "comment",
           name: formData.get("name"),
+          email: formData.get("email"),
           message: formData.get("message")
         })
       });
