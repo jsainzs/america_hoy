@@ -128,6 +128,120 @@ body{
   font-size:.72rem;
   font-weight:600;
 }
+.feedback-panel{
+  margin:18px 0 22px;
+  padding:16px;
+  border-radius:8px;
+  background:rgba(4,13,31,.50);
+  border:1px solid rgba(250,204,21,.24);
+  box-shadow:0 10px 28px rgba(0,0,0,.18);
+}
+.feedback-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+.feedback-title{
+  color:#fff;
+  font-weight:900;
+  font-size:1rem;
+}
+.feedback-counts{
+  color:rgba(255,255,255,.72);
+  font-size:.82rem;
+  line-height:1.35;
+  text-align:right;
+}
+.feedback-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:12px;
+}
+.feedback-btn{
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:8px;
+  padding:9px 11px;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+.feedback-btn:hover{ background:rgba(255,255,255,.13); }
+.feedback-btn.active{
+  color:#071633;
+  background:linear-gradient(135deg,var(--accent),var(--accent-strong));
+  border-color:rgba(255,255,255,.28);
+}
+.feedback-form{
+  display:grid;
+  grid-template-columns:minmax(120px,180px) minmax(0,1fr) auto;
+  gap:8px;
+  margin-bottom:12px;
+}
+.feedback-form[hidden]{ display:none; }
+.feedback-input,
+.feedback-textarea{
+  width:100%;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:8px;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font:inherit;
+  padding:10px 11px;
+}
+.feedback-input::placeholder,
+.feedback-textarea::placeholder{ color:rgba(255,255,255,.58); }
+.feedback-textarea{
+  min-height:42px;
+  resize:vertical;
+}
+.feedback-submit{
+  border:0;
+  border-radius:8px;
+  padding:10px 13px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-strong));
+  color:#071633;
+  font-weight:900;
+  cursor:pointer;
+}
+.feedback-status{
+  min-height:18px;
+  color:rgba(255,255,255,.76);
+  font-size:.84rem;
+  margin-bottom:8px;
+}
+.feedback-list{
+  display:grid;
+  gap:8px;
+}
+.feedback-item{
+  padding:10px 11px;
+  border-radius:8px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.09);
+}
+.feedback-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  align-items:center;
+  margin-bottom:4px;
+  color:rgba(255,255,255,.66);
+  font-size:.78rem;
+  font-weight:800;
+}
+.feedback-kind{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:.4px;
+}
+.feedback-message{
+  color:rgba(255,255,255,.92);
+  line-height:1.45;
+}
 
 .page-grid{
   display:block;
@@ -1049,6 +1163,60 @@ body{
   margin-top:30px;
   text-align:center;
 }
+.blurbs-box{
+  margin-top:24px;
+  padding:18px;
+  border-radius:8px;
+  background:linear-gradient(135deg,rgba(250,204,21,.18),rgba(4,13,31,.70));
+  border:1px solid rgba(250,204,21,.34);
+  box-shadow:0 14px 36px rgba(0,0,0,.20);
+}
+.blurbs-kicker{
+  display:inline-flex;
+  width:max-content;
+  max-width:100%;
+  margin-bottom:8px;
+  padding:6px 9px;
+  border-radius:8px;
+  background:rgba(250,204,21,.16);
+  border:1px solid rgba(250,204,21,.26);
+  color:var(--accent);
+  font-size:.76rem;
+  font-weight:900;
+  letter-spacing:.7px;
+  text-transform:uppercase;
+}
+.blurbs-title{
+  margin:0 0 14px;
+  color:#fff;
+  font-size:clamp(1.35rem,2.4vw,2.15rem);
+  line-height:1.08;
+  font-weight:900;
+}
+.blurbs-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.blurb-card{
+  min-width:0;
+  padding:13px;
+  border-radius:8px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+}
+.blurb-quote{
+  margin:0 0 10px;
+  color:#fff;
+  font-size:1rem;
+  line-height:1.36;
+  font-weight:900;
+}
+.blurb-source{
+  color:rgba(255,255,255,.72);
+  font-size:.86rem;
+  line-height:1.35;
+}
 .chanfle-img{
   display:block;
   margin:0 auto;
@@ -1095,6 +1263,9 @@ body{
   }
   .result-strip{ width:100%; }
   .match-extra{ justify-content:center; }
+  .feedback-form{ grid-template-columns:1fr; }
+  .feedback-counts{ text-align:left; }
+  .blurbs-grid{ grid-template-columns:1fr; }
 }
 @media (max-width:540px){
   .title{ font-size:clamp(1.9rem,8vw,2.5rem); }
@@ -1166,6 +1337,7 @@ body{
       <span class="quick-link-text">Memorama Azulcrema</span>
     </a>
   </nav>
+  <div id="siteFeedbackMount"></div>
 
   <div class="page-grid">
     <section class="main-stack">
@@ -1210,6 +1382,7 @@ body{
             <figcaption>Reporte americanista</figcaption>
           </figure>
         </div>
+        <div id="canchaFeedbackMount"></div>
       </section>
       <div class="layout">
         <div class="media-wrap">
@@ -1244,6 +1417,36 @@ body{
       <div id="femenilInfo"></div>
       <div id="mangaAzulcrema"></div>
       <div id="factoDeAve"></div>
+      <section class="blurbs-box" aria-labelledby="blurbsTitle">
+        <div class="blurbs-kicker">Crítica especializada</div>
+        <h2 id="blurbsTitle" class="blurbs-title">Lo que dicen aficionados expertos sobre el nido del Ave</h2>
+        <div class="blurbs-grid">
+          <article class="blurb-card">
+            <p class="blurb-quote">“Está mucho mejor que la página oficial del Ame!!!”</p>
+            <div class="blurb-source">Elio, científico de datos</div>
+          </article>
+          <article class="blurb-card">
+            <p class="blurb-quote">“Buen proyecto!”</p>
+            <div class="blurb-source">César, experto elite de plataformas de plataformas de datos</div>
+          </article>
+          <article class="blurb-card">
+            <p class="blurb-quote">“¿Incluye al equipo femenil?”</p>
+            <div class="blurb-source">Fidel, académico y experto en equidad de género</div>
+          </article>
+          <article class="blurb-card">
+            <p class="blurb-quote">“100 refulgente.”</p>
+            <div class="blurb-source">Marco, americanista histórico, impresor</div>
+          </article>
+          <article class="blurb-card">
+            <p class="blurb-quote">“JAJAJAJA.”</p>
+            <div class="blurb-source">Académicos aficionados al otro equipo del Pedregal</div>
+          </article>
+          <article class="blurb-card">
+            <p class="blurb-quote">“Aplausos.”</p>
+            <div class="blurb-source">Julio, catedrático y jurista</div>
+          </article>
+        </div>
+      </section>
     </section>
   </div>
 
@@ -1263,6 +1466,24 @@ const TZ = "America/Mexico_City";
 const STANDINGS_VISIBLE_COUNT = 6;
 const VISIT_COUNTER_KEY = "americaHoySmartVisitCounter";
 const OWNER_QUERY_KEYS = ["owner", "dueno", "duenio"];
+const FEEDBACK_ENDPOINT = "/api/feedback";
+const FEEDBACK_WIDGETS = [
+  {
+    mountId: "siteFeedbackMount",
+    target: "page:home",
+    title: "Comentarios de la página"
+  },
+  {
+    mountId: "canchaFeedbackMount",
+    target: "section:aguila-cancha",
+    title: "Comenta el reporte en cancha"
+  },
+  {
+    mountId: "mangaFeedbackMount",
+    target: "section:manga-azulcrema",
+    title: "Comenta el manga azulcrema"
+  }
+];
 
 /* Mantener true mientras no haya próximo partido oficial registrado tras la eliminación */
 const FORCE_PUMAS_LIGUILLA = true;
@@ -1356,6 +1577,182 @@ function renderSmartVisitCounter(){
     : state.lastCountedDay === today
       ? "Cuenta una vez al día por navegador"
       : "Listo para contar tu próxima visita";
+}
+
+function escapeHtml(value){
+  return String(value || "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[char]));
+}
+
+function feedbackTypeLabel(type){
+  if(type === "like"){
+    return "Me gusta";
+  }
+  if(type === "error"){
+    return "Error";
+  }
+  return "Comentario";
+}
+
+function renderFeedbackItems(listEl, items){
+  const visibleItems = items.filter(item => item.type !== "like").slice(0, 8);
+  if(!visibleItems.length){
+    listEl.innerHTML = "";
+    return;
+  }
+
+  listEl.innerHTML = visibleItems.map(item => {
+    const date = new Date(item.createdAt);
+    const dateText = Number.isNaN(date.getTime())
+      ? ""
+      : date.toLocaleDateString("es-MX", { month: "short", day: "numeric" });
+    return `
+      <article class="feedback-item">
+        <div class="feedback-meta">
+          <span class="feedback-kind">${feedbackTypeLabel(item.type)}</span>
+          <span>${escapeHtml(item.name || "Americanista")}</span>
+          <span>${escapeHtml(dateText)}</span>
+        </div>
+        <div class="feedback-message">${escapeHtml(item.message)}</div>
+      </article>
+    `;
+  }).join("");
+}
+
+function updateFeedbackCounts(countsEl, items){
+  const likes = items.filter(item => item.type === "like").length;
+  const comments = items.filter(item => item.type === "comment").length;
+  const errors = items.filter(item => item.type === "error").length;
+  countsEl.textContent = `${likes} me gusta · ${comments} comentarios · ${errors} reportes`;
+}
+
+async function loadFeedback(target, statusEl, listEl, countsEl){
+  try {
+    const response = await fetch(`${FEEDBACK_ENDPOINT}?target=${encodeURIComponent(target)}`);
+    const payload = await response.json();
+    if(!response.ok){
+      throw new Error(payload.error || "No se pudo cargar feedback.");
+    }
+    const items = Array.isArray(payload.items) ? payload.items : [];
+    updateFeedbackCounts(countsEl, items);
+    renderFeedbackItems(listEl, items);
+    statusEl.textContent = "";
+  } catch(err) {
+    statusEl.textContent = "Feedback listo en la interfaz. Falta conectar almacenamiento en Vercel para guardar respuestas.";
+    updateFeedbackCounts(countsEl, []);
+    renderFeedbackItems(listEl, []);
+  }
+}
+
+function buildFeedbackWidget(config){
+  const mount = document.getElementById(config.mountId);
+  if(!mount || mount.dataset.feedbackReady === "true"){
+    return;
+  }
+  mount.dataset.feedbackReady = "true";
+
+  mount.innerHTML = `
+    <section class="feedback-panel" aria-label="${escapeHtml(config.title)}">
+      <div class="feedback-head">
+        <div class="feedback-title">${escapeHtml(config.title)}</div>
+        <div class="feedback-counts">Cargando...</div>
+      </div>
+      <div class="feedback-actions">
+        <button class="feedback-btn" type="button" data-feedback-type="like">Me gusta</button>
+        <button class="feedback-btn active" type="button" data-feedback-type="comment">Comentar</button>
+        <button class="feedback-btn" type="button" data-feedback-type="error">Reportar error</button>
+      </div>
+      <form class="feedback-form">
+        <input class="feedback-input" name="name" autocomplete="name" maxlength="42" placeholder="Tu nombre">
+        <textarea class="feedback-textarea" name="message" maxlength="500" placeholder="Escribe tu comentario"></textarea>
+        <button class="feedback-submit" type="submit">Enviar</button>
+      </form>
+      <div class="feedback-status" role="status"></div>
+      <div class="feedback-list"></div>
+    </section>
+  `;
+
+  const form = mount.querySelector(".feedback-form");
+  const statusEl = mount.querySelector(".feedback-status");
+  const listEl = mount.querySelector(".feedback-list");
+  const countsEl = mount.querySelector(".feedback-counts");
+  const messageEl = mount.querySelector(".feedback-textarea");
+  const buttons = Array.from(mount.querySelectorAll(".feedback-btn"));
+  let selectedType = "comment";
+
+  function setType(type){
+    selectedType = type;
+    buttons.forEach(button => {
+      button.classList.toggle("active", button.dataset.feedbackType === selectedType);
+    });
+    form.hidden = selectedType === "like";
+    messageEl.placeholder = selectedType === "error"
+      ? "Cuéntame qué está mal o qué no cargó"
+      : "Escribe tu comentario";
+  }
+
+  buttons.forEach(button => {
+    button.addEventListener("click", async () => {
+      setType(button.dataset.feedbackType);
+      if(selectedType !== "like"){
+        return;
+      }
+      statusEl.textContent = "Guardando me gusta...";
+      try {
+        const response = await fetch(FEEDBACK_ENDPOINT, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ target: config.target, type: "like" })
+        });
+        const payload = await response.json();
+        if(!response.ok){
+          throw new Error(payload.error || "No se pudo guardar.");
+        }
+        statusEl.textContent = "Gracias por el me gusta.";
+        await loadFeedback(config.target, statusEl, listEl, countsEl);
+      } catch(err) {
+        statusEl.textContent = "El botón ya está listo; falta conectar almacenamiento en Vercel para guardar el me gusta.";
+      }
+    });
+  });
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    statusEl.textContent = "Enviando...";
+    try {
+      const response = await fetch(FEEDBACK_ENDPOINT, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          target: config.target,
+          type: selectedType,
+          name: formData.get("name"),
+          message: formData.get("message")
+        })
+      });
+      const payload = await response.json();
+      if(!response.ok){
+        throw new Error(payload.error || "No se pudo enviar.");
+      }
+      form.reset();
+      statusEl.textContent = "Listo, quedó guardado.";
+      await loadFeedback(config.target, statusEl, listEl, countsEl);
+    } catch(err) {
+      statusEl.textContent = "La interfaz ya está lista; falta conectar almacenamiento en Vercel para guardar comentarios.";
+    }
+  });
+
+  loadFeedback(config.target, statusEl, listEl, countsEl);
+}
+
+function mountFeedbackWidgets(){
+  FEEDBACK_WIDGETS.forEach(buildFeedbackWidget);
 }
 
 /* Fuerza manual del último partido correcto mientras la API agregada se rezaga */
@@ -1935,8 +2332,10 @@ function renderMangaAzulcrema(event){
       <figure class="section-figure">
         <img class="manga-comic pumas-strip" src="borregos_ame.jpeg" alt="Manga azulcrema: y nos volvieron a ganar con empate">
       </figure>
+      <div id="mangaFeedbackMount"></div>
     </div>
   `;
+  buildFeedbackWidget(FEEDBACK_WIDGETS.find(widget => widget.mountId === "mangaFeedbackMount"));
 }
 
 function renderFactoDeAve(){
@@ -2550,6 +2949,7 @@ loadMatch();
 
 document.addEventListener("DOMContentLoaded", () => {
   renderSmartVisitCounter();
+  mountFeedbackWidgets();
 
   const femenilNav = document.getElementById("femenilNavLink");
   if(femenilNav && shouldFeatureFemenilFinal()){
