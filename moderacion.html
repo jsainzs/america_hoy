@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Moderación · América Hoy</title>
+<style>
+:root{
+  --text:#f8fafc;
+  --muted:rgba(248,250,252,.72);
+  --accent:#facc15;
+  --blue:#93c5fd;
+  --surface:rgba(4,13,31,.78);
+  --border:rgba(255,255,255,.14);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--text);
+  background:linear-gradient(135deg,#071633 0%,#102b5a 60%,#facc15 100%);
+}
+.shell{
+  width:min(100%,1080px);
+  margin:0 auto;
+  padding:28px 18px 60px;
+}
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:22px;
+}
+h1{
+  margin:0;
+  font-size:clamp(2rem,4vw,3.2rem);
+  line-height:1.05;
+}
+a{ color:var(--blue); font-weight:800; }
+.panel{
+  padding:16px;
+  border-radius:8px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  box-shadow:0 16px 42px rgba(0,0,0,.24);
+}
+.login{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px;
+  margin-bottom:18px;
+}
+input{
+  width:100%;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:8px;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font:inherit;
+  padding:12px;
+}
+input::placeholder{ color:rgba(255,255,255,.58); }
+button{
+  border:0;
+  border-radius:8px;
+  padding:11px 14px;
+  color:#071633;
+  background:linear-gradient(135deg,#facc15,#f59e0b);
+  font-weight:900;
+  cursor:pointer;
+}
+button.secondary{
+  color:#fff;
+  background:rgba(255,255,255,.11);
+  border:1px solid rgba(255,255,255,.14);
+}
+.status{
+  min-height:20px;
+  margin-bottom:12px;
+  color:var(--muted);
+}
+.target{
+  margin-top:16px;
+}
+.target-title{
+  margin:0 0 10px;
+  color:var(--accent);
+  font-size:1rem;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+.items{
+  display:grid;
+  gap:10px;
+}
+.item{
+  padding:13px;
+  border-radius:8px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+}
+.meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:8px;
+  color:var(--muted);
+  font-size:.84rem;
+  font-weight:800;
+}
+.message{
+  margin-bottom:10px;
+  line-height:1.45;
+}
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.empty{
+  color:var(--muted);
+  padding:12px 0;
+}
+@media (max-width:640px){
+  .topbar,
+  .login{ grid-template-columns:1fr; display:grid; }
+}
+</style>
+</head>
+<body>
+<main class="shell">
+  <div class="topbar">
+    <h1>Moderación</h1>
+    <a href="index.html">Volver al sitio</a>
+  </div>
+
+  <section class="panel">
+    <form class="login" id="tokenForm">
+      <input id="tokenInput" type="password" autocomplete="current-password" placeholder="Clave de moderador">
+      <button type="submit">Cargar comentarios</button>
+    </form>
+    <div class="status" id="status">Pega tu clave para revisar comentarios pendientes.</div>
+    <div id="moderationList"></div>
+  </section>
+</main>
+
+<script>
+const ENDPOINT = "/api/feedback";
+const tokenInput = document.getElementById("tokenInput");
+const tokenForm = document.getElementById("tokenForm");
+const statusEl = document.getElementById("status");
+const listEl = document.getElementById("moderationList");
+
+function escapeHtml(value){
+  return String(value || "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[char]));
+}
+
+function labelTarget(target){
+  if(target === "section:aguila-cancha") return "Águila en cancha";
+  if(target === "section:manga-azulcrema") return "Manga azulcrema";
+  return target;
+}
+
+function visibleItems(group){
+  return group.items.filter(item => item.type !== "like" && item.status !== "hidden");
+}
+
+function render(groups){
+  const filtered = groups
+    .map(group => ({ ...group, items: visibleItems(group) }))
+    .filter(group => group.items.length);
+
+  if(!filtered.length){
+    listEl.innerHTML = '<div class="empty">No hay comentarios por revisar.</div>';
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(group => `
+    <section class="target">
+      <h2 class="target-title">${escapeHtml(labelTarget(group.target))}</h2>
+      <div class="items">
+        ${group.items.map(item => `
+          <article class="item" data-target="${escapeHtml(group.target)}" data-id="${escapeHtml(item.id)}">
+            <div class="meta">
+              <span>${escapeHtml(item.status || "approved")}</span>
+              <span>${escapeHtml(item.name || "Americanista")}</span>
+              <span>${escapeHtml(item.email || "sin correo")}</span>
+              <span>${escapeHtml(new Date(item.createdAt).toLocaleString("es-MX"))}</span>
+            </div>
+            <div class="message">${escapeHtml(item.message)}</div>
+            <div class="actions">
+              <button type="button" data-status="approved">Aprobar</button>
+              <button class="secondary" type="button" data-status="hidden">Ocultar</button>
+              <button class="secondary" type="button" data-status="pending">Pendiente</button>
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `).join("");
+}
+
+async function loadModeration(){
+  const token = tokenInput.value.trim();
+  if(!token){
+    statusEl.textContent = "Necesitas la clave de moderador.";
+    return;
+  }
+
+  localStorage.setItem("americaHoyModerationToken", token);
+  statusEl.textContent = "Cargando...";
+  const response = await fetch(`${ENDPOINT}?mode=moderation`, {
+    headers: { "x-moderation-token": token }
+  });
+  const payload = await response.json();
+  if(!response.ok){
+    statusEl.textContent = payload.error || "No se pudo cargar moderación.";
+    return;
+  }
+  statusEl.textContent = "Comentarios cargados.";
+  render(payload.targets || []);
+}
+
+async function moderate(itemEl, status){
+  const token = tokenInput.value.trim();
+  statusEl.textContent = "Guardando cambio...";
+  const response = await fetch(ENDPOINT, {
+    method: "PATCH",
+    headers: {
+      "content-type": "application/json",
+      "x-moderation-token": token
+    },
+    body: JSON.stringify({
+      target: itemEl.dataset.target,
+      id: itemEl.dataset.id,
+      status
+    })
+  });
+  const payload = await response.json();
+  if(!response.ok){
+    statusEl.textContent = payload.error || "No se pudo moderar.";
+    return;
+  }
+  statusEl.textContent = "Cambio guardado.";
+  await loadModeration();
+}
+
+tokenForm.addEventListener("submit", event => {
+  event.preventDefault();
+  loadModeration();
+});
+
+listEl.addEventListener("click", event => {
+  const button = event.target.closest("button[data-status]");
+  if(!button) return;
+  const itemEl = button.closest(".item");
+  moderate(itemEl, button.dataset.status);
+});
+
+tokenInput.value = localStorage.getItem("americaHoyModerationToken") || "";
+if(tokenInput.value){
+  loadModeration();
+}
+</script>
+</body>
+</html>

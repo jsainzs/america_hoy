@@ -13,6 +13,10 @@ function getRedisConfig(){
   return url && token ? { url, token } : null;
 }
 
+function getModerationToken(){
+  return process.env.FEEDBACK_MODERATION_TOKEN || process.env.MODERATION_TOKEN || "";
+}
+
 async function redis(command){
   const config = getRedisConfig();
   if(!config){
@@ -72,6 +76,10 @@ function feedbackKey(target){
   return `america_hoy:feedback:${target}`;
 }
 
+function allFeedbackKey(){
+  return "america_hoy:feedback:targets";
+}
+
 function isValidType(type){
   return type === "like" || type === "comment" || type === "error";
 }
@@ -84,9 +92,37 @@ function cleanEmail(value){
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : "";
 }
 
+function isModerator(req, url){
+  const token = getModerationToken();
+  const provided = req.headers["x-moderation-token"] || url.searchParams.get("token") || "";
+  return Boolean(token && provided && provided === token);
+}
+
+function parseItem(row){
+  try {
+    return JSON.parse(row);
+  } catch(err) {
+    return null;
+  }
+}
+
+async function readItems(target){
+  const rows = await redis(["LRANGE", feedbackKey(target), "0", String(MAX_ITEMS - 1)]);
+  return (rows || []).map(parseItem).filter(Boolean);
+}
+
+async function writeItems(target, items){
+  const key = feedbackKey(target);
+  await redis(["DEL", key]);
+  if(items.length){
+    await redis(["RPUSH", key, ...items.map(item => JSON.stringify(item))]);
+    await redis(["LTRIM", key, "0", String(MAX_ITEMS - 1)]);
+  }
+}
+
 module.exports = async function handler(req, res){
-  res.setHeader("access-control-allow-methods", "GET,POST,OPTIONS");
-  res.setHeader("access-control-allow-headers", "content-type");
+  res.setHeader("access-control-allow-methods", "GET,POST,PATCH,OPTIONS");
+  res.setHeader("access-control-allow-headers", "content-type,x-moderation-token");
 
   if(req.method === "OPTIONS"){
     res.statusCode = 204;
@@ -98,13 +134,31 @@ module.exports = async function handler(req, res){
     if(req.method === "GET"){
       const url = new URL(req.url, "https://america-hoy.vercel.app");
       const target = cleanText(url.searchParams.get("target"), 80);
+      const mode = cleanText(url.searchParams.get("mode"), 20);
+
+      if(mode === "moderation"){
+        if(!isModerator(req, url)){
+          json(res, 401, { error: "Moderator token required." });
+          return;
+        }
+        const targets = await redis(["SMEMBERS", allFeedbackKey()]);
+        const grouped = [];
+        for(const knownTarget of targets || []){
+          if(!TARGET_PATTERN.test(knownTarget)) continue;
+          grouped.push({ target: knownTarget, items: await readItems(knownTarget) });
+        }
+        json(res, 200, { targets: grouped });
+        return;
+      }
+
       if(!TARGET_PATTERN.test(target)){
         json(res, 400, { error: "Invalid feedback target." });
         return;
       }
 
-      const rows = await redis(["LRANGE", feedbackKey(target), "0", String(MAX_ITEMS - 1)]);
-      const items = (rows || []).map(row => JSON.parse(row));
+      const items = (await readItems(target)).filter(item => (
+        item.type === "like" || item.status === "approved" || !item.status
+      ));
       json(res, 200, { items });
       return;
     }
@@ -133,12 +187,44 @@ module.exports = async function handler(req, res){
         name,
         message,
         email,
+        status: type === "like" ? "approved" : "pending",
         createdAt: new Date().toISOString()
       };
 
+      await redis(["SADD", allFeedbackKey(), target]);
       await redis(["LPUSH", feedbackKey(target), JSON.stringify(item)]);
       await redis(["LTRIM", feedbackKey(target), "0", String(MAX_ITEMS - 1)]);
       json(res, 201, { item });
+      return;
+    }
+
+    if(req.method === "PATCH"){
+      const url = new URL(req.url, "https://america-hoy.vercel.app");
+      if(!isModerator(req, url)){
+        json(res, 401, { error: "Moderator token required." });
+        return;
+      }
+
+      const body = await parseBody(req);
+      const target = cleanText(body.target, 80);
+      const id = cleanText(body.id, 80);
+      const status = cleanText(body.status, 20);
+      if(!TARGET_PATTERN.test(target) || !id || !["approved", "hidden", "pending"].includes(status)){
+        json(res, 400, { error: "Invalid moderation payload." });
+        return;
+      }
+
+      const items = await readItems(target);
+      const item = items.find(entry => entry.id === id);
+      if(!item){
+        json(res, 404, { error: "Feedback item not found." });
+        return;
+      }
+
+      item.status = status;
+      item.moderatedAt = new Date().toISOString();
+      await writeItems(target, items);
+      json(res, 200, { item });
       return;
     }
 

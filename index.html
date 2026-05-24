@@ -1765,7 +1765,7 @@ function buildFeedbackWidget(config){
         throw new Error(payload.error || "No se pudo enviar.");
       }
       form.reset();
-      statusEl.textContent = "Listo, quedó guardado.";
+      statusEl.textContent = "Listo, quedó guardado y aparecerá cuando sea aprobado.";
       await loadFeedback(config.target, statusEl, listEl, countsEl);
     } catch(err) {
       statusEl.textContent = "La interfaz ya está lista; falta conectar almacenamiento en Vercel para guardar comentarios.";
